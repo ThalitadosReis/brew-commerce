@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -14,9 +14,21 @@ import {
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isDesktopSearchFocused, setIsDesktopSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +39,10 @@ export default function Navbar() {
     }
   };
 
+  // mobile overlays and scroll affect navbar color text
+  const useTextChange = isScrolled || isMenuOpen || isMobileSearchOpen;
+
+
   const links = [
     { href: "/", label: "Home" },
     { href: "/product", label: "Collection" },
@@ -36,17 +52,23 @@ export default function Navbar() {
 
   return (
     <div className="relative">
-      <header className="bg-mist sticky top-0 z-50">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? "bg-mist" : "bg-transparent"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center h-20 relative">
             {/* left section */}
             <div className="flex items-center flex-1">
               {/* mobile menu toggle */}
               <button
-                className="lg:hidden text-onyx hover:opacity-70 transition-opacity"
+                className={`lg:hidden hover:opacity-70 transition-opacity ${
+                  useTextChange ? "text-onyx" : "text-white"
+                }`}
                 onClick={() => {
                   setIsMenuOpen(!isMenuOpen);
-                  setIsSearchOpen(false);
+                  setIsMobileSearchOpen(false);
                 }}
               >
                 {isMenuOpen ? (
@@ -63,11 +85,15 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={`
-                      uppercase text-xs relative after:content-[''] after:absolute after:h-0.5 after:bg-onyx/80 after:left-0 after:-bottom-1 after:transition-all after:duration-300 duration-200 ${
-                        pathname === link.href
-                          ? "after:w-full"
-                          : "after:w-0 hover:after:w-full"
-                      }`}
+                      uppercase text-xs relative after:content-[''] after:absolute after:h-0.5 after:left-0 after:-bottom-1 after:transition-all after:duration-300 duration-200 ${
+                        useTextChange
+                          ? "text-onyx after:bg-onyx/80"
+                          : "text-white after:bg-white/80"
+                      } ${
+                      pathname === link.href
+                        ? "after:w-full"
+                        : "after:w-0 hover:after:w-full"
+                    }`}
                   >
                     {link.label}
                   </Link>
@@ -79,7 +105,9 @@ export default function Navbar() {
             <div className="absolute left-1/2 transform -translate-x-1/2">
               <Link
                 href="/"
-                className="font-primary text-3xl tracking-wide text-onyx "
+                className={`font-primary text-3xl tracking-wide ${
+                  useTextChange ? "text-onyx" : "text-white"
+                }`}
               >
                 brew.
               </Link>
@@ -88,13 +116,15 @@ export default function Navbar() {
             {/* right section */}
             <div className="flex items-center space-x-4 flex-1 justify-end">
               {/* mobile search button */}
-              {!isSearchOpen && (
+              {!isMobileSearchOpen && (
                 <button
                   onClick={() => {
-                    setIsSearchOpen(!isSearchOpen);
+                    setIsMobileSearchOpen(!isMobileSearchOpen);
                     setIsMenuOpen(false);
                   }}
-                  className="lg:hidden p-1 text-onyx hover:opacity-70 transition-opacity"
+                  className={`lg:hidden p-1 hover:opacity-70 transition-opacity ${
+                    useTextChange ? "text-onyx" : "text-white"
+                  }`}
                   title="Search"
                 >
                   <Search className="h-5 w-5" />
@@ -114,20 +144,26 @@ export default function Navbar() {
                         handleSearch(e);
                       }
                     }}
-                    onFocus={() => setIsSearchOpen(true)}
+                    onFocus={() => setIsDesktopSearchFocused(true)}
                     onBlur={() => {
                       if (!searchQuery.trim()) {
-                        setIsSearchOpen(false);
+                        setIsDesktopSearchFocused(false);
                       }
                     }}
                     placeholder="Search coffee..."
                     className={`${
-                      isSearchOpen ? "w-72" : "w-56"
-                    } text-sm pl-10 pr-4 py-3 bg-onyx/10 rounded-full focus:outline-none text-onyx placeholder-onyx/50 transition-all duration-300`}
+                      isDesktopSearchFocused ? "w-72" : "w-56"
+                    } text-sm pl-10 pr-4 py-3 rounded-full focus:outline-none transition-all duration-300 ${
+                      isScrolled
+                        ? "bg-onyx/10 text-onyx placeholder-onyx/50"
+                        : "bg-white/20 backdrop-blur-sm text-white placeholder-white/50"
+                    }`}
                   />
                   <button
-                    onClick={() => setIsSearchOpen(true)}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-onyx transition-colors"
+                    onClick={() => setIsDesktopSearchFocused(true)}
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors ${
+                      isScrolled ? "text-onyx" : "text-white"
+                    }`}
                   >
                     <Search className="h-5 w-5" />
                   </button>
@@ -137,10 +173,16 @@ export default function Navbar() {
               {/* cart */}
               <Link
                 href="/cart"
-                className="text-xs text-onyx relative flex items-center gap-2 hover:opacity-80 transition-opacity"
+                className={`text-xs relative flex items-center gap-2 hover:opacity-80 transition-opacity ${
+                  useTextChange ? "text-onyx" : "text-white"
+                }`}
               >
                 <ShoppingCart className="h-5 w-5" />
-                <span className="h-5 w-5 bg-onyx text-white text-xs font-bold absolute -top-2 -right-3 rounded-full  flex items-center justify-center">
+                <span
+                  className={`h-5 w-5 text-xs font-bold absolute -top-2 -right-3 rounded-full flex items-center justify-center ${
+                    useTextChange ? "bg-onyx text-white" : "bg-white text-onyx"
+                  }`}
+                >
                   1
                 </span>
               </Link>
@@ -159,7 +201,7 @@ export default function Navbar() {
 
       {/* mobile menu */}
       <div
-        className={`w-full bg-mist lg:hidden absolute top-full left-0 transition-transform duration-300 z-40 ${
+        className={`w-full bg-mist lg:hidden fixed left-0 top-0 pt-20 transition-transform duration-300 z-40 ${
           isMenuOpen ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -187,17 +229,17 @@ export default function Navbar() {
       </div>
 
       {/* mobile search backdrop */}
-      {isSearchOpen && (
+      {isMobileSearchOpen && (
         <div
           className="bg-gray/30 fixed lg:hidden inset-0 z-30"
-          onClick={() => setIsSearchOpen(false)}
+          onClick={() => setIsMobileSearchOpen(false)}
         />
       )}
 
       {/* mobile search overlay */}
       <div
-        className={`bg-mist lg:hidden absolute top-full left-0 w-full transition-transform duration-300 z-40 ${
-          isSearchOpen ? "translate-y-0" : "-translate-y-full"
+        className={`bg-mist lg:hidden fixed left-0 top-0 pt-20 w-full transition-transform duration-300 z-40 ${
+          isMobileSearchOpen ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="px-6 pb-4">
