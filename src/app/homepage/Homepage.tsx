@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoveRight } from "lucide-react";
 import Image from "next/image";
 
 type Product = {
@@ -85,11 +85,10 @@ export default function Homepage() {
     );
   };
 
-
   return (
     <div className="min-h-screen bg-mist text-onyx">
       {/* hero */}
-      <section className="relative h-container overflow-hidden">
+      <section className="relative overflow-hidden">
         {/* background with parallax */}
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
@@ -105,36 +104,34 @@ export default function Homepage() {
 
         {/* content */}
         <div className="relative z-10 h-full flex items-center justify-center py-50">
-          <div className="max-w-7xl mx-auto px-6 w-full">
-            <div className="text-center">
-              {/* logo */}
-              <div>
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  width={150}
-                  height={150}
-                  className="mx-auto"
-                />
-              </div>
+          <div className="text-center space-y-8 px-6">
+            {/* logo */}
+            <div>
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={150}
+                height={150}
+                className="mx-auto"
+              />
+            </div>
 
-              <h1 className="uppercase text-white font-primary -mt-4 text-3xl md:text-4xl lg:text-5xl  mb-4">
-                Crafting Coffee Excellence
-                <br className="block" />
-                One Bean at a Time
-              </h1>
-              <p className="lg:text-lg text-white/70 max-w-lg mb-8 mx-auto">
-                Discover the perfect cup with our carefully sourced, expertly
-                roasted coffee beans from around the world.
-              </p>
-              <div className="uppercase text-sm font-primary w-fit mx-auto flex flex-col sm:flex-row justify-center">
-                <Link
-                  href="/collection"
-                  className="text-white px-8 py-3 border-1 flex items-center hover:bg-white hover:text-black transition-colors"
-                >
-                  Shop Now
-                </Link>
-              </div>
+            <h1 className="uppercase text-white font-primary -mt-8 text-3xl md:text-5xl lg:text-6xl">
+              Crafting Coffee Excellence
+              <br className="block" />
+              One Bean at a Time
+            </h1>
+            <p className="lg:text-lg text-white/70 max-w-lg mx-auto">
+              Discover the perfect cup with our carefully sourced, expertly
+              roasted coffee beans from around the world.
+            </p>
+            <div className="uppercase text-sm font-primary w-fit mx-auto">
+              <Link
+                href="/collection"
+                className="text-white px-8 py-3 border-1 flex items-center hover:bg-white hover:text-black transition-colors"
+              >
+                Shop Now
+              </Link>
             </div>
           </div>
         </div>
@@ -190,23 +187,26 @@ export default function Homepage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 md:place-items-baseline">
                     {featuredProducts.map((product, index) => {
                       // Mobile
-                      const showMobile = (index >= currentIndex && index < currentIndex + 2) ||
+                      const showMobile =
+                        (index >= currentIndex && index < currentIndex + 2) ||
                         (currentIndex + 2 > featuredProducts.length &&
                           index < (currentIndex + 2) % featuredProducts.length);
 
                       // Desktop
-                      const showDesktop = (index >= currentIndex && index < currentIndex + 3) ||
+                      const showDesktop =
+                        (index >= currentIndex && index < currentIndex + 3) ||
                         (currentIndex + 3 > featuredProducts.length &&
                           index < (currentIndex + 3) % featuredProducts.length);
 
                       if (!showMobile && !showDesktop) return null;
 
                       return (
-                        <div key={product.id} className={`text-center ${
-                          showMobile ? 'block' : 'hidden'
-                        } ${
-                          showDesktop ? 'md:block' : 'md:hidden'
-                        }`}>
+                        <div
+                          key={product.id}
+                          className={`text-center ${
+                            showMobile ? "block" : "hidden"
+                          } ${showDesktop ? "md:block" : "md:hidden"}`}
+                        >
                           <div className="mb-3 md:mb-0">
                             <Image
                               src={product.image}
@@ -255,6 +255,49 @@ export default function Homepage() {
                   />
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* about */}
+      <section className="relative h-container overflow-hidden">
+        {/* background with parallax */}
+        <div
+          className="absolute w-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://res.cloudinary.com/douen1dwv/image/upload/v1758990337/default/brew..jpg')",
+            transform: `translateY(${scrollY * 0.3}px)`,
+            top: "-100%",
+            height: "200%",
+          }}
+        ></div>
+
+        {/* overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
+
+        {/* content */}
+        <div className="relative z-10 py-20 px-6 lg:px-12">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <h2 className="uppercase text-white font-primary text-3xl md:text-4xl lg:text-5xl">
+              Our Passion for
+              <br className="block" />
+              Perfect Coffee
+            </h2>
+            <p className="lg:text-lg text-white/70 max-w-lg text-justify">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <div className="uppercase text-sm font-primary w-fit">
+              <Link
+                href="/about"
+                className="text-white px-8 py-3 border-1 flex items-center hover:bg-white hover:text-black transition-colors"
+              >
+                Learn more about us
+              </Link>
             </div>
           </div>
         </div>
