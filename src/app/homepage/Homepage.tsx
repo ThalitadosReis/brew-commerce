@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, MoveRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleStar,
+  Coffee,
+  Sprout,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 
 type Product = {
@@ -279,25 +286,93 @@ export default function Homepage() {
 
         {/* content */}
         <div className="relative z-10 py-20 px-6 lg:px-12">
-          <div className="max-w-7xl mx-auto space-y-8">
+          <div className="max-w-7xl mx-auto space-y-8 text-center">
             <h2 className="uppercase text-white font-primary text-3xl md:text-4xl lg:text-5xl">
               Our Passion for
               <br className="block" />
               Perfect Coffee
             </h2>
-            <p className="lg:text-lg text-white/70 max-w-lg text-justify">
+            <p className="lg:text-lg text-white/70 max-w-2xl mx-auto">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
               nisi ut aliquip ex ea commodo consequat.
             </p>
-            <div className="uppercase text-sm font-primary w-fit">
+            <div className="uppercase text-sm font-primary w-fit mx-auto">
               <Link
                 href="/about"
                 className="text-white px-8 py-3 border-1 flex items-center hover:bg-white hover:text-black transition-colors"
               >
                 Learn more about us
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* features */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2">
+            {/* header */}
+            <div className="text-center lg:text-left px-6 lg:px-0">
+              <div className="space-y-6">
+                <h2 className="max-w-sm mx-auto lg:mx-0 font-secondary text-3xl md:text-4xl leading-tight">
+                  We care about the quality of our{" "}
+                  <strong className="font-bold">products</strong>
+                </h2>
+                <p className="max-w-lg mx-auto lg:mx-0 text-onyx/80 text-base leading-relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className="pt-2">
+                  <Link
+                    href="/collection"
+                    className="inline-flex items-center uppercase text-sm font-primary text-onyx px-8 py-3 border border-onyx hover:bg-onyx hover:text-white transition-colors duration-300 ease-in-out"
+                  >
+                    Explore our products
+                  </Link>
+                </div>
+              </div>
+            </div>
+            {/* content */}
+            <div className="grid md:grid-cols-2 gap-8 px-6 lg:px-0 mt-8 lg:mt-0">
+              <div className="flex flex-col">
+                <Coffee strokeWidth={1} className="w-10 h-10 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Fresh Roasted</h3>
+                <p className="text-sm text-onyx/80">
+                  Beans roasted to order ensuring maximum freshness and flavor
+                  in every cup.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <CircleStar strokeWidth={1} className="w-10 h-10 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Premium Quality</h3>
+                <p className="text-sm text-onyx/80">
+                  Sourced from the finest coffee regions with direct
+                  relationships with farmers.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <Users strokeWidth={1} className="w-10 h-10 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">
+                  Community Focused
+                </h3>
+                <p className="text-sm text-onyx/80">
+                  Supporting local communities and sustainable farming practices
+                  worldwide.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <Sprout strokeWidth={1} className="w-10 h-10 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">
+                  Sustainable Practices
+                </h3>
+                <p className="text-sm text-onyx/80">
+                  Environmentally conscious methods that protect our planet for
+                  future generations.
+                </p>
+              </div>
             </div>
           </div>
         </div>
