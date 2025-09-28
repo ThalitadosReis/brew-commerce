@@ -377,6 +377,43 @@ export default function Homepage() {
           </div>
         </div>
       </section>
+
+      {/* contact */}
+      <section
+        className="relative h-container bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage:
+            "url('https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg?_gl=1*4zlw1m*_ga*MTE1NTcwMTQwLjE3NTU4ODU3NjQ.*_ga_8JE65Q40S6*czE3NTkwNTIwODYkbzIxJGcxJHQxNzU5MDUyMTAzJGo0MyRsMCRoMA..')",
+        }}
+      >
+        {/* overlay */}
+        <div className="absolute inset-0 bg-black/60"></div>
+
+        {/* contact */}
+        <div className="relative z-10 py-20 px-6 lg:px-12">
+          <div className="max-w-7xl mx-auto space-y-8 text-center">
+            <h2 className="uppercase text-white font-primary text-3xl md:text-4xl lg:text-5xl">
+              Stay connected
+            </h2>
+            <p className="lg:text-lg text-white/70 max-w-xl mx-auto">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+            <div className="text-sm w-fit mx-auto">
+              <div className="relative flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full p-1 overflow-hidden">
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  className="flex-1 px-8 py-3 bg-transparent text-white placeholder-white/50 focus:outline-none focus:bg-transparent"
+                />
+                <button className="uppercase text-sm font-primary bg-white text-onyx px-8 py-3 rounded-full hover:bg-gray hover:text-white transition-colors">
+                  Subscribe
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
