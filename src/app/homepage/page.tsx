@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useCart } from "@/contexts/CartContext";
+import { allProducts } from "@/data/products";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,21 +11,14 @@ import {
   Coffee,
   Sprout,
   Users,
+  ShoppingCart,
 } from "lucide-react";
 import Image from "next/image";
-
-type Product = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  roast: string;
-  country: string;
-};
 
 export default function Homepage() {
   const [scrollY, setScrollY] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -31,56 +26,12 @@ export default function Homepage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const featuredProducts: Product[] = [
-    {
-      id: 1,
-      name: "Morning Bloom",
-      price: 24.99,
-      image: "/mockup-coffee.png",
-      roast: "Light Roast",
-      country: "Ethiopia",
-    },
-    {
-      id: 2,
-      name: "Velvet Thunder",
-      price: 22.99,
-      image: "/mockup-coffee.png",
-      roast: "Medium-Dark Roast",
-      country: "Colombia",
-    },
-    {
-      id: 3,
-      name: "Golden Horizon",
-      price: 19.99,
-      image: "/mockup-coffee.png",
-      roast: "Medium Roast",
-      country: "Brazil",
-    },
-    {
-      id: 4,
-      name: "Midnight Fire",
-      price: 26.99,
-      image: "/mockup-coffee.png",
-      roast: "Dark Roast",
-      country: "Guatemala",
-    },
-    {
-      id: 5,
-      name: "Ruby Cascade",
-      price: 28.99,
-      image: "/mockup-coffee.png",
-      roast: "Medium-Light Roast",
-      country: "Kenya",
-    },
-    {
-      id: 6,
-      name: "Sapphire Peak",
-      price: 34.99,
-      image: "/mockup-coffee.png",
-      roast: "Medium Roast",
-      country: "Jamaica",
-    },
-  ];
+  // get 6 random products from allProducts
+  const featuredProducts = useMemo(() => {
+    // create a copy and shuffle it
+    const shuffled = [...allProducts].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 6);
+  }, []);
 
   const nextProduct = () => {
     setCurrentIndex((prev) => (prev + 1) % featuredProducts.length);
@@ -171,7 +122,7 @@ export default function Homepage() {
 
             {/* products list */}
             <div className="lg:col-span-8 relative">
-              <div className="flex items-center">
+              <div className="flex items-center gap-2 md:gap-4">
                 {/* left arrow */}
                 <button
                   onClick={prevProduct}
@@ -193,13 +144,13 @@ export default function Homepage() {
                 <div className="flex-1 mt-8 md:mt-0">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 md:place-items-baseline">
                     {featuredProducts.map((product, index) => {
-                      // Mobile
+                      // mobile
                       const showMobile =
                         (index >= currentIndex && index < currentIndex + 2) ||
                         (currentIndex + 2 > featuredProducts.length &&
                           index < (currentIndex + 2) % featuredProducts.length);
 
-                      // Desktop
+                      // desktop
                       const showDesktop =
                         (index >= currentIndex && index < currentIndex + 3) ||
                         (currentIndex + 3 > featuredProducts.length &&
@@ -210,11 +161,11 @@ export default function Homepage() {
                       return (
                         <div
                           key={product.id}
-                          className={`text-center ${
+                          className={` ${
                             showMobile ? "block" : "hidden"
                           } ${showDesktop ? "md:block" : "md:hidden"}`}
                         >
-                          <div className="mb-3 md:mb-0">
+                          <div className="mb-3 md:mb-0 relative bg-gray/20">
                             <Image
                               src={product.image}
                               width={200}
@@ -222,18 +173,22 @@ export default function Homepage() {
                               alt={product.name}
                               className="w-full h-full object-contain"
                             />
+                            <button
+                              onClick={() => addToCart(product)}
+                              className="absolute bottom-2 right-0 bg-onyx text-white p-2 hover:bg-serene transition-colors group"
+                              title="Add to cart"
+                            >
+                              <ShoppingCart className="h-5 w-5" />
+                            </button>
                           </div>
-                          <div className="space-y-1">
-                            <h2 className="font-semibold text-onyx text-base md:text-lg">
+                          <div className="mt-3 space-y-1">
+                            <h2 className="font-semibold text-onyx text-base md:text-">
                               {product.name}
                             </h2>
-                            <h3 className="font-light text-onyx text-sm  md:text-base">
-                              {product.country}
-                            </h3>
-                            <p className="text-onyx/50 text-xs">
+                            <h3 className="font-light text-onyx text-xs md:text-xs">
                               {product.roast}
-                            </p>
-                            <span className="text-base md:text-lg">
+                            </h3>
+                            <span className="text-sm md:text-base">
                               CHF{product.price}
                             </span>
                           </div>
@@ -404,7 +359,7 @@ export default function Homepage() {
                 <input
                   type="email"
                   placeholder="Your email address"
-                  className="flex-1 px-8 py-3 bg-transparent text-white placeholder-white/50 focus:outline-none focus:bg-transparent"
+                  className="flex-1 px-8 py-3 text-white placeholder-white/50 focus:outline-none focus:bg-transparent"
                 />
                 <button className="uppercase text-sm font-primary bg-white text-onyx px-8 py-3 rounded-full hover:bg-gray hover:text-white transition-colors">
                   Subscribe

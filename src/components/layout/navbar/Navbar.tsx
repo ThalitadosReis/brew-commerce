@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCart } from "@/contexts/CartContext";
 import {
   XIcon,
   MenuIcon,
@@ -19,6 +20,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  const { getTotalItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,13 +41,20 @@ export default function Navbar() {
     }
   };
 
-  // mobile overlays and scroll affect navbar color text
-  const useTextChange = isScrolled || isMenuOpen || isMobileSearchOpen;
+  // background logic
+  const getBackgroundClass = () => {
+    if (pathname !== "/") {
+      return "bg-mist";
+    }
+    return isScrolled ? "bg-mist" : "bg-transparent";
+  };
 
+  // text color logic: always use dark text (onyx) except on homepage when transparent
+  const useTextChange = pathname !== "/" || isScrolled || isMenuOpen || isMobileSearchOpen;
 
   const links = [
     { href: "/", label: "Home" },
-    { href: "/product", label: "Collection" },
+    { href: "/collection", label: "Collection" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
@@ -53,9 +62,7 @@ export default function Navbar() {
   return (
     <div className="relative">
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-mist" : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getBackgroundClass()}`}
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center h-20 relative">
@@ -154,15 +161,15 @@ export default function Navbar() {
                     className={`${
                       isDesktopSearchFocused ? "w-72" : "w-56"
                     } text-sm pl-10 pr-4 py-3 rounded-full focus:outline-none transition-all duration-300 ${
-                      isScrolled
-                        ? "bg-onyx/10 text-onyx placeholder-onyx/50"
-                        : "bg-white/20 backdrop-blur-sm text-white placeholder-white/50"
+                      useTextChange 
+                        ? "text-onyx bg-onyx/10 placeholder-onyx/50" 
+                        : "text-white bg-white/20 backdrop-blur-sm placeholder-white/50"
                     }`}
                   />
                   <button
                     onClick={() => setIsDesktopSearchFocused(true)}
                     className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors ${
-                      isScrolled ? "text-onyx" : "text-white"
+                      useTextChange ? "text-onyx" : "text-white"
                     }`}
                   >
                     <Search className="h-5 w-5" />
@@ -171,21 +178,26 @@ export default function Navbar() {
               </div>
 
               {/* cart */}
-              <Link
-                href="/cart"
-                className={`text-xs relative flex items-center gap-2 hover:opacity-80 transition-opacity ${
-                  useTextChange ? "text-onyx" : "text-white"
-                }`}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                <span
-                  className={`h-5 w-5 text-xs font-bold absolute -top-2 -right-3 rounded-full flex items-center justify-center ${
-                    useTextChange ? "bg-onyx text-white" : "bg-white text-onyx"
+              <div className="relative">
+                <Link
+                  href="/cart"
+                  className={`text-xs relative flex items-center gap-2 hover:opacity-80 transition-opacity ${
+                    useTextChange ? "text-onyx" : "text-white"
                   }`}
+                  title={`Cart (${getTotalItems()} items)`}
                 >
-                  1
-                </span>
-              </Link>
+                  <ShoppingCart className="h-5 w-5" />
+                  {getTotalItems() > 0 && (
+                    <span
+                      className={`h-5 w-5 text-xs font-bold absolute -top-2 -right-3 rounded-full flex items-center justify-center ${
+                        useTextChange ? "bg-onyx text-white" : "bg-white text-onyx"
+                      }`}
+                    >
+                      {getTotalItems() > 99 ? '99+' : getTotalItems()}
+                    </span>
+                  )}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
