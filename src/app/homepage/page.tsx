@@ -141,7 +141,7 @@ export default function Homepage() {
                 </button>
 
                 {/* product content */}
-                <div className="flex-1 mt-8 md:mt-0">
+                <div className="flex-1 mt-8 lg:mt-0">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 md:place-items-baseline">
                     {featuredProducts.map((product, index) => {
                       // mobile

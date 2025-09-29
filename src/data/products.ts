@@ -5,7 +5,6 @@ export const allProducts: Product[] = [
     id: 1,
     name: "Ethiopian Yirgacheffe",
     price: 24.99,
-    rating: 4.8,
     image: "/mockup-coffee.png",
     description: "Bright, floral notes with citrus undertones",
     country: "Ethiopia",
@@ -15,7 +14,6 @@ export const allProducts: Product[] = [
     id: 2,
     name: "Colombian Supremo",
     price: 22.99,
-    rating: 4.9,
     image: "/mockup-coffee.png",
     description: "Rich, full-bodied with chocolate finish",
     country: "Colombia",
@@ -25,7 +23,6 @@ export const allProducts: Product[] = [
     id: 3,
     name: "Brazil Santos",
     price: 19.99,
-    rating: 4.7,
     image: "/mockup-coffee.png",
     description: "Smooth, nutty flavor with low acidity",
     country: "Brazil",
@@ -35,7 +32,6 @@ export const allProducts: Product[] = [
     id: 4,
     name: "Guatemala Antigua",
     price: 26.99,
-    rating: 4.8,
     image: "/mockup-coffee.png",
     description: "Medium body with spicy and smoky notes",
     country: "Guatemala",
@@ -45,7 +41,6 @@ export const allProducts: Product[] = [
     id: 5,
     name: "Costa Rica Tarrazú",
     price: 25.99,
-    rating: 4.6,
     image: "/mockup-coffee.png",
     description: "Crisp acidity with wine-like characteristics",
     country: "Costa Rica",
@@ -55,7 +50,6 @@ export const allProducts: Product[] = [
     id: 6,
     name: "Jamaica Blue Mountain",
     price: 42.99,
-    rating: 4.9,
     image: "/mockup-coffee.png",
     description: "Mild flavor with excellent balance",
     country: "Jamaica",
@@ -65,7 +59,6 @@ export const allProducts: Product[] = [
     id: 7,
     name: "Kenya AA",
     price: 28.99,
-    rating: 4.7,
     image: "/mockup-coffee.png",
     description: "Wine-like acidity with blackcurrant notes",
     country: "Kenya",
@@ -75,7 +68,6 @@ export const allProducts: Product[] = [
     id: 8,
     name: "Peru Organic",
     price: 21.99,
-    rating: 4.5,
     image: "/mockup-coffee.png",
     description: "Organic certification with caramel sweetness",
     country: "Peru",
@@ -85,7 +77,6 @@ export const allProducts: Product[] = [
     id: 9,
     name: "Sumatra Mandheling",
     price: 23.99,
-    rating: 4.6,
     image: "/mockup-coffee.png",
     description: "Full body with earthy and herbal notes",
     country: "Indonesia",
@@ -95,7 +86,6 @@ export const allProducts: Product[] = [
     id: 10,
     name: "Yemen Mocha",
     price: 35.99,
-    rating: 4.8,
     image: "/mockup-coffee.png",
     description: "Distinctive wine-like flavor with chocolate notes",
     country: "Yemen",
@@ -105,7 +95,6 @@ export const allProducts: Product[] = [
     id: 11,
     name: "Panama Geisha",
     price: 48.99,
-    rating: 4.9,
     image: "/mockup-coffee.png",
     description: "Exotic floral aroma with jasmine and bergamot",
     country: "Panama",
@@ -115,7 +104,6 @@ export const allProducts: Product[] = [
     id: 12,
     name: "Mexico Chiapas",
     price: 20.99,
-    rating: 4.4,
     image: "/mockup-coffee.png",
     description: "Medium body with nutty and chocolate undertones",
     country: "Mexico",
@@ -133,3 +121,21 @@ export const roastLevels = [
 ] as const;
 
 export type RoastLevel = typeof roastLevels[number];
+
+// Export countries for filtering
+export const countries = [
+  "Ethiopia",
+  "Colombia", 
+  "Brazil",
+  "Guatemala",
+  "Costa Rica",
+  "Jamaica",
+  "Kenya",
+  "Peru",
+  "Indonesia",
+  "Yemen",
+  "Panama",
+  "Mexico"
+] as const;
+
+export type Country = typeof countries[number];
