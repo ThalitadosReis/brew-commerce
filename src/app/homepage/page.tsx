@@ -12,6 +12,7 @@ import {
   Sprout,
   Users,
   ShoppingCart,
+  Ellipsis,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -173,13 +174,26 @@ export default function Homepage() {
                               alt={product.name}
                               className="w-full h-full object-contain"
                             />
-                            <button
-                              onClick={() => addToCart(product)}
-                              className="absolute bottom-2 right-0 bg-onyx text-white p-2 hover:bg-serene transition-colors group"
-                              title="Add to cart"
-                            >
-                              <ShoppingCart className="h-5 w-5" />
-                            </button>
+                            <>
+                          {/* link to product page */}
+                          <Link
+                            href={`/product`}
+                            // href={`/products/${product.id}`}
+                            className="absolute bottom-10 right-0 bg-white p-2 hover:bg-gray transition-colors group"
+                            title="View Product"
+                          >
+                            <Ellipsis className="h-4 w-4 text-onyx" />
+                          </Link>
+
+                          {/* add to cart */}
+                          <button
+                            onClick={() => addToCart(product)}
+                            className="absolute bottom-2 right-0 bg-onyx text-white p-2 hover:bg-gray transition-colors group"
+                            title="Add to cart"
+                          >
+                            <ShoppingCart className="h-4 w-4" />
+                          </button>
+                        </>
                           </div>
                           <div className="mt-3 space-y-1">
                             <h2 className="font-semibold text-onyx text-base md:text-">

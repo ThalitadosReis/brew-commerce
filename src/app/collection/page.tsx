@@ -290,7 +290,7 @@ export default function CollectionPage() {
                   </div>
                 </div>
 
-                {/* Countries Filter */}
+                {/* countries filter */}
                 <div>
                   <label className="block text-sm font-medium text-onyx mb-3">
                     Countries

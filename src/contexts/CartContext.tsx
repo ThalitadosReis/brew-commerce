@@ -7,15 +7,14 @@ type CartAction =
   | { type: "ADD_TO_CART"; payload: Product }
   | { type: "REMOVE_FROM_CART"; payload: number }
   | { type: "UPDATE_QUANTITY"; payload: { id: number; quantity: number } }
-  | { type: "CLEAR_CART" }
   | { type: "LOAD_CART"; payload: CartItem[] };
 
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
     case "ADD_TO_CART": {
-      const existingItem = state.find(item => item.id === action.payload.id);
+      const existingItem = state.find((item) => item.id === action.payload.id);
       if (existingItem) {
-        return state.map(item =>
+        return state.map((item) =>
           item.id === action.payload.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
@@ -24,18 +23,16 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
       return [...state, { ...action.payload, quantity: 1 }];
     }
     case "REMOVE_FROM_CART":
-      return state.filter(item => item.id !== action.payload);
+      return state.filter((item) => item.id !== action.payload);
     case "UPDATE_QUANTITY":
       if (action.payload.quantity === 0) {
-        return state.filter(item => item.id !== action.payload.id);
+        return state.filter((item) => item.id !== action.payload.id);
       }
-      return state.map(item =>
+      return state.map((item) =>
         item.id === action.payload.id
           ? { ...item, quantity: action.payload.quantity }
           : item
       );
-    case "CLEAR_CART":
-      return [];
     case "LOAD_CART":
       return action.payload;
     default:
@@ -67,7 +64,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("cart", JSON.stringify(items)); // Also save with the key the navbar expects
 
     // Dispatch custom event to notify navbar of cart changes
-    window.dispatchEvent(new Event('cartUpdated'));
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [items]);
 
   const addToCart = (product: Product) => {
@@ -80,10 +77,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const updateQuantity = (productId: number, quantity: number) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { id: productId, quantity } });
-  };
-
-  const clearCart = () => {
-    dispatch({ type: "CLEAR_CART" });
   };
 
   const getTotalItems = () => {
@@ -99,7 +92,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     addToCart,
     removeFromCart,
     updateQuantity,
-    clearCart,
     getTotalItems,
     getTotalPrice,
   };
