@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { useCart } from "@/contexts/CartContext";
 import { allProducts } from "@/data/products";
 import {
   ChevronLeft,
@@ -11,15 +10,12 @@ import {
   Coffee,
   Sprout,
   Users,
-  ShoppingCart,
-  Ellipsis,
 } from "lucide-react";
 import Image from "next/image";
 
 export default function Homepage() {
   const [scrollY, setScrollY] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { addToCart } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -27,11 +23,9 @@ export default function Homepage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // get 6 random products from allProducts
+  // get first 6 products from allProducts
   const featuredProducts = useMemo(() => {
-    // create a copy and shuffle it
-    const shuffled = [...allProducts].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 6);
+    return allProducts.slice(0, 6);
   }, []);
 
   const nextProduct = () => {
@@ -45,7 +39,7 @@ export default function Homepage() {
   };
 
   return (
-    <div className="min-h-screen bg-mist text-onyx">
+    <div className="min-h-screen bg-white text-primary">
       {/* hero */}
       <section className="relative overflow-hidden">
         {/* background with parallax */}
@@ -87,7 +81,7 @@ export default function Homepage() {
             <div className="uppercase text-sm font-primary w-fit mx-auto">
               <Link
                 href="/collection"
-                className="text-white px-8 py-3 border-1 flex items-center hover:bg-white hover:text-black transition-colors"
+                className="text-white px-8 py-3 border border-white rounded-full flex items-center hover:bg-white hover:text-primary transition-colors"
               >
                 Shop Now
               </Link>
@@ -106,14 +100,14 @@ export default function Homepage() {
                 <h2 className="uppercase font-primary font-bold tracking-wider text-3xl md:text-4xl">
                   Bestsellers
                 </h2>
-                <p className="text-onyx/80">
+                <p className="text-accent">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className="uppercase text-sm font-primary flex mx-auto lg:mx-0 w-fit">
                   <Link
                     href="/collection"
-                    className="text-onyx px-8 py-3 border-1 flex items-center hover:bg-onyx hover:text-white transition-colors"
+                    className="text-primary px-8 py-3 border border-primary rounded-full flex items-center hover:bg-primary hover:text-white transition-colors"
                   >
                     View More
                   </Link>
@@ -128,28 +122,28 @@ export default function Homepage() {
                 <button
                   onClick={prevProduct}
                   disabled={currentIndex === 0}
-                  className={`bg-gray/20 p-2 transition-colors rounded-r-full lg:rounded-full ${
+                  className={`bg-neutral/30 p-2 transition-colors rounded-r-full lg:rounded-full ${
                     currentIndex === 0
                       ? "cursor-not-allowed"
-                      : "hover:bg-serene"
+                      : "hover:bg-neutral/50"
                   }`}
                 >
                   <ChevronLeft
                     className={`h-5 w-5 ${
-                      currentIndex === 0 ? "text-gray/50" : "text-onyx"
+                      currentIndex === 0 ? "text-accent/50" : "text-primary"
                     }`}
                   />
                 </button>
 
                 {/* product content */}
                 <div className="flex-1 mt-8 lg:mt-0">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 md:place-items-baseline">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     {featuredProducts.map((product, index) => {
                       // mobile
                       const showMobile =
-                        (index >= currentIndex && index < currentIndex + 2) ||
-                        (currentIndex + 2 > featuredProducts.length &&
-                          index < (currentIndex + 2) % featuredProducts.length);
+                        (index >= currentIndex && index < currentIndex + 1) ||
+                        (currentIndex + 1 > featuredProducts.length &&
+                          index < (currentIndex + 1) % featuredProducts.length);
 
                       // desktop
                       const showDesktop =
@@ -162,47 +156,32 @@ export default function Homepage() {
                       return (
                         <div
                           key={product.id}
-                          className={` ${
+                          className={`flex flex-col h-full ${
                             showMobile ? "block" : "hidden"
                           } ${showDesktop ? "md:block" : "md:hidden"}`}
                         >
-                          <div className="mb-3 md:mb-0 relative bg-gray/20">
-                            <Image
-                              src={product.image}
-                              width={200}
-                              height={150}
-                              alt={product.name}
-                              className="w-full h-full object-contain"
-                            />
-                            <>
-                          {/* link to product page */}
-                          <Link
-                            href={`/product`}
-                            // href={`/products/${product.id}`}
-                            className="absolute bottom-10 right-0 bg-white p-2 hover:bg-gray transition-colors group"
-                            title="View Product"
-                          >
-                            <Ellipsis className="h-4 w-4 text-onyx" />
-                          </Link>
-
-                          {/* add to cart */}
-                          <button
-                            onClick={() => addToCart(product)}
-                            className="absolute bottom-2 right-0 bg-onyx text-white p-2 hover:bg-gray transition-colors group"
-                            title="Add to cart"
-                          >
-                            <ShoppingCart className="h-4 w-4" />
-                          </button>
-                        </>
+                          <div className="relative aspect-square bg-neutral/50 rounded-3xl overflow-hidden">
+                            <span className="absolute top-2 right-2 z-10 bg-white border border-neutral text-secondary font-medium text-xs px-3 py-1 rounded-full">
+                              {product.country}
+                            </span>
+                            <Link href={`/collection/${product.id}`}>
+                              <Image
+                                src={product.image}
+                                alt={product.name}
+                                fill
+                                className="object-contain hover:scale-105 transition-transform duration-300"
+                              />
+                            </Link>
                           </div>
-                          <div className="mt-3 space-y-1">
-                            <h2 className="font-semibold text-onyx text-base md:text-">
+
+                          <div className="flex-1 flex flex-col mt-4">
+                            <h3 className="font-semibold text-primary lg:text-lg">
                               {product.name}
-                            </h2>
-                            <h3 className="font-light text-onyx text-xs md:text-xs">
-                              {product.roast}
                             </h3>
-                            <span className="text-sm md:text-base">
+                            <span className="text-sm text-accent">
+                              {product.roast}
+                            </span>
+                            <span className="text-xl font-semibold text-primary mt-2">
                               CHF{product.price}
                             </span>
                           </div>
@@ -216,17 +195,17 @@ export default function Homepage() {
                 <button
                   onClick={nextProduct}
                   disabled={currentIndex >= featuredProducts.length - 1}
-                  className={`bg-gray/20 p-2 transition-colors rounded-l-full lg:rounded-full ${
+                  className={`bg-neutral/30 p-2 transition-colors rounded-l-full lg:rounded-full ${
                     currentIndex >= featuredProducts.length - 1
                       ? "cursor-not-allowed"
-                      : "hover:bg-serene"
+                      : "hover:bg-neutral/50"
                   }`}
                 >
                   <ChevronRight
                     className={`h-5 w-5 ${
                       currentIndex >= featuredProducts.length - 1
-                        ? "text-gray/50"
-                        : "text-onyx"
+                        ? "text-accent/50"
+                        : "text-primary"
                     }`}
                   />
                 </button>
@@ -270,7 +249,7 @@ export default function Homepage() {
             <div className="uppercase text-sm font-primary w-fit mx-auto">
               <Link
                 href="/about"
-                className="text-white px-8 py-3 border-1 flex items-center hover:bg-white hover:text-black transition-colors"
+                className="text-white px-8 py-3 border border-white rounded-full flex items-center hover:bg-white hover:text-primary transition-colors"
               >
                 Learn more about us
               </Link>
@@ -290,14 +269,14 @@ export default function Homepage() {
                   We care about the quality of our{" "}
                   <strong className="font-bold">products</strong>
                 </h2>
-                <p className="max-w-lg mx-auto lg:mx-0 text-onyx/80 text-base leading-relaxed">
+                <p className="max-w-lg mx-auto lg:mx-0 text-accent text-base leading-relaxed">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className="pt-2">
                   <Link
                     href="/collection"
-                    className="inline-flex items-center uppercase text-sm font-primary text-onyx px-8 py-3 border border-onyx hover:bg-onyx hover:text-white transition-colors duration-300 ease-in-out"
+                    className="inline-flex items-center uppercase text-sm font-primary text-primary px-8 py-3 border border-primary rounded-full hover:bg-primary hover:text-white transition-colors duration-300 ease-in-out"
                   >
                     Explore our products
                   </Link>
@@ -307,37 +286,37 @@ export default function Homepage() {
             {/* content */}
             <div className="grid md:grid-cols-2 gap-8 px-6 lg:px-0 mt-8 lg:mt-0">
               <div className="flex flex-col">
-                <Coffee strokeWidth={1} className="w-10 h-10 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Fresh Roasted</h3>
-                <p className="text-sm text-onyx/80">
+                <Coffee strokeWidth={1} className="w-10 h-10 mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-2 text-primary">Fresh Roasted</h3>
+                <p className="text-sm text-accent">
                   Beans roasted to order ensuring maximum freshness and flavor
                   in every cup.
                 </p>
               </div>
               <div className="flex flex-col">
-                <CircleStar strokeWidth={1} className="w-10 h-10 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Premium Quality</h3>
-                <p className="text-sm text-onyx/80">
+                <CircleStar strokeWidth={1} className="w-10 h-10 mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-2 text-primary">Premium Quality</h3>
+                <p className="text-sm text-accent">
                   Sourced from the finest coffee regions with direct
                   relationships with farmers.
                 </p>
               </div>
               <div className="flex flex-col">
-                <Users strokeWidth={1} className="w-10 h-10 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">
+                <Users strokeWidth={1} className="w-10 h-10 mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-2 text-primary">
                   Community Focused
                 </h3>
-                <p className="text-sm text-onyx/80">
+                <p className="text-sm text-accent">
                   Supporting local communities and sustainable farming practices
                   worldwide.
                 </p>
               </div>
               <div className="flex flex-col">
-                <Sprout strokeWidth={1} className="w-10 h-10 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">
+                <Sprout strokeWidth={1} className="w-10 h-10 mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-2 text-primary">
                   Sustainable Practices
                 </h3>
-                <p className="text-sm text-onyx/80">
+                <p className="text-sm text-accent">
                   Environmentally conscious methods that protect our planet for
                   future generations.
                 </p>
@@ -369,13 +348,13 @@ export default function Homepage() {
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
             <div className="text-sm w-fit mx-auto">
-              <div className="relative flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full p-1 overflow-hidden">
+              <div className="relative flex items-center bg-white/20 border border-white/30 rounded-full p-1 overflow-hidden">
                 <input
                   type="email"
                   placeholder="Your email address"
-                  className="flex-1 px-8 py-3 text-white placeholder-white/50 focus:outline-none focus:bg-transparent"
+                  className="flex-1 px-8 py-3 bg-transparent text-white placeholder-white/50 focus:outline-none"
                 />
-                <button className="uppercase text-sm font-primary bg-white text-onyx px-8 py-3 rounded-full hover:bg-gray hover:text-white transition-colors">
+                <button className="uppercase text-sm font-primary bg-white text-primary px-8 py-3 rounded-full hover:bg-primary hover:text-white transition-colors">
                   Subscribe
                 </button>
               </div>
