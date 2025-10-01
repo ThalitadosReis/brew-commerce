@@ -3,15 +3,12 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-neutral/50">
+    <footer className="w-full bg-white">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* brand */}
           <div className="col-span-1 md:col-span-2 space-y-4">
-            <h2 className="font-display text-3xl tracking-wide text-primary">
-              brew.
-            </h2>
-            <p className="text-sm max-w-md text-accent">
+            <h2 className="font-display text-3xl text-primary">brew.</h2>
+            <p className="max-w-md font-body text-accent">
               Premium coffee delivered to your doorstep. Ethically sourced,
               expertly roasted, and served with love.
             </p>
@@ -32,47 +29,28 @@ export default function Footer() {
           </div>
 
           {/* links */}
-          <div className="col-span-1 md:col-span-2 grid grid-cols-2 text-sm">
+          <div className="grid grid-cols-2 col-span-1 md:col-span-2 font-body">
             <div>
-              <h3 className="uppercase font-bold tracking-wide text-primary mb-2">
+              <h3 className="uppercase font-heading font-semibold tracking-wider text-base mb-1">
                 Shop
               </h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-accent hover:text-primary transition-colors"
-                  >
-                    All Products
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-accent hover:text-primary transition-colors"
-                  >
-                    Coffee Beans
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-accent hover:text-primary transition-colors"
-                  >
-                    Equipment
-                  </Link>
-                </li>
-              </ul>
+
+              <Link
+                href="/collections"
+                className="text-accent hover:text-primary transition-colors"
+              >
+                All Products
+              </Link>
             </div>
 
             <div>
-              <h3 className="uppercase font-bold tracking-wide text-primary mb-2">
+              <h3 className="uppercase font-heading font-semibold tracking-wider text-base mb-1">
                 Company
               </h3>
-              <ul className="space-y-2">
+              <ul>
                 <li>
                   <Link
-                    href="#"
+                    href="/about"
                     className="text-accent hover:text-primary transition-colors"
                   >
                     About Us
@@ -80,15 +58,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
-                    className="text-accent hover:text-primary transition-colors"
-                  >
-                    Brewing Guides
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
+                    href="/contact"
                     className="text-accent hover:text-primary transition-colors"
                   >
                     Contact
@@ -101,10 +71,10 @@ export default function Footer() {
 
         {/* bottom bar */}
         <div className="border-t border-neutral mt-10 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-accent">
+          <p className="font-body text-accent">
             © {new Date().getFullYear()} brew. All rights reserved.
           </p>
-          <span className="text-sm text-accent">
+          <span className="font-body text-accent">
             Made with ❤️ by Thalita dos Reis
           </span>
         </div>
