@@ -36,8 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   isSearchOpen,
   onClose,
 }) => (
-  <>
-    {/* overlay */}
+  <div  className="h-screen">
     {isSearchOpen && (
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
     )}
@@ -50,6 +49,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   `}
     >
       <div className="p-6 flex flex-col h-full">
+        <button
+        onClick={onClose}
+        className="mb-2 text-sm underline text-secondary hover:text-accent text-end"
+      >
+        Back
+      </button>
+
         {/* input */}
         <div className="relative mb-4">
           <input
@@ -123,7 +129,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </div>
       </div>
     </div>
-  </>
+  </div>
 );
 
 export default function Navbar() {
@@ -131,6 +137,9 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const pathname = usePathname();
   const { getTotalItems } = useCart();
   const { getTotalWishlistItems } = useWishlist();
@@ -155,6 +164,23 @@ export default function Navbar() {
       setIsSearchOpen(false);
     }
   };
+
+  // handle scroll hide/show
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        // scrolling down
+        setShowNavbar(false);
+      } else {
+        // scrolling up
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -182,11 +208,15 @@ export default function Navbar() {
 
   return (
     <div className="relative">
-      <header className="fixed top-0 left-0 right-0 z-50 p-4">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 p-4 transition-transform duration-300 ${
+          showNavbar ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <div className="max-w-7xl mx-auto p-4 bg-neutral rounded-2xl">
           <div className="flex items-center justify-between px-1">
             {/* navigation links */}
-            <div className="hidden lg:flex justify-center gap-4">
+            <div className="hidden lg:flex gap-4">
               {links.map((link) => (
                 <Link
                   key={link.href}
@@ -204,12 +234,14 @@ export default function Navbar() {
             </div>
 
             {/* logo */}
-            <Link href="/" className="text-3xl text-secondary">
+            <Link
+              href="/"
+              className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-3xl text-secondary"
+            >
               brew.
             </Link>
-
             {/* right section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ml-auto">
               {/* profile */}
               <div>
                 {isAuthenticated ? (

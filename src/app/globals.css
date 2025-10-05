@@ -1,24 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:opsz@18..144&family=Poppins&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32,300&display=swap');
 
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Sentient-Variable';
+  src: url('/fonts/Sentient-Variable.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sentient-Variable';
+  src: url('/fonts/Sentient-VariableItalic.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+
+
 @theme {
-  --font-display: 'Bebas Neue', sans-serif;  /* hero, product names */
-  --font-heading: 'Bebas Neue', sans-serif;   /* section headers */
-  --font-body: 'Inter', sans-serif;           /* body text */
+  --font-display: "Sentient-Variable", sans-serif;
+  /* hero, product names */
+  --font-heading: "Poppins", sans-serif;
+  /* section headers */
+  --font-body: "Inter", sans-serif;
+  /* body text */
 
   --text-tiny: 0.625rem;
   --text-tiny--font-weight: 500;
 
-  --color-primary: #1a1a1a;        /* deep black */
-  --color-secondary: #404040;      /* dark gray */
-  --color-accent: #666666;         /* medium gray */
-  --color-muted: #4a4a4a;          /* muted dark gray */
-  --color-neutral: #e5e5e5;        /* light gray */
+  --color-primary: #00000d;
+  /* main headings, CTAs */
+  --color-secondary: #29343d;
+  /* nav, footer, hover */
+  --color-accent: #5a7480;
+  /* price, icons, subtle accents */
+  --color-muted: #3c5665;
+  /* body text, descriptions, secondary info */
+  --color-neutral: #f0f0f0;
+  /* backgrounds, cards, section dividers */
 }
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px transparent inset;
-  -webkit-text-fill-color: white;
   transition: background-color 5000s ease-in-out 0s;
 }
