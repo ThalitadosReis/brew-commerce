@@ -47,15 +47,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem("brew-cart");
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart);
-        dispatch({ type: "LOAD_CART", payload: parsedCart });
-      } catch (error) {
-        console.error("Failed to load cart from localStorage:", error);
+    const loadCart = () => {
+      const savedCart = localStorage.getItem("brew-cart");
+      if (savedCart) {
+        try {
+          const parsedCart = JSON.parse(savedCart);
+          dispatch({ type: "LOAD_CART", payload: parsedCart });
+        } catch (error) {
+          console.error("Failed to load cart from localStorage:", error);
+        }
+      } else {
+        // If cart is cleared, reset to empty
+        dispatch({ type: "LOAD_CART", payload: [] });
       }
-    }
+    };
+
+    loadCart();
+
+    // Listen for storage events (when cart is cleared from another page)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "cart" || e.key === "brew-cart" || e.key === null) {
+        loadCart();
+      }
+    };
+
+    // Listen for custom storage event (when cart is cleared on same page)
+    const handleCustomStorage = () => {
+      loadCart();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("cartCleared", handleCustomStorage);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("cartCleared", handleCustomStorage);
+    };
   }, []);
 
   // Save cart to localStorage whenever items change
