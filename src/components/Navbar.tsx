@@ -36,25 +36,28 @@ const SearchBar: React.FC<SearchBarProps> = ({
   isSearchOpen,
   onClose,
 }) => (
-  <div  className="h-screen">
+  <>
     {isSearchOpen && (
-      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
+      <div
+        className="fixed inset-0 bg-black/40 z-40 h-screen"
+        onClick={onClose}
+      />
     )}
 
     {/* search */}
     <div
-      className={`fixed top-4 right-4 bottom-4 w-[calc(100%-2rem)] lg:w-[400px] bg-neutral rounded-2xl z-50 transform transition-transform duration-300 ${
+      className={`fixed top-4 right-4 w-[calc(100%-2rem)] md:w-[400px] bg-white rounded-2xl shadow-xl z-50 transform transition-transform duration-300 ${
         isSearchOpen ? "translate-x-0" : "translate-x-[calc(100%+2rem)]"
       }
   `}
     >
       <div className="p-6 flex flex-col h-full">
         <button
-        onClick={onClose}
-        className="mb-2 text-sm underline text-secondary hover:text-accent text-end"
-      >
-        Back
-      </button>
+          onClick={onClose}
+          className="mb-2 text-sm underline text-secondary hover:text-accent text-end"
+        >
+          Back
+        </button>
 
         {/* input */}
         <div className="relative mb-4">
@@ -93,7 +96,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 className="block text-sm underline text-accent hover:text-primary"
                 onClick={onClose}
               >
-                See all results
+                See all {searchResults.length} result
+                {searchResults.length !== 1 ? "s" : ""}
               </Link>
               {searchResults.map((product) => (
                 <Link
@@ -122,14 +126,22 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ))}
             </div>
           ) : searchQuery.trim() ? (
-            <div className="mt-6 p-3 text-center text-sm text-muted">
-              No products found
+            <div className="py-8 text-center">
+              <p className="text-sm text-muted">No products found</p>
+              <p className="text-xs text-muted mt-1">
+                Try adjusting your search
+              </p>
             </div>
-          ) : null}
+          ) : (
+            <div className="py-8 text-center">
+              <Search className="h-12 w-12 text-muted mx-auto mb-2 opacity-50" />
+              <p className="text-sm text-muted">Start typing to search</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
-  </div>
+  </>
 );
 
 export default function Navbar() {
@@ -252,6 +264,7 @@ export default function Navbar() {
                           src={user.profilePicture}
                           alt={user.name}
                           fill
+                          sizes="32px"
                           className="w-full h-full object-cover rounded-full overflow-hidden"
                         />
                       </div>
@@ -356,9 +369,9 @@ export default function Navbar() {
 
         {/* mobile menu */}
         <div
-          className={`lg:hidden absolute top-24 left-4 right-4 bg-white rounded-2xl transition-transform duration-300 z-20
-    ${isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+6rem)]"} 
-  `}
+          className={`lg:hidden absolute top-24 left-4 right-4 bg-white rounded-2xl transition-transform duration-300 z-20 ${
+            isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+6rem)]"
+          }`}
         >
           <nav className="pl-6 py-6">
             {links.map((link, index) => (

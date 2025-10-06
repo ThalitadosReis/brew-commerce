@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useEffect } from "react";
-import { CartContextType, CartItem, Product } from "@/types/cart";
+import { CartItem, Product, CartContextType } from "@/types/cart";
 
 type CartAction =
   | { type: "ADD_TO_CART"; payload: Product }
@@ -44,9 +44,26 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
+  const [isClient, setIsClient] = React.useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
+    setIsClient(true);
+    const savedCart = localStorage.getItem("brew-cart");
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        dispatch({ type: "LOAD_CART", payload: parsedCart });
+      } catch (error) {
+        console.error("Failed to load cart from localStorage:", error);
+      }
+    }
+  }, []);
+
+  // Listen for storage events
+  useEffect(() => {
+    if (!isClient) return;
+
     const loadCart = () => {
       const savedCart = localStorage.getItem("brew-cart");
       if (savedCart) {
@@ -57,21 +74,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           console.error("Failed to load cart from localStorage:", error);
         }
       } else {
-        // If cart is cleared, reset to empty
         dispatch({ type: "LOAD_CART", payload: [] });
       }
     };
 
-    loadCart();
-
-    // Listen for storage events (when cart is cleared from another page)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "cart" || e.key === "brew-cart" || e.key === null) {
         loadCart();
       }
     };
 
-    // Listen for custom storage event (when cart is cleared on same page)
     const handleCustomStorage = () => {
       loadCart();
     };
@@ -83,16 +95,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("cartCleared", handleCustomStorage);
     };
-  }, []);
+  }, [isClient]);
 
   // Save cart to localStorage whenever items change
   useEffect(() => {
-    localStorage.setItem("brew-cart", JSON.stringify(items));
-    localStorage.setItem("cart", JSON.stringify(items)); // Also save with the key the navbar expects
+    if (!isClient) return;
 
-    // Dispatch custom event to notify navbar of cart changes
+    localStorage.setItem("brew-cart", JSON.stringify(items));
+    localStorage.setItem("cart", JSON.stringify(items));
     window.dispatchEvent(new Event("cartUpdated"));
-  }, [items]);
+  }, [items, isClient]);
 
   const addToCart = (product: Product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });

@@ -17,17 +17,24 @@ const WishlistContext = createContext<WishlistContextType | undefined>(
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<Product[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const savedWishlist = localStorage.getItem("wishlist");
     if (savedWishlist) {
-      setWishlist(JSON.parse(savedWishlist));
+      try {
+        setWishlist(JSON.parse(savedWishlist));
+      } catch (error) {
+        console.error("Failed to load wishlist from localStorage:", error);
+      }
     }
   }, []);
 
   useEffect(() => {
+    if (!isClient) return;
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }, [wishlist]);
+  }, [wishlist, isClient]);
 
   const addToWishlist = (product: Product) => {
     setWishlist((prev) => {
