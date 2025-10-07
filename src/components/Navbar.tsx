@@ -10,13 +10,13 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import { allProducts } from "@/data/products";
 import { Product } from "@/types/cart";
 import {
-  XIcon,
-  MenuIcon,
-  Search,
-  ShoppingCart,
-  User,
-  Heart,
-} from "lucide-react";
+  HeartIcon,
+  List,
+  MagnifyingGlass,
+  ShoppingCartSimpleIcon,
+  UserIcon,
+  X,
+} from "@phosphor-icons/react";
 
 interface SearchBarProps {
   searchQuery: string;
@@ -43,8 +43,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onClick={onClose}
       />
     )}
-
-    {/* search */}
     <div
       className={`fixed top-4 right-4 w-[calc(100%-2rem)] md:w-[400px] bg-white rounded-2xl shadow-xl z-50 transform transition-transform duration-300 ${
         isSearchOpen ? "translate-x-0" : "translate-x-[calc(100%+2rem)]"
@@ -54,7 +52,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <div className="p-6 flex flex-col h-full">
         <button
           onClick={onClose}
-          className="mb-2 text-sm underline text-secondary hover:text-accent text-end"
+          className="mb-2 text-sm underline text-secondary hover:opacity-70 text-end"
         >
           Back
         </button>
@@ -67,33 +65,36 @@ const SearchBar: React.FC<SearchBarProps> = ({
             onChange={(e) => onQueryChange(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="Search coffee..."
-            className="w-full text-sm pl-10 pr-10 py-5 text-secondary bg-muted/10 rounded-xl focus:outline-none placeholder-accent"
+            className="w-full text-sm pl-10 pr-10 py-5 bg-secondary/10 rounded-lg focus:outline-none placeholder-secondary/50"
             autoFocus
           />
 
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-accent" />
+          <MagnifyingGlass
+            size={20}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2"
+          />
 
           {searchQuery && (
             <button
               onClick={() => {
                 onQueryChange("");
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-accent hover:text-primary"
+              className="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-70"
             >
-              <XIcon className="w-4 h-4" />
+              <X size={16} />
             </button>
           )}
         </div>
 
         {/* results */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 p-4">
           {searchResults.length > 0 ? (
             <div className="space-y-4">
               <Link
                 href={`/collection?search=${encodeURIComponent(
                   searchQuery.trim()
                 )}`}
-                className="block text-sm underline text-accent hover:text-primary"
+                className="block text-sm underline text-secondary hover:opacity-70"
                 onClick={onClose}
               >
                 See all {searchResults.length} result
@@ -104,9 +105,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   key={product.id}
                   href={`/collection/${product.id}`}
                   onClick={onClose}
-                  className="flex items-center gap-4"
+                  className="flex items-center gap-2 hover:bg-muted/70 rounded-lg"
                 >
-                  <div className="relative w-22 h-22 bg-accent/10 rounded-lg">
+                  <div className="relative w-22 h-22">
                     <Image
                       src={product.images[0]}
                       alt={product.name}
@@ -114,11 +115,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                       className="object-contain p-3"
                     />
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <span className="text-sm font-body text-primary">
+                  <div className="flex flex-col gap-">
+                    <span className="text- font-body text-primary">
                       {product.name}
                     </span>
-                    <span className="text-xs text-secondary">
+                    <span className="text-sm text-secondary/70">
                       CHF{product.price}
                     </span>
                   </div>
@@ -126,16 +127,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ))}
             </div>
           ) : searchQuery.trim() ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-muted">No products found</p>
-              <p className="text-xs text-muted mt-1">
-                Try adjusting your search
-              </p>
+            <div className="py-8 text-center text-secondary/70">
+              <p className="text-sm">No products found</p>
+              <p className="text-xs mt-1">Try adjusting your search</p>
             </div>
           ) : (
-            <div className="py-8 text-center">
-              <Search className="h-12 w-12 text-muted mx-auto mb-2 opacity-50" />
-              <p className="text-sm text-muted">Start typing to search</p>
+            <div className="text-center text-secondary/70">
+              <MagnifyingGlass size={48} className="mx-auto" />
+              <p className="text-sm mt-1">Start typing to search</p>
             </div>
           )}
         </div>
@@ -225,10 +224,10 @@ export default function Navbar() {
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-7xl mx-auto p-4 bg-neutral rounded-2xl">
-          <div className="flex items-center justify-between px-1">
+        <div className="max-w-6xl mx-auto p-6 bg-white rounded-xl">
+          <div className="flex items-center justify-between">
             {/* navigation links */}
-            <div className="hidden lg:flex gap-4">
+            <div className="hidden lg:flex gap-6">
               {links.map((link) => (
                 <Link
                   key={link.href}
@@ -252,6 +251,7 @@ export default function Navbar() {
             >
               brew.
             </Link>
+
             {/* right section */}
             <div className="flex items-center gap-4 ml-auto">
               {/* profile */}
@@ -269,12 +269,18 @@ export default function Navbar() {
                         />
                       </div>
                     ) : (
-                      <User className="text-secondary h-6 w-6 hover:scale-85 transition-transform duration-300 ease-in-out" />
+                      <UserIcon
+                        size={24}
+                        className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                      />
                     )}
                   </Link>
                 ) : (
                   <Link href="/login" title="Login">
-                    <User className="text-secondary h-6 w-6 hover:scale-85 transition-transform duration-300 ease-in-out" />
+                    <UserIcon
+                      size={24}
+                      className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                    />
                   </Link>
                 )}
               </div>
@@ -287,7 +293,10 @@ export default function Navbar() {
                 }}
                 title="Search"
               >
-                <Search className="text-secondary h-6 w-6 hover:scale-85 transition-transform duration-300 ease-in-out" />
+                <MagnifyingGlass
+                  size={24}
+                  className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                />
               </button>
 
               {/* wishlist */}
@@ -297,7 +306,10 @@ export default function Navbar() {
                   className="relative flex items-center"
                   title={`Wishlist (${getTotalWishlistItems()} items)`}
                 >
-                  <Heart className="text-secondary h-6 w-6 hover:scale-85 transition-transform duration-300 ease-in-out" />
+                  <HeartIcon
+                    size={24}
+                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                  />
 
                   {getTotalWishlistItems() > 0 && (
                     <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
@@ -316,7 +328,10 @@ export default function Navbar() {
                   className="relative flex items-center justify-center"
                   title={`Cart (${getTotalItems()} items)`}
                 >
-                  <ShoppingCart className="text-secondary h-6 w-6 hover:scale-95 transition-transform duration-300 ease-in-out" />
+                  <ShoppingCartSimpleIcon
+                    size={24}
+                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                  />
 
                   {getTotalItems() > 0 && (
                     <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
@@ -335,11 +350,7 @@ export default function Navbar() {
                 }}
                 title="Menu"
               >
-                {isMenuOpen ? (
-                  <XIcon className="h-6 w-6 text-secondary" />
-                ) : (
-                  <MenuIcon className="h-6 w-6 text-secondary" />
-                )}
+                {isMenuOpen ? <X size={24} /> : <List size={24} />}
               </button>
             </div>
           </div>
@@ -369,21 +380,23 @@ export default function Navbar() {
 
         {/* mobile menu */}
         <div
-          className={`lg:hidden absolute top-24 left-4 right-4 bg-white rounded-2xl transition-transform duration-300 z-20 ${
-            isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+6rem)]"
+          className={`lg:hidden absolute top-28 left-4 right-4 bg-white rounded-xl transition-transform duration-300 z-20 ${
+            isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+8rem)]"
           }`}
         >
-          <nav className="pl-6 py-6">
+          <nav className="px-6 py-6">
             {links.map((link, index) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-heading tracking-wide text-sm flex items-center justify-between py-3 ${
+                className={`font-body tracking-wide text-sm flex items-center justify-between py-3 ${
                   pathname === link.href
                     ? "text-primary font-semibold"
                     : "text-secondary hover:text-primary"
                 } ${
-                  index < links.length - 1 ? "border-b border-neutral py-2" : ""
+                  index < links.length - 1
+                    ? "border-b border-secondary/10 py-2"
+                    : ""
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
