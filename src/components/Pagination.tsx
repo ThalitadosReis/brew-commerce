@@ -23,7 +23,7 @@ export default function Pagination({
           className={`flex items-center gap-2 ${
             currentPage === 1
               ? "text-muted opacity-50 cursor-not-allowed"
-              : "text-primary hover:text-secondary"
+              : "text-secondary hover:text-muted"
           }`}
         >
           <ChevronLeft className="h-5 w-5" /> Previous
@@ -34,10 +34,10 @@ export default function Pagination({
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`w-10 h-10 rounded-xl transition-colors font-semibold ${
+              className={`w-10 h-10 rounded-xl transition-colors ${
                 currentPage === page
-                  ? "bg-primary text-white"
-                  : "text-secondary hover:bg-neutral"
+                  ? "bg-accent text-white"
+                  : "text-primary hover:bg-accent/30"
               }`}
             >
               {page}
@@ -51,10 +51,10 @@ export default function Pagination({
           className={`flex items-center gap-2 ${
             currentPage === totalPages
               ? "text-muted opacity-50 cursor-not-allowed"
-              : "text-primary hover:text-secondary"
+              : "text-secondary hover:text-muted"
           }`}
         >
-          Next 
+          Next
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
