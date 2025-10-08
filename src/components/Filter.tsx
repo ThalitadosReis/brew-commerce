@@ -143,8 +143,8 @@ export default function Filter({
                   }
                   className={`w-full px-6 py-2 text-xs rounded-lg transition-colors ${
                     selectedSizes.includes(size)
-                      ? "bg-accent text-white"
-                      : "bg-accent/20 text-primary hover:bg-accent/30"
+                      ? "bg-accent text-white hover:opacity-80"
+                      : "bg-accent/10 hover:bg-accent/20"
                   }`}
                 >
                   {size}
@@ -181,7 +181,11 @@ export default function Filter({
                       }`}
                     >
                       {isSelected && (
-                        <CheckIcon size={12} weight="bold" className="text-accent" />
+                        <CheckIcon
+                          size={12}
+                          weight="bold"
+                          className="text-accent"
+                        />
                       )}
                     </span>
                     <span>{roast}</span>
@@ -224,7 +228,11 @@ export default function Filter({
                         }`}
                       >
                         {isSelected && (
-                          <CheckIcon size={12} weight="bold" className="text-accent" />
+                          <CheckIcon
+                            size={12}
+                            weight="bold"
+                            className="text-accent"
+                          />
                         )}
                       </span>
                       <span>{country}</span>

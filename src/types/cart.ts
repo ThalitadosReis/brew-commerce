@@ -7,6 +7,7 @@ export interface Product {
   country: string;
   roast: string;
   sizes: string[];
+  prices: { [key: string]: number };
 }
 
 export interface CartItem extends Product {

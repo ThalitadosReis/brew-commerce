@@ -45,7 +45,7 @@ export default function ImageCard({
             <HeartIcon
               size={20}
               weight={isInWishlist ? "fill" : "light"}
-              className={`transition-all duration-20
+              className={`transition-all
                 ${isInWishlist ? "text-primary" : "hover:fill-black"}
               `}
             />
