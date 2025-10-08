@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 
 interface PaginationProps {
   currentPage: number;
@@ -15,18 +15,19 @@ export default function Pagination({
   setCurrentPage,
 }: PaginationProps) {
   return (
-    <div className="mt-12 pt-4 border-t border-neutral">
+    <div className="mt-12 pt-4 border-t border-secondary/20">
       <div className="flex items-center justify-between font-body">
         <button
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
           className={`flex items-center gap-2 ${
             currentPage === 1
-              ? "text-muted opacity-50 cursor-not-allowed"
-              : "text-secondary hover:text-muted"
+              ? "text-secondary opacity-50 cursor-not-allowed"
+              : "text-secondary hover:opacity-80"
           }`}
         >
-          <ChevronLeft className="h-5 w-5" /> Previous
+          <CaretLeftIcon size={20} weight="light" />
+          Previous
         </button>
 
         <div className="flex items-center gap-2">
@@ -36,8 +37,8 @@ export default function Pagination({
               onClick={() => setCurrentPage(page)}
               className={`w-10 h-10 rounded-xl transition-colors ${
                 currentPage === page
-                  ? "bg-accent text-white"
-                  : "text-primary hover:bg-accent/30"
+                  ? "bg-secondary text-white"
+                  : "text-primary hover:bg-secondary/20"
               }`}
             >
               {page}
@@ -50,12 +51,12 @@ export default function Pagination({
           disabled={currentPage === totalPages}
           className={`flex items-center gap-2 ${
             currentPage === totalPages
-              ? "text-muted opacity-50 cursor-not-allowed"
-              : "text-secondary hover:text-muted"
+              ? "text-secondary opacity-50 cursor-not-allowed"
+              : "text-secondary hover:opacity-80"
           }`}
         >
           Next
-          <ChevronRight className="h-5 w-5" />
+          <CaretRightIcon size={20} weight="light" />
         </button>
       </div>
     </div>

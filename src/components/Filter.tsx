@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { roastLevels, countries, sizes } from "@/data/products";
-import { Check, ChevronDown } from "lucide-react";
+
+import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 
 export type SortOption = "a-z" | "z-a" | "price-low" | "price-high";
 
@@ -30,27 +31,35 @@ export function SortDropdown({
   const options = [
     { value: "a-z", label: "A-Z" },
     { value: "z-a", label: "Z-A" },
-    { value: "price-low", label: "Low to High" },
-    { value: "price-high", label: "High to Low" },
+    { value: "price-low", label: "Price (Low to High)" },
+    { value: "price-high", label: "Price (High to Low)" },
   ];
 
   return (
-    <div className="flex items-center gap-1 text-sm text-muted/70">
-      <span>Sort by</span>
-      <div className="relative">
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as SortOption)}
-          className="text-secondary focus:outline-none cursor-pointer appearance-none pr-4"
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <ChevronDown className="w-3 h-3 text-muted/70 absolute right-0 pointer-events-none" />
+    <div className="relative inline-flex items-center">
+      <span className="text-sm select-none pointer-events-none">
+        <span className="text-secondary/70">Sort by </span>
+        {options.find((o) => o.value === sortBy)?.label}
+      </span>
+
+      <CaretDownIcon
+        size={12}
+        weight="light"
+        className="ml-1 text-secondary pointer-events-none"
+      />
+
+      {/* invisible native select on top for accessibility */}
+      <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value as SortOption)}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
@@ -81,16 +90,18 @@ export default function Filter({
 
   return (
     <div className="lg:w-42">
-      {/* filter mobile */}
-      <div className="w-full">
+      {/* filter */}
+      <div className="w-full space-y-8">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className="w-full p-4 lg:p-0 flex items-center justify-between bg-muted/10 lg:bg-transparent rounded-xl lg:rounded-none transition-colors"
+          className="w-full p-4 lg:p-0 flex items-center justify-between bg-secondary/10 lg:bg-transparent rounded-xl lg:rounded-none transition-colors lg:mb-2"
         >
           <div className="flex items-center gap-2">
-            <span className="text-xl font-display italic">Filters</span>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform lg:hidden ${
+            <span className="text-xl font-display italic ">Filters</span>
+            <CaretDownIcon
+              size={12}
+              weight="light"
+              className={`transition-transform lg:hidden ${
                 isFilterOpen ? "rotate-180" : ""
               }`}
             />
@@ -102,7 +113,7 @@ export default function Filter({
                 e.stopPropagation();
                 resetFilters();
               }}
-              className="underline text-sm text-secondary hover:text-primary"
+              className="underline text-sm text-secondary/70 hover:text-primary"
             >
               Reset
             </span>
@@ -116,10 +127,10 @@ export default function Filter({
         >
           {/* size */}
           <div className="my-4">
-            <span className="text-lg font-light font-display italic text-accent/80">
+            <span className="text-lg font-light font-display italic text-secondary/70">
               Size
             </span>
-            <div className="w-full flex flex-wrap gap-2 mt-2 lg:grid lg:grid-cols-2">
+            <div className="w-full flex lg:grid lg:grid-cols-2 gap-2 mt-2">
               {sizes.map((size) => (
                 <button
                   key={size}
@@ -130,10 +141,10 @@ export default function Filter({
                         )
                       : setSelectedSizes([...selectedSizes, size])
                   }
-                  className={`lg:w-full px-6 py-2 text-xs rounded-lg transition-colors ${
+                  className={`w-full px-6 py-2 text-xs rounded-lg transition-colors ${
                     selectedSizes.includes(size)
                       ? "bg-accent text-white"
-                      : "bg-accent/10 text-primary hover:bg-accent/30"
+                      : "bg-accent/20 text-primary hover:bg-accent/30"
                   }`}
                 >
                   {size}
@@ -144,7 +155,7 @@ export default function Filter({
 
           {/* roast */}
           <div className="my-4">
-            <span className="text-lg font-light font-display italic text-accent/80">
+            <span className="text-lg font-light font-display italic text-secondary/70">
               Roast
             </span>
             <div className="w-full flex flex-col gap-2 mt-2">
@@ -166,10 +177,12 @@ export default function Filter({
                       className={`w-5 h-5 flex items-center justify-center border-1 rounded-sm ${
                         isSelected
                           ? "border-accent"
-                          : "border-muted/20 hover:border-accent"
+                          : "border-secondary/20 hover:border-accent"
                       }`}
                     >
-                      {isSelected && <Check className="w-3 h-3 text-accent" />}
+                      {isSelected && (
+                        <CheckIcon size={12} weight="bold" className="text-accent" />
+                      )}
                     </span>
                     <span>{roast}</span>
                   </button>
@@ -180,37 +193,44 @@ export default function Filter({
 
           {/* countries */}
           <div className="my-4">
-            <span className="text-lg font-light font-display italic text-accent/80">
+            <span className="text-lg font-light font-display italic text-secondary/70">
               Countries
             </span>
             <div className="w-full flex flex-col gap-2 mt-2">
-              {countries.map((country) => {
-                const isSelected = selectedCountries.includes(country);
-                return (
-                  <button
-                    key={country}
-                    onClick={() =>
-                      isSelected
-                        ? setSelectedCountries(
-                            selectedCountries.filter((c) => c !== country)
-                          )
-                        : setSelectedCountries([...selectedCountries, country])
-                    }
-                    className="flex items-center gap-2 text-sm text-primary transition-colors"
-                  >
-                    <span
-                      className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
+              {[...countries]
+                .sort((a, b) => a.localeCompare(b))
+                .map((country) => {
+                  const isSelected = selectedCountries.includes(country);
+                  return (
+                    <button
+                      key={country}
+                      onClick={() =>
                         isSelected
-                          ? "border-accent"
-                          : "border-muted/20 hover:border-accent"
-                      }`}
+                          ? setSelectedCountries(
+                              selectedCountries.filter((c) => c !== country)
+                            )
+                          : setSelectedCountries([
+                              ...selectedCountries,
+                              country,
+                            ])
+                      }
+                      className="flex items-center gap-2 text-sm text-primary transition-colors"
                     >
-                      {isSelected && <Check className="w-3 h-3 text-accent" />}
-                    </span>
-                    <span>{country}</span>
-                  </button>
-                );
-              })}
+                      <span
+                        className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
+                          isSelected
+                            ? "border-accent"
+                            : "border-secondary/20 hover:border-accent"
+                        }`}
+                      >
+                        {isSelected && (
+                          <CheckIcon size={12} weight="bold" className="text-accent" />
+                        )}
+                      </span>
+                      <span>{country}</span>
+                    </button>
+                  );
+                })}
             </div>
           </div>
         </div>

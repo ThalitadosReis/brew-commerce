@@ -11,11 +11,11 @@ import { allProducts } from "@/data/products";
 import { Product } from "@/types/cart";
 import {
   HeartIcon,
-  List,
-  MagnifyingGlass,
+  ListIcon,
+  MagnifyingGlassIcon,
   ShoppingCartSimpleIcon,
   UserIcon,
-  X,
+  XIcon,
 } from "@phosphor-icons/react";
 
 interface SearchBarProps {
@@ -69,7 +69,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             autoFocus
           />
 
-          <MagnifyingGlass
+          <MagnifyingGlassIcon
             size={20}
             className="absolute left-4 top-1/2 transform -translate-y-1/2"
           />
@@ -81,7 +81,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               }}
               className="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-70"
             >
-              <X size={16} />
+              <XIcon size={16} />
             </button>
           )}
         </div>
@@ -133,7 +133,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </div>
           ) : (
             <div className="text-center text-secondary/70">
-              <MagnifyingGlass size={48} className="mx-auto" />
+              <MagnifyingGlassIcon size={48} className="mx-auto" />
               <p className="text-sm mt-1">Start typing to search</p>
             </div>
           )}
@@ -224,7 +224,7 @@ export default function Navbar() {
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-6xl mx-auto p-6 bg-white rounded-xl">
+        <div className="max-w-7xl mx-auto p-4 lg:p-6 bg-white rounded-xl">
           <div className="flex items-center justify-between">
             {/* navigation links */}
             <div className="hidden lg:flex gap-6">
@@ -247,7 +247,7 @@ export default function Navbar() {
             {/* logo */}
             <Link
               href="/"
-              className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-3xl text-secondary"
+              className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl lg:text-3xl font-heading"
             >
               brew.
             </Link>
@@ -264,13 +264,13 @@ export default function Navbar() {
                           src={user.profilePicture}
                           alt={user.name}
                           fill
-                          sizes="32px"
+                          sizes="20px"
                           className="w-full h-full object-cover rounded-full overflow-hidden"
                         />
                       </div>
                     ) : (
                       <UserIcon
-                        size={24}
+                        size={20}
                         className="hover:scale-85 transition-transform duration-300 ease-in-out"
                       />
                     )}
@@ -278,7 +278,7 @@ export default function Navbar() {
                 ) : (
                   <Link href="/login" title="Login">
                     <UserIcon
-                      size={24}
+                      size={20}
                       className="hover:scale-85 transition-transform duration-300 ease-in-out"
                     />
                   </Link>
@@ -293,8 +293,8 @@ export default function Navbar() {
                 }}
                 title="Search"
               >
-                <MagnifyingGlass
-                  size={24}
+                <MagnifyingGlassIcon
+                  size={20}
                   className="hover:scale-85 transition-transform duration-300 ease-in-out"
                 />
               </button>
@@ -307,12 +307,12 @@ export default function Navbar() {
                   title={`Wishlist (${getTotalWishlistItems()} items)`}
                 >
                   <HeartIcon
-                    size={24}
+                    size={20}
                     className="hover:scale-85 transition-transform duration-300 ease-in-out"
                   />
 
                   {getTotalWishlistItems() > 0 && (
-                    <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
                       {getTotalWishlistItems() > 99
                         ? "99+"
                         : getTotalWishlistItems()}
@@ -329,12 +329,12 @@ export default function Navbar() {
                   title={`Cart (${getTotalItems()} items)`}
                 >
                   <ShoppingCartSimpleIcon
-                    size={24}
+                    size={20}
                     className="hover:scale-85 transition-transform duration-300 ease-in-out"
                   />
 
                   {getTotalItems() > 0 && (
-                    <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
                       {getTotalItems() > 99 ? "99+" : getTotalItems()}
                     </span>
                   )}
@@ -350,7 +350,7 @@ export default function Navbar() {
                 }}
                 title="Menu"
               >
-                {isMenuOpen ? <X size={24} /> : <List size={24} />}
+                {isMenuOpen ? <XIcon size={20} /> : <ListIcon size={20} />}
               </button>
             </div>
           </div>
@@ -380,9 +380,10 @@ export default function Navbar() {
 
         {/* mobile menu */}
         <div
-          className={`lg:hidden absolute top-28 left-4 right-4 bg-white rounded-xl transition-transform duration-300 z-20 ${
+          className={`lg:hidden fixed left-4 right-4 bg-white rounded-xl transition-transform duration-300 z-40 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+8rem)]"
           }`}
+          style={{ top: "var(--navbar-height, 96px)" }}
         >
           <nav className="px-6 py-6">
             {links.map((link, index) => (

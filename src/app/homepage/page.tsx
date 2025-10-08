@@ -26,7 +26,7 @@ export default function Homepage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-muted/5">
+    <div className="min-h-screen bg-secondary/10">
       {/* hero */}
       <section className="relative overflow-hidden h-[44rem] lg:h-[52rem]">
         <div
@@ -64,7 +64,7 @@ export default function Homepage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex flex-col items-center space-y-2 bg-muted/50 rounded-xl p-6">
+            <div className="flex flex-col items-center space-y-2 bg-white rounded-xl p-6">
               <CoffeeIcon size={32} weight="light" />
               <h3 className="font-display font-normal text-xl">
                 Fresh Roasted
@@ -75,7 +75,7 @@ export default function Homepage() {
               </p>
             </div>
 
-            <div className="flex flex-col items-center space-y-2 bg-muted/50 rounded-xl p-6">
+            <div className="flex flex-col items-center space-y-2 bg-white rounded-xl p-6">
               <SealCheckIcon size={32} weight="light" />
               <h3 className="font-display font-normal text-xl">
                 Premium Quality
@@ -86,7 +86,7 @@ export default function Homepage() {
               </p>
             </div>
 
-            <div className="flex flex-col items-center space-y-2 bg-muted/50 rounded-xl p-6">
+            <div className="flex flex-col items-center space-y-2 bg-white rounded-xl p-6">
               <UsersThreeIcon size={32} weight="light" />
               <h3 className="font-display font-normal text-xl">
                 Community Focused
@@ -97,7 +97,7 @@ export default function Homepage() {
               </p>
             </div>
 
-            <div className="flex flex-col items-center space-y-2 bg-muted/50 rounded-xl p-6">
+            <div className="flex flex-col items-center space-y-2 bg-white rounded-xl p-6">
               <PlantIcon size={32} weight="light" />
               <h3 className="font-display font-normal text-xl">
                 Sustainable Practices
@@ -147,11 +147,11 @@ export default function Homepage() {
 
               <Link
                 href="/collection"
-                className="inline-block text-sm font-body text-secondary relative group"
+                className="inline-block text-sm font-body relative group"
               >
                 Shop Coffes
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent" />
-                <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-out group-hover:w-1/2" />
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-secondary" />
+                <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-neutral transition-all duration-300 ease-out group-hover:w-1/2" />
               </Link>
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function Homepage() {
                 </div>
               </div>
 
-              <div className="grid bg-muted/50 rounded-2xl">
+              <div className="grid bg-white rounded-2xl">
                 <div className="flex flex-col justify-center space-y-2 p-6">
                   <PlantIcon size={32} weight="light" className="text-accent" />
                   <h3 className="font-display font-normal text-xl md:text-2xl ">
@@ -315,7 +315,7 @@ export default function Homepage() {
                 image: "https://randomuser.me/api/portraits/women/32.jpg",
               },
             ].map((t, i) => (
-              <div key={i} className="bg-muted/50 rounded-xl p-6 space-y-2">
+              <div key={i} className="bg-white rounded-xl p-6 space-y-2">
                 <QuotesIcon
                   size={32}
                   weight="light"

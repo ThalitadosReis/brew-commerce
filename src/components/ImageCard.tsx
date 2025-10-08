@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { HeartIcon } from "@phosphor-icons/react";
 
 interface ImageCardProps {
   id: number;
@@ -28,7 +28,7 @@ export default function ImageCard({
 }: ImageCardProps) {
   return (
     <div
-      className={`flex flex-col h-full bg-muted/10 rounded-3xl ${className}`}
+      className={`flex flex-col h-full bg-secondary/10 rounded-2xl ${className}`}
     >
       {/* image container */}
       <div className="relative aspect-square overflow-hidden rounded-t-2xl">
@@ -39,17 +39,19 @@ export default function ImageCard({
               e.stopPropagation();
               onToggleWishlist();
             }}
-            className="p-2 bg-white rounded-full hover:bg-neutral transition-colors relative z-20"
+            className="relative p-2 bg-white rounded-full hover:bg-neutral"
             title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <Heart
-              className={`h-4 w-4 ${
-                isInWishlist ? "text-primary fill-primary" : "text-secondary"
-              }`}
+            <HeartIcon
+              size={20}
+              weight={isInWishlist ? "fill" : "light"}
+              className={`transition-all duration-20
+                ${isInWishlist ? "text-primary" : "hover:fill-black"}
+              `}
             />
           </button>
 
-          <span className="px-4 py-1 text-white bg-secondary rounded-lg font-body text-xs relative z-20 pointer-events-none">
+          <span className="relative px-4 py-1 text-white bg-secondary rounded-md font-body text-xs pointer-events-none">
             {country}
           </span>
         </div>
@@ -80,12 +82,11 @@ export default function ImageCard({
         </Link>
       </div>
 
-      <div className="mt-2 p-6 block text-center">
-        <h3 className="font-display text-lg text-primary hover:text-secondary transition-colors">
+      <div className="p-6 text-center">
+        <h3 className="font-display text-xl text-primary hover:text-secondary transition-colors">
           {name}
         </h3>
-
-        <span className="text-sm text-muted">CHF{price}</span>
+        <span className="font-body text-sm text-secondary/70">CHF{price}</span>
       </div>
     </div>
   );
