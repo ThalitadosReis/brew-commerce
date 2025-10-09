@@ -38,10 +38,9 @@ export default function ProductPage() {
   }, [params.id]);
 
   const handleAddToCart = () => {
-    if (!product) return;
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    if (!product || !selectedSize) return;
+
+    addToCart(product, [selectedSize], quantity);
   };
 
   return (

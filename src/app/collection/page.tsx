@@ -74,7 +74,9 @@ export default function CollectionPage() {
   useEffect(() => {
     const updateItemsPerPage = () => {
       if (typeof window === "undefined") return;
-      setItemsPerPage(window.innerWidth >= 1024 ? 9 : 6);
+
+      const isXl = window.innerWidth >= 1280;
+      setItemsPerPage(isXl ? 9 : 6);
     };
 
     updateItemsPerPage();
@@ -100,7 +102,7 @@ export default function CollectionPage() {
   };
 
   return (
-    <section className="min-h-screen bg-secondary/10">
+    <section className="min-h-screen bg-secondary/10 ">
       {/* header */}
       <div className="relative overflow-hidden h-[24rem] md:h-[28rem] lg:h-[44rem] flex flex-col justify-end">
         <div
