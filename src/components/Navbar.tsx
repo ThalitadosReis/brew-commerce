@@ -4,11 +4,15 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+
 import { allProducts } from "@/data/products";
 import { Product } from "@/types/cart";
+import Cart from "./Cart";
+
 import {
   HeartIcon,
   ListIcon,
@@ -81,7 +85,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               }}
               className="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-70"
             >
-              <XIcon size={16} />
+              <XIcon size={16} weight="light" />
             </button>
           )}
         </div>
@@ -146,6 +150,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [showNavbar, setShowNavbar] = useState(true);
@@ -323,8 +328,8 @@ export default function Navbar() {
 
               {/* cart */}
               <div className="relative">
-                <Link
-                  href="/cart"
+                <button
+                  onClick={() => setCartOpen(true)}
                   className="relative flex items-center justify-center"
                   title={`Cart (${getTotalItems()} items)`}
                 >
@@ -338,7 +343,10 @@ export default function Navbar() {
                       {getTotalItems() > 99 ? "99+" : getTotalItems()}
                     </span>
                   )}
-                </Link>
+                </button>
+
+                {/* cart */}
+                <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
               </div>
 
               {/* mobile menu toggle */}
