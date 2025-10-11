@@ -6,13 +6,13 @@ import Link from "next/link";
 import { HeartIcon } from "@phosphor-icons/react";
 
 interface ImageCardProps {
-  id: number;
+  id: string | number;
   name: string;
   images: string[];
   price: number;
   country: string;
-  isInWishlist: boolean;
-  onToggleWishlist: () => void;
+  isInWishlist?: boolean;
+  onToggleWishlist?: () => void;
   className?: string;
 }
 
@@ -30,25 +30,27 @@ export default function ImageCard({
     <div
       className={`flex flex-col h-full bg-secondary/10 rounded-2xl ${className}`}
     >
-      {/* image container */}
       <div className="relative aspect-square overflow-hidden rounded-t-2xl">
         <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-4 z-20">
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onToggleWishlist();
+              onToggleWishlist?.();
             }}
-            className="relative p-2 bg-white rounded-full hover:bg-neutral"
+            className="relative p-2 bg-white rounded-full group"
             title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <HeartIcon
-              size={20}
-              weight={isInWishlist ? "fill" : "light"}
-              className={`transition-all
-                ${isInWishlist ? "text-primary" : "hover:fill-black"}
-              `}
-            />
+            <HeartIcon size={20} weight={isInWishlist ? "fill" : "light"} />
+
+            {/* hover effect */}
+            {!isInWishlist && (
+              <HeartIcon
+                size={20}
+                weight="fill"
+                className="absolute inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              />
+            )}
           </button>
 
           <span className="relative px-4 py-1 text-white bg-secondary rounded-md font-body text-xs pointer-events-none">
@@ -58,7 +60,7 @@ export default function ImageCard({
 
         <Link
           href={`/collection/${id}`}
-          className="relative block w-full h-full group"
+          className="relative block w-full h-full group overflow-hidden"
         >
           <Image
             src={images[0]}
@@ -66,19 +68,8 @@ export default function ImageCard({
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 33vw"
-            className="object-cover transition-opacity duration-500 group-hover:opacity-0"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
-
-          {images[1] && (
-            <Image
-              src={images[1]}
-              alt={`${name} alternate`}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 33vw"
-              className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-            />
-          )}
         </Link>
       </div>
 

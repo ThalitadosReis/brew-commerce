@@ -7,11 +7,15 @@ type CartAction =
   | { type: "ADD_TO_CART"; payload: CartItem }
   | {
       type: "REMOVE_FROM_CART";
-      payload: { id: number; selectedSizes?: string[] };
+      payload: { id: string | number; selectedSizes?: string[] };
     }
   | {
       type: "UPDATE_QUANTITY";
-      payload: { id: number; quantity: number; selectedSizes?: string[] };
+      payload: {
+        id: string | number;
+        quantity: number;
+        selectedSizes?: string[];
+      };
     }
   | { type: "LOAD_CART"; payload: CartItem[] };
 
@@ -66,6 +70,7 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
       return action.payload.map((item) => ({
         ...item,
         selectedSizes: item.selectedSizes || [],
+        images: item.images || [],
       }));
     }
 
@@ -90,6 +95,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           (item) => ({
             ...item,
             selectedSizes: item.selectedSizes || [],
+            images: item.images || [],
           })
         );
         dispatch({ type: "LOAD_CART", payload: parsedCart });
@@ -97,6 +103,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to load cart from localStorage:", error);
       }
     }
+
+    // listen for cart cleared event from success page
+    const handleCartCleared = () => {
+      console.log("cartCleared event received in CartContext");
+      dispatch({ type: "LOAD_CART", payload: [] });
+      console.log("Cart state cleared");
+    };
+
+    window.addEventListener("cartCleared", handleCartCleared);
+    console.log("CartContext: cartCleared event listener added");
+
+    return () => {
+      window.removeEventListener("cartCleared", handleCartCleared);
+    };
   }, []);
 
   // save cart to localStorage
@@ -120,7 +140,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // update quantity
   const updateQuantity = (
-    productId: number,
+    productId: string | number,
     quantity: number,
     selectedSizes?: string[]
   ) => {
@@ -131,7 +151,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   // remove from cart
-  const removeFromCart = (productId: number, selectedSizes?: string[]) => {
+  const removeFromCart = (
+    productId: string | number,
+    selectedSizes?: string[]
+  ) => {
     dispatch({
       type: "REMOVE_FROM_CART",
       payload: { id: productId, selectedSizes },

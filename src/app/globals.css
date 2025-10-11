@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:opsz@18..144&family=Poppins&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32,300&family=Poppins&display=swap');
 
 @import "tailwindcss";
 
@@ -20,29 +18,19 @@
   font-display: swap;
 }
 
-
-
 @theme {
   --font-display: "Sentient-Variable", sans-serif;
-  /* hero, product names */
   --font-heading: "Poppins", sans-serif;
-  /* section headers */
   --font-body: "Inter", sans-serif;
-  /* body text */
 
   --text-tiny: 0.625rem;
   --text-tiny--font-weight: 500;
 
-  --color-primary: #00000d;
-  /* main headings, CTAs */
+  --color-primary: #232323;
   --color-secondary: #29343d;
-  /* nav, footer, hover */
-  --color-accent: #5a7480;
-  /* price, icons, subtle accents */
-  --color-muted: #3c5665;
-  /* body text, descriptions, secondary info */
-  --color-neutral: #f0f0f0;
-  /* backgrounds, cards, section dividers */
+  --color-accent: #a35d54;
+  --color-muted: #e5ded2;
+  --color-neutral: #fbf8f4;
 }
 
 input:-webkit-autofill {

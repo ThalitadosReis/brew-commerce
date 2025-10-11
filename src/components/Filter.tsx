@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { roastLevels, countries, sizes } from "@/data/products";
-
+import React, { useState, useMemo, useEffect } from "react";
+import { Product } from "@/types/product";
 import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 
+const sizes = ["250g", "500g", "1kg"] as const;
 export type SortOption = "a-z" | "z-a" | "price-low" | "price-high";
 
 interface FilterProps {
@@ -18,6 +18,8 @@ interface FilterProps {
   setSelectedSizes: (sizes: string[]) => void;
   showFilters: boolean;
   onClose: () => void;
+  products: Product[];
+  onFilter: (filtered: Product[]) => void;
 }
 
 // sort by dropdown
@@ -48,7 +50,7 @@ export function SortDropdown({
         className="ml-1 text-secondary pointer-events-none"
       />
 
-      {/* invisible native select on top for accessibility */}
+      {/* invisible native select */}
       <select
         value={sortBy}
         onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -65,39 +67,93 @@ export function SortDropdown({
 }
 
 export default function Filter({
+  sortBy,
   selectedRoasts,
   setSelectedRoasts,
   selectedCountries,
   setSelectedCountries,
   selectedSizes,
   setSelectedSizes,
+  products,
+  onFilter,
 }: FilterProps) {
-  // check if any filters are active
+  const availableRoasts = useMemo(() => {
+    const roasts = new Set<string>();
+    products?.forEach((p) => p.category && roasts.add(p.category));
+    return Array.from(roasts).sort();
+  }, [products]);
+
+  const availableCountries = useMemo(() => {
+    const countries = new Set<string>();
+    products?.forEach((p) => {
+      const hasStock = p.sizes.some((s) => s.stock > 0);
+      if (hasStock && p.country) countries.add(p.country);
+    });
+    return Array.from(countries).sort();
+  }, [products]);
+
   const hasActiveFilters =
     selectedRoasts.length > 0 ||
     selectedCountries.length > 0 ||
     selectedSizes.length > 0;
 
-  // reset filters
   const resetFilters = () => {
     setSelectedRoasts([]);
     setSelectedCountries([]);
     setSelectedSizes([]);
   };
 
-  // accordion state for mobile
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // filtering + sorting logic
+  useEffect(() => {
+    if (!products) return;
+
+    const filtered = products.filter((product) => {
+      const matchesRoast =
+        selectedRoasts.length === 0 ||
+        selectedRoasts.includes(product.category);
+      const matchesCountry =
+        selectedCountries.length === 0 ||
+        selectedCountries.includes(product.country);
+      const matchesSize =
+        selectedSizes.length === 0 ||
+        product.sizes.some((s) => selectedSizes.includes(s.size));
+      return matchesRoast && matchesCountry && matchesSize;
+    });
+
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return (a.price ?? 0) - (b.price ?? 0);
+        case "price-high":
+          return (b.price ?? 0) - (a.price ?? 0);
+        case "z-a":
+          return b.name.localeCompare(a.name);
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
+
+    onFilter(sorted);
+  }, [
+    products,
+    sortBy,
+    selectedRoasts,
+    selectedCountries,
+    selectedSizes,
+    onFilter,
+  ]);
 
   return (
     <div className="lg:w-42">
-      {/* filter */}
       <div className="w-full space-y-8">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
           className="w-full p-4 lg:p-0 flex items-center justify-between bg-secondary/10 lg:bg-transparent rounded-xl lg:rounded-none transition-colors lg:mb-2"
         >
           <div className="flex items-center gap-2">
-            <span className="text-xl font-display italic ">Filters</span>
+            <span className="text-xl font-display italic">Filters</span>
             <CaretDownIcon
               size={12}
               weight="light"
@@ -154,56 +210,57 @@ export default function Filter({
           </div>
 
           {/* roast */}
-          <div className="my-4">
-            <span className="text-lg font-light font-display italic text-secondary/70">
-              Roast
-            </span>
-            <div className="w-full flex flex-col gap-2 mt-2">
-              {roastLevels.map((roast) => {
-                const isSelected = selectedRoasts.includes(roast);
-                return (
-                  <button
-                    key={roast}
-                    onClick={() =>
-                      isSelected
-                        ? setSelectedRoasts(
-                            selectedRoasts.filter((r) => r !== roast)
-                          )
-                        : setSelectedRoasts([...selectedRoasts, roast])
-                    }
-                    className="flex items-center gap-2 text-sm text-primary transition-colors"
-                  >
-                    <span
-                      className={`w-5 h-5 flex items-center justify-center border-1 rounded-sm ${
+          {availableRoasts.length > 0 && (
+            <div className="my-4">
+              <span className="text-lg font-light font-display italic text-secondary/70">
+                Roast
+              </span>
+              <div className="w-full flex flex-col gap-2 mt-2">
+                {availableRoasts.map((roast) => {
+                  const isSelected = selectedRoasts.includes(roast);
+                  return (
+                    <button
+                      key={roast}
+                      onClick={() =>
                         isSelected
-                          ? "border-accent"
-                          : "border-secondary/20 hover:border-accent"
-                      }`}
+                          ? setSelectedRoasts(
+                              selectedRoasts.filter((r) => r !== roast)
+                            )
+                          : setSelectedRoasts([...selectedRoasts, roast])
+                      }
+                      className="flex items-center gap-2 text-sm text-primary transition-colors"
                     >
-                      {isSelected && (
-                        <CheckIcon
-                          size={12}
-                          weight="bold"
-                          className="text-accent"
-                        />
-                      )}
-                    </span>
-                    <span>{roast}</span>
-                  </button>
-                );
-              })}
+                      <span
+                        className={`w-5 h-5 flex items-center justify-center border-1 rounded-sm ${
+                          isSelected
+                            ? "border-accent"
+                            : "border-secondary/20 hover:border-accent"
+                        }`}
+                      >
+                        {isSelected && (
+                          <CheckIcon
+                            size={12}
+                            weight="bold"
+                            className="text-accent"
+                          />
+                        )}
+                      </span>
+                      <span>{roast}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* countries */}
-          <div className="my-4">
-            <span className="text-lg font-light font-display italic text-secondary/70">
-              Countries
-            </span>
-            <div className="w-full flex flex-col gap-2 mt-2">
-              {[...countries]
-                .sort((a, b) => a.localeCompare(b))
-                .map((country) => {
+          {availableCountries.length > 0 && (
+            <div className="my-4">
+              <span className="text-lg font-light font-display italic text-secondary/70">
+                Country
+              </span>
+              <div className="w-full flex flex-col gap-2 mt-2">
+                {availableCountries.map((country) => {
                   const isSelected = selectedCountries.includes(country);
                   return (
                     <button
@@ -239,8 +296,9 @@ export default function Filter({
                     </button>
                   );
                 })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
