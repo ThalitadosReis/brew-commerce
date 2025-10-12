@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useCart } from "@/contexts/CartContext";
 import { getStripe } from "@/lib/stripe";
 
-import { XIcon, MinusIcon, PlusIcon } from "@phosphor-icons/react";
+import { XIcon, MinusIcon, PlusIcon, CoffeeIcon } from "@phosphor-icons/react";
 
 export default function Cart({
   isOpen,
@@ -83,19 +83,25 @@ export default function Cart({
                         e.stopPropagation();
                         removeFromCart(item.id, item.selectedSizes);
                       }}
-                      className="absolute top-1 left-1 p-1 rounded-full bg-white hover:bg-white/70 z-10"
+                      className="absolute top-1 left-1 p-1 rounded-full bg-white hover:bg-white/80 z-10"
                       title="Remove item"
                     >
-                      <XIcon size={12} className="hover:text-secondary/70" />
+                      <XIcon size={12} />
                     </button>
 
-                    <Image
-                      src={item.images[0]}
-                      alt={item.name}
-                      fill
-                      sizes="w-22 h-22"
-                      className="object-contain"
-                    />
+                    {item.images && item.images.length > 0 && item.images[0] ? (
+                      <Image
+                        src={item.images[0]}
+                        alt={item.name}
+                        fill
+                        sizes="80px"
+                        className="object-contain"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-secondary/50">
+                        <CoffeeIcon size={32} weight="light" />
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col justify-between h-full">
@@ -112,7 +118,7 @@ export default function Cart({
                     </div>
 
                     <div
-                      className="w-fit flex items-center px-2 py-1 gap-2 bg-accent/10 rounded"
+                      className="w-fit flex items-center px-2 py-1 gap-2 bg-secondary/10 rounded"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button
@@ -125,11 +131,7 @@ export default function Cart({
                           );
                         }}
                       >
-                        <MinusIcon
-                          size={12}
-                          weight="light"
-                          className="hover:opacity-50"
-                        />
+                        <MinusIcon size={12} className="hover:opacity-50" />
                       </button>
 
                       <span className="text-sm font-medium w-6 text-center">
@@ -146,11 +148,7 @@ export default function Cart({
                           );
                         }}
                       >
-                        <PlusIcon
-                          size={12}
-                          weight="light"
-                          className="hover:opacity-50"
-                        />
+                        <PlusIcon size={12} className="hover:opacity-50" />
                       </button>
                     </div>
                   </div>
@@ -167,22 +165,24 @@ export default function Cart({
         </div>
 
         {/* footer */}
-        <div className="m-4 p-6 bg-accent/10 rounded-lg">
-          <div className="flex justify-between mb-3">
-            <span className="text-sm text-secondary/70">Subtotal</span>
-            <span className="font-display text-lg">
-              CHF{subtotal.toFixed(2)}
-            </span>
-          </div>
+        {items.length > 0 && (
+          <div className="m-4 p-6 bg-accent/10 rounded-lg">
+            <div className="flex justify-between items-end mb-3">
+              <span className="text-sm text-secondary/70">Subtotal</span>
+              <span className="font-display text-lg">
+                CHF{subtotal.toFixed(2)}
+              </span>
+            </div>
 
-          <button
-            onClick={handleCheckout}
-            disabled={loading || items.length === 0}
-            className="w-full py-3  text-sm rounded-full bg-accent text-white hover:opacity-80 transition-colors disabled:opacity-50"
-          >
-            {loading ? "Processing..." : "Checkout"}
-          </button>
-        </div>
+            <button
+              onClick={handleCheckout}
+              disabled={loading}
+              className="w-full py-3 text-sm rounded-full bg-accent text-white hover:opacity-80 transition-colors"
+            >
+              {loading ? "Processing..." : "Checkout"}
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

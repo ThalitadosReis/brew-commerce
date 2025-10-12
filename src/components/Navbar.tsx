@@ -4,12 +4,11 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useUser, UserButton } from "@clerk/nextjs";
 
 import { useCart } from "@/contexts/CartContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-
-import { allProducts } from "@/data/products";
+import { useAuth } from "@/contexts/AuthContext";
 import { Product } from "@/types/cart";
 import Cart from "./Cart";
 
@@ -48,7 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       />
     )}
     <div
-      className={`fixed top-4 right-4 w-[calc(100%-2rem)] md:w-[400px] bg-white rounded-2xl shadow-xl z-50 transform transition-transform duration-300 ${
+      className={`fixed top-4 right-4 w-[calc(100%-2rem)] md:w-[400px] bg-white rounded-2xl z-50 transform transition-transform duration-300 ${
         isSearchOpen ? "translate-x-0" : "translate-x-[calc(100%+2rem)]"
       }
   `}
@@ -119,7 +118,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                       className="object-contain p-3"
                     />
                   </div>
-                  <div className="flex flex-col gap-">
+                  <div className="flex flex-col">
                     <span className="text- font-body text-primary">
                       {product.name}
                     </span>
@@ -155,11 +154,56 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
 
   const pathname = usePathname();
   const { getTotalItems } = useCart();
   const { getTotalWishlistItems } = useWishlist();
-  const { isAuthenticated, user } = useAuth();
+  const { isSignedIn } = useUser();
+  const { user: adminUser, logout: adminLogout } = useAuth();
+
+  // check if on admin route
+  const isAdminRoute = pathname?.startsWith("/admin");
+
+  // fetch products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (response.ok) {
+          const dbProducts = await response.json();
+
+          // transform database products to match Product interface
+          const products: Product[] = dbProducts.map(
+            (p: {
+              _id: string;
+              name: string;
+              price: number;
+              image: string;
+              description: string;
+              country: string;
+              category: string;
+            }) => ({
+              id: p._id,
+              name: p.name,
+              price: p.price,
+              images: [p.image, p.image],
+              description: p.description,
+              country: p.country,
+              roast: p.category,
+              sizes: ["250g", "500g", "1kg"],
+            })
+          );
+          setAllProducts(products);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,16 +248,16 @@ export default function Navbar() {
         .filter(
           (product) =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+            product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.roast.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .slice(0, 5);
       setSearchResults(filtered);
     } else {
       setSearchResults([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allProducts]);
 
   const links = [
     { href: "/", label: "Home" },
@@ -229,7 +273,7 @@ export default function Navbar() {
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-7xl mx-auto p-4 lg:p-6 bg-white rounded-xl">
+        <div className="max-w-7xl mx-auto p-4 bg-white rounded-xl">
           <div className="flex items-center justify-between">
             {/* navigation links */}
             <div className="hidden lg:flex gap-6">
@@ -258,38 +302,7 @@ export default function Navbar() {
             </Link>
 
             {/* right section */}
-            <div className="flex items-center gap-4 ml-auto">
-              {/* profile */}
-              <div>
-                {isAuthenticated ? (
-                  <Link href="/profile">
-                    {user?.profilePicture ? (
-                      <div className="h-8 w-8 relative">
-                        <Image
-                          src={user.profilePicture}
-                          alt={user.name}
-                          fill
-                          sizes="20px"
-                          className="w-full h-full object-cover rounded-full overflow-hidden"
-                        />
-                      </div>
-                    ) : (
-                      <UserIcon
-                        size={20}
-                        className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                      />
-                    )}
-                  </Link>
-                ) : (
-                  <Link href="/login" title="Login">
-                    <UserIcon
-                      size={20}
-                      className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                    />
-                  </Link>
-                )}
-              </div>
-
+            <div className="flex items-center gap-4">
               {/* search button */}
               <button
                 onClick={() => {
@@ -304,49 +317,131 @@ export default function Navbar() {
                 />
               </button>
 
-              {/* wishlist */}
-              <div className="relative">
-                <Link
-                  href="/profile#wishlist"
-                  className="relative flex items-center"
-                  title={`Wishlist (${getTotalWishlistItems()} items)`}
-                >
-                  <HeartIcon
-                    size={20}
+              {/* wishlist - hide on admin */}
+              {!isAdminRoute && !adminUser && (
+                <div className="relative">
+                  <Link
+                    href="/favorites"
+                    className="relative flex items-center"
+                    title={`Wishlist (${getTotalWishlistItems()} items)`}
+                  >
+                    <HeartIcon
+                      size={20}
+                      className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                    />
+
+                    {getTotalWishlistItems() > 0 && (
+                      <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                        {getTotalWishlistItems() > 99
+                          ? "99+"
+                          : getTotalWishlistItems()}
+                      </span>
+                    )}
+                  </Link>
+                </div>
+              )}
+
+              {/* cart - hide on admin */}
+              {!isAdminRoute && !adminUser && (
+                <div className="relative">
+                  <button
+                    onClick={() => setCartOpen(true)}
+                    className="relative flex items-center justify-center"
+                    title={`Cart (${getTotalItems()} items)`}
+                  >
+                    <ShoppingCartSimpleIcon
+                      size={20}
+                      className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                    />
+
+                    {getTotalItems() > 0 && (
+                      <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                        {getTotalItems() > 99 ? "99+" : getTotalItems()}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* cart drawer */}
+                  <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+                </div>
+              )}
+
+              {/* profile */}
+              <div className="h-full w-full flex items-center justify-center relative">
+                {adminUser ? (
+                  // admin dropdown menu
+                  <div className="relative">
+                    <button
+                      onClick={() =>
+                        setIsLoginDropdownOpen(!isLoginDropdownOpen)
+                      }
+                      className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+                      title={adminUser.email}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm font-semibold">
+                        {adminUser.email?.charAt(0).toUpperCase()}
+                      </div>
+                    </button>
+
+                    {isLoginDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-40"
+                          onClick={() => setIsLoginDropdownOpen(false)}
+                        />
+
+                        {/* dropdown panel */}
+                        <div
+                          className={`fixed w-60 right-4 bg-white rounded-xl transition-transform duration-300 z-50 ${
+                            isLoginDropdownOpen
+                              ? "translate-y-0"
+                              : "-translate-y-full"
+                          }`}
+                          style={{ top: "var(--navbar-height, 96px)" }}
+                        >
+                          <div className="px-4 py-3 border-b border-gray-100">
+                            <p className="text-sm font-semibold text-gray-800">
+                              {adminUser.name || "Admin"}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                              {adminUser.email}
+                            </p>
+                          </div>
+
+                          <Link
+                            href="/admin"
+                            className="block px-4 py-2 text-sm hover:bg-accent/10 transition-colors"
+                            onClick={() => setIsLoginDropdownOpen(false)}
+                          >
+                            Dashboard
+                          </Link>
+
+                          <button
+                            onClick={() => {
+                              adminLogout();
+                              setIsLoginDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm text-secondary hover:bg-secondary/5 hover:text-primary transition-colors"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : isSignedIn ? (
+                  // clerk user/button
+                  <UserButton afterSignOutUrl="/" />
+                ) : (
+                  // not logged in
+                  <Link
+                    href="/sign-up"
+                    title="Sign Up"
                     className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                  />
-
-                  {getTotalWishlistItems() > 0 && (
-                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
-                      {getTotalWishlistItems() > 99
-                        ? "99+"
-                        : getTotalWishlistItems()}
-                    </span>
-                  )}
-                </Link>
-              </div>
-
-              {/* cart */}
-              <div className="relative">
-                <button
-                  onClick={() => setCartOpen(true)}
-                  className="relative flex items-center justify-center"
-                  title={`Cart (${getTotalItems()} items)`}
-                >
-                  <ShoppingCartSimpleIcon
-                    size={20}
-                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                  />
-
-                  {getTotalItems() > 0 && (
-                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
-                      {getTotalItems() > 99 ? "99+" : getTotalItems()}
-                    </span>
-                  )}
-                </button>
-
-                {/* cart */}
-                <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+                  >
+                    <UserIcon size={20} />
+                  </Link>
+                )}
               </div>
 
               {/* mobile menu toggle */}
@@ -376,9 +471,8 @@ export default function Navbar() {
         />
       </header>
 
-      {/* mobile menu wrapper */}
+      {/* mobile menu */}
       <div className="lg:hidden relative z-40">
-        {/* overlay */}
         {isMenuOpen && (
           <div
             className="fixed inset-0 bg-black/40 z-10"
@@ -386,7 +480,6 @@ export default function Navbar() {
           />
         )}
 
-        {/* mobile menu */}
         <div
           className={`lg:hidden fixed left-4 right-4 bg-white rounded-xl transition-transform duration-300 z-40 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+8rem)]"
