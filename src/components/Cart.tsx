@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useCart } from "@/contexts/CartContext";
 import { getStripe } from "@/lib/stripe";
+import { useUser } from "@clerk/nextjs";
+import { useCart } from "@/contexts/CartContext";
 
 import { XIcon, MinusIcon, PlusIcon, CoffeeIcon } from "@phosphor-icons/react";
 
@@ -16,14 +17,21 @@ export default function Cart({
 }) {
   const { items, updateQuantity, removeFromCart, getTotalPrice } = useCart();
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
   const handleCheckout = async () => {
+    if (!user) {
+      alert("You must be signed in to checkout.");
+      return;
+    }
+
     setLoading(true);
     try {
+      const email = user.emailAddresses[0].emailAddress;
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, email }),
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);

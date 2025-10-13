@@ -62,14 +62,20 @@ export default function ImageCard({
           href={`/collection/${id}`}
           className="relative block w-full h-full group overflow-hidden"
         >
-          <Image
-            src={images[0]}
-            alt={name}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-          />
+          {images && images.length > 0 && images[0] ? (
+            <Image
+              src={images[0]}
+              alt={name}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <div className="w-full h-full bg-neutral/20 flex items-center justify-center">
+              <span className="text-secondary/70 text-sm">No Image</span>
+            </div>
+          )}
         </Link>
       </div>
 

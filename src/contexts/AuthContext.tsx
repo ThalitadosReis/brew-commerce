@@ -15,7 +15,7 @@ interface AuthContextType {
   user: AdminUser | null;
   isAuthenticated: boolean;
   loading: boolean;
-  token: string | null; // add this
+  token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (updates: Partial<AdminUser>) => void;
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const router = useRouter();
 
-  // Verify auth on mount (checks cookie via API, no localStorage)
+  // Verify auth
   useEffect(() => {
     const verifyAuth = async () => {
       try {
@@ -82,8 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data.user);
         if (data.token) setToken(data.token);
         setLoading(false);
-        // Force a full page reload to /admin
-        window.location.replace("/admin");
+        router.push("/admin");
         return;
       } else {
         throw new Error("Access denied: Admin role required");
@@ -107,15 +106,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setUser(null);
     setLoading(false);
-    router.push("/admin-login");
+    router.push("/");
   };
 
-  // Updates (no localStorage; persist via API if needed)
+  // Updates
   const updateUser = (updates: Partial<AdminUser>) => {
     if (user) {
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
-      // Optional: Call API to update in MongoDB, e.g., fetch("/api/admin/profile", { method: "PATCH", body: ... })
     }
   };
 

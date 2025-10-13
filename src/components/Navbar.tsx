@@ -3,12 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useUser, UserButton } from "@clerk/nextjs";
 
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { Product } from "@/types/cart";
 import Cart from "./Cart";
 
@@ -16,6 +15,7 @@ import {
   HeartIcon,
   ListIcon,
   MagnifyingGlassIcon,
+  PackageIcon,
   ShoppingCartSimpleIcon,
   UserIcon,
   XIcon,
@@ -49,8 +49,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <div
       className={`fixed top-4 right-4 w-[calc(100%-2rem)] md:w-[400px] bg-white rounded-2xl z-50 transform transition-transform duration-300 ${
         isSearchOpen ? "translate-x-0" : "translate-x-[calc(100%+2rem)]"
-      }
-  `}
+      }`}
     >
       <div className="p-6 flex flex-col h-full">
         <button
@@ -79,9 +78,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           {searchQuery && (
             <button
-              onClick={() => {
-                onQueryChange("");
-              }}
+              onClick={() => onQueryChange("")}
               className="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-70"
             >
               <XIcon size={16} weight="light" />
@@ -155,16 +152,12 @@ export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
+  const router = useRouter();
 
   const pathname = usePathname();
   const { getTotalItems } = useCart();
   const { getTotalWishlistItems } = useWishlist();
   const { isSignedIn } = useUser();
-  const { user: adminUser, logout: adminLogout } = useAuth();
-
-  // check if on admin route
-  const isAdminRoute = pathname?.startsWith("/admin");
 
   // fetch products on mount
   useEffect(() => {
@@ -173,8 +166,6 @@ export default function Navbar() {
         const response = await fetch("/api/products");
         if (response.ok) {
           const dbProducts = await response.json();
-
-          // transform database products to match Product interface
           const products: Product[] = dbProducts.map(
             (p: {
               _id: string;
@@ -220,43 +211,36 @@ export default function Navbar() {
       handleSearch(e);
       setIsSearchOpen(false);
     }
-    if (e.key === "Escape") {
-      setIsSearchOpen(false);
-    }
+    if (e.key === "Escape") setIsSearchOpen(false);
   };
 
   // handle scroll hide/show
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        // scrolling down
-        setShowNavbar(false);
-      } else {
-        // scrolling up
-        setShowNavbar(true);
-      }
+      if (window.scrollY > lastScrollY) setShowNavbar(false);
+      else setShowNavbar(true);
       setLastScrollY(window.scrollY);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  // filter products for search
   useEffect(() => {
     if (searchQuery.trim()) {
       const filtered = allProducts
         .filter(
           (product) =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.description
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
             product.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
             product.roast.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .slice(0, 5);
       setSearchResults(filtered);
-    } else {
-      setSearchResults([]);
-    }
+    } else setSearchResults([]);
   }, [searchQuery, allProducts]);
 
   const links = [
@@ -302,7 +286,7 @@ export default function Navbar() {
             </Link>
 
             {/* right section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 relative justify-end">
               {/* search button */}
               <button
                 onClick={() => {
@@ -317,123 +301,66 @@ export default function Navbar() {
                 />
               </button>
 
-              {/* wishlist - hide on admin */}
-              {!isAdminRoute && !adminUser && (
-                <div className="relative">
-                  <Link
-                    href="/favorites"
-                    className="relative flex items-center"
-                    title={`Wishlist (${getTotalWishlistItems()} items)`}
-                  >
-                    <HeartIcon
-                      size={20}
-                      className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                    />
+              {/* wishlist */}
+              <div className="relative">
+                <Link
+                  href="/favorites"
+                  className="relative flex items-center"
+                  title={`Wishlist (${getTotalWishlistItems()} items)`}
+                >
+                  <HeartIcon
+                    size={20}
+                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                  />
+                  {getTotalWishlistItems() > 0 && (
+                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                      {getTotalWishlistItems() > 99
+                        ? "99+"
+                        : getTotalWishlistItems()}
+                    </span>
+                  )}
+                </Link>
+              </div>
 
-                    {getTotalWishlistItems() > 0 && (
-                      <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
-                        {getTotalWishlistItems() > 99
-                          ? "99+"
-                          : getTotalWishlistItems()}
-                      </span>
-                    )}
-                  </Link>
-                </div>
-              )}
-
-              {/* cart - hide on admin */}
-              {!isAdminRoute && !adminUser && (
-                <div className="relative">
-                  <button
-                    onClick={() => setCartOpen(true)}
-                    className="relative flex items-center justify-center"
-                    title={`Cart (${getTotalItems()} items)`}
-                  >
-                    <ShoppingCartSimpleIcon
-                      size={20}
-                      className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                    />
-
-                    {getTotalItems() > 0 && (
-                      <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
-                        {getTotalItems() > 99 ? "99+" : getTotalItems()}
-                      </span>
-                    )}
-                  </button>
-
-                  {/* cart drawer */}
-                  <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-                </div>
-              )}
+              {/* cart */}
+              <div className="relative">
+                <button
+                  onClick={() => setCartOpen(true)}
+                  className="relative flex items-center justify-center"
+                  title={`Cart (${getTotalItems()} items)`}
+                >
+                  <ShoppingCartSimpleIcon
+                    size={20}
+                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                  />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                      {getTotalItems() > 99 ? "99+" : getTotalItems()}
+                    </span>
+                  )}
+                </button>
+                <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+              </div>
 
               {/* profile */}
-              <div className="h-full w-full flex items-center justify-center relative">
-                {adminUser ? (
-                  // admin dropdown menu
-                  <div className="relative">
-                    <button
-                      onClick={() =>
-                        setIsLoginDropdownOpen(!isLoginDropdownOpen)
-                      }
-                      className="flex items-center gap-2 hover:opacity-70 transition-opacity"
-                      title={adminUser.email}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-sm font-semibold">
-                        {adminUser.email?.charAt(0).toUpperCase()}
-                      </div>
-                    </button>
-
-                    {isLoginDropdownOpen && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setIsLoginDropdownOpen(false)}
-                        />
-
-                        {/* dropdown panel */}
-                        <div
-                          className={`fixed w-60 right-4 bg-white rounded-xl transition-transform duration-300 z-50 ${
-                            isLoginDropdownOpen
-                              ? "translate-y-0"
-                              : "-translate-y-full"
-                          }`}
-                          style={{ top: "var(--navbar-height, 96px)" }}
-                        >
-                          <div className="px-4 py-3 border-b border-gray-100">
-                            <p className="text-sm font-semibold text-gray-800">
-                              {adminUser.name || "Admin"}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                              {adminUser.email}
-                            </p>
-                          </div>
-
-                          <Link
-                            href="/admin"
-                            className="block px-4 py-2 text-sm hover:bg-accent/10 transition-colors"
-                            onClick={() => setIsLoginDropdownOpen(false)}
-                          >
-                            Dashboard
-                          </Link>
-
-                          <button
-                            onClick={() => {
-                              adminLogout();
-                              setIsLoginDropdownOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm text-secondary hover:bg-secondary/5 hover:text-primary transition-colors"
-                          >
-                            Sign Out
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ) : isSignedIn ? (
-                  // clerk user/button
-                  <UserButton afterSignOutUrl="/" />
+              <div className="relative flex items-center justify-end">
+                {isSignedIn ? (
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-8 h-8",
+                      },
+                    }}
+                  >
+                    <UserButton.MenuItems>
+                      <UserButton.Link
+                        label="Orders"
+                        labelIcon={<PackageIcon size={16} />}
+                        href="/profile"
+                      />
+                    </UserButton.MenuItems>
+                  </UserButton>
                 ) : (
-                  // not logged in
                   <Link
                     href="/sign-up"
                     title="Sign Up"
@@ -479,7 +406,6 @@ export default function Navbar() {
             onClick={() => setIsMenuOpen(false)}
           />
         )}
-
         <div
           className={`lg:hidden fixed left-4 right-4 bg-white rounded-xl transition-transform duration-300 z-40 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+8rem)]"

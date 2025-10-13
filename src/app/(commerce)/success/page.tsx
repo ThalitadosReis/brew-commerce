@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { CheckIcon } from "@phosphor-icons/react";
 
@@ -17,10 +18,11 @@ type CartItem = {
 export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const { user } = useUser();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!sessionId || typeof window === "undefined") return;
+    if (!sessionId || typeof window === "undefined" || !user) return;
 
     const saveOrderToDB = async () => {
       try {
@@ -58,6 +60,10 @@ export default function SuccessPage() {
             shipping,
             total,
             status: "completed",
+            customerEmail:
+              user?.primaryEmailAddress?.emailAddress ||
+              user?.emailAddresses?.[0]?.emailAddress,
+            userId: user?.id,
           }),
         });
 
@@ -78,7 +84,7 @@ export default function SuccessPage() {
     };
 
     saveOrderToDB();
-  }, [sessionId]);
+  }, [sessionId, user]);
 
   if (loading) {
     return (

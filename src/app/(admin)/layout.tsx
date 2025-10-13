@@ -1,26 +1,20 @@
 "use client";
 
-import { ClerkProvider } from "@clerk/nextjs";
+import { useState } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { CartProvider } from "@/contexts/CartContext";
-import { WishlistProvider } from "@/contexts/WishlistContext";
-import Navbar from "@/components/Navbar";
+import AdminNavbar from "@/components/AdminNavbar";
 
 export default function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const [activeTab, setActiveTab] = useState("overview");
+
   return (
-    <ClerkProvider>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <div className="admin-layout min-h-screen">
-              <Navbar />
-              <main className="p-8">{children}</main>
-            </div>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
-    </ClerkProvider>
+    <AuthProvider>
+      <div>
+        <AdminNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <main>{children}</main>
+      </div>
+    </AuthProvider>
   );
 }
