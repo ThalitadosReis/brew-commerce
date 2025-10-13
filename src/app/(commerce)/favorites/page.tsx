@@ -8,7 +8,7 @@ import { CaretRightIcon } from "@phosphor-icons/react";
 import ImageCard from "@/components/ImageCard";
 
 export default function FavoritesPage() {
-  const { wishlist, removeFromWishlist } = useWishlist();
+  const { wishlist, removeFromWishlist, loading } = useWishlist();
 
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
 
@@ -26,6 +26,22 @@ export default function FavoritesPage() {
       }
     });
   }, [wishlist, sortBy]);
+
+  if (loading) {
+    return (
+      <section className="min-h-screen bg-secondary/10 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <h1 className="font-display italic text-5xl md:text-6xl lg:text-7xl text-center mb-8">
+            Favorites
+          </h1>
+          <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-secondary/70">Loading your favorites...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen bg-secondary/10 py-20">
