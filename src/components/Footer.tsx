@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUpIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -10,27 +9,10 @@ export default function Footer() {
     { href: "/contact", label: "Contact" },
   ];
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <footer className="relative max-w-7xl mx-auto px-6 py-10">
-      <button
-        onClick={scrollToTop}
-        aria-label="Scroll to top"
-        className="absolute right-0 top-0 -translate-x-4 -translate-y-4 p-3 rounded bg-secondary hover:bg-secondary/70 transition-colors shadow-md"
-      >
-        <ArrowUpIcon
-          size={20}
-          weight="light"
-          className="text-white transition-colors"
-        />
-      </button>
-
-      {/* brand */}
       <div className="text-center space-y-2">
-        <h2 className="text-3xl tracking-tight">brew.</h2>
+        <h2 className="text-3xl font-heading tracking-tight">brew.</h2>
         <p className="mx-auto text-sm text-secondary/70 leading-relaxed">
           Premium coffee delivered to your doorstep.
           <br className="hidden sm:block" />
