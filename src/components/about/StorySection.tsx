@@ -45,15 +45,17 @@ export default function StorySection() {
       </Head>
 
       <section className="max-w-7xl mx-auto">
-        <div className="mb-12 lg:mb-24 text-center max-w-3xl mx-auto space-y-4">
-          <h5 className="text-lg font-heading">Roots</h5>
-          <h2 className="text-4xl lg:text-6xl font-heading">
-            A journey of passion and precision in coffee
-          </h2>
-          <p className="text-body">
-            Born from a deep love of coffee and commitment to craft, our small
-            business began in a tiny kitchen with a single mission.
-          </p>
+        <div className="mb-12 lg:mb-24">
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            <h5 className="text-lg font-heading">Roots</h5>
+            <h2 className="text-4xl lg:text-6xl font-heading">
+              A journey of passion and precision in coffee
+            </h2>
+            <p className="text-body">
+              Born from a deep love of coffee and commitment to craft, our small
+              business began in a tiny kitchen with a single mission.
+            </p>
+          </div>
         </div>
 
         <div

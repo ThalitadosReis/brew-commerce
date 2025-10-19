@@ -9,33 +9,33 @@ import {
   GearIcon,
 } from "@phosphor-icons/react";
 
+const imageSrc =
+  "https://images.pexels.com/photos/10433516/pexels-photo-10433516.jpeg";
+
+const benefits = [
+  {
+    title: "Why choose our coffee",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+    icon: <CoffeeIcon size={40} weight="thin" />,
+  },
+  {
+    title: "Expert roasting",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+    icon: <TimerIcon size={40} weight="thin" />,
+  },
+  {
+    title: "Sustainable practices",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+    icon: <PlantIcon size={40} weight="thin" />,
+  },
+  {
+    title: "Crafted for your experience",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+    icon: <GearIcon size={40} weight="thin" />,
+  },
+];
+
 export default function BenefitsSection() {
-  const imageSrc =
-    "https://images.pexels.com/photos/10433516/pexels-photo-10433516.jpeg";
-
-  const benefits = [
-    {
-      title: "Why choose our coffee",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      icon: <CoffeeIcon size={40} weight="thin" />,
-    },
-    {
-      title: "Expert roasting",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      icon: <TimerIcon size={40} weight="thin" />,
-    },
-    {
-      title: "Sustainable practices",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      icon: <PlantIcon size={40} weight="thin" />,
-    },
-    {
-      title: "Crafted for your experience",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      icon: <GearIcon size={40} weight="thin" />,
-    },
-  ];
-
   return (
     <>
       <Head>
@@ -43,10 +43,9 @@ export default function BenefitsSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        {/* header */}
         <div className="mb-12 lg:mb-24">
           <div className="mx-auto text-center space-y-4">
-            <h5 className="mb-1 text-lg font-heading">Benefits</h5>
+            <h5 className="text-lg font-heading">Benefits</h5>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
               Highest grade arabica beans
             </h2>

@@ -3,11 +3,11 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
+const imageUrl =
+  "https://res.cloudinary.com/douen1dwv/image/upload/v1758990337/default/brew..jpg";
+
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
-
-  const imageUrl =
-    "https://res.cloudinary.com/douen1dwv/image/upload/v1758990337/default/brew..jpg";
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);

@@ -2,45 +2,45 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 
-export default function TestimonialSection() {
-  const testimonials = [
-    {
-      name: "Samantha Lee",
-      quote:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      image: "https://randomuser.me/api/portraits/women/68.jpg",
-      role: "Coffee lover, California",
-    },
-    {
-      name: "Jordan Smith",
-      quote:
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      image: "https://randomuser.me/api/portraits/men/75.jpg",
-      role: "Barista, London",
-    },
-    {
-      name: "Emily Carter",
-      quote:
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      image: "https://randomuser.me/api/portraits/women/32.jpg",
-      role: "Coffee enthusiast, Berlin",
-    },
-    {
-      name: "Liam Thompson",
-      quote:
-        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      image: "https://randomuser.me/api/portraits/men/40.jpg",
-      role: "Roaster, Toronto",
-    },
-    {
-      name: "Olivia Martinez",
-      quote:
-        "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Proin eget tortor risus.",
-      image: "https://randomuser.me/api/portraits/women/45.jpg",
-      role: "Coffee Blogger, Madrid",
-    },
-  ];
+const testimonials = [
+  {
+    name: "Samantha Lee",
+    quote:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    role: "Coffee lover, California",
+  },
+  {
+    name: "Jordan Smith",
+    quote:
+      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    image: "https://randomuser.me/api/portraits/men/75.jpg",
+    role: "Barista, London",
+  },
+  {
+    name: "Emily Carter",
+    quote:
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    image: "https://randomuser.me/api/portraits/women/32.jpg",
+    role: "Coffee enthusiast, Berlin",
+  },
+  {
+    name: "Liam Thompson",
+    quote:
+      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    image: "https://randomuser.me/api/portraits/men/40.jpg",
+    role: "Roaster, Toronto",
+  },
+  {
+    name: "Olivia Martinez",
+    quote:
+      "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Proin eget tortor risus.",
+    image: "https://randomuser.me/api/portraits/women/45.jpg",
+    role: "Coffee Blogger, Madrid",
+  },
+];
 
+export default function TestimonialSection() {
   const [active, setActive] = useState(0);
 
   const nextSlide = () => setActive((prev) => (prev + 1) % testimonials.length);
@@ -52,7 +52,7 @@ export default function TestimonialSection() {
       setActive((prev) => (prev + 1) % testimonials.length);
     }, 10000);
     return () => clearInterval(timer);
-  }, [testimonials.length]);
+  }, []);
 
   return (
     <>

@@ -14,40 +14,40 @@ type CraftItemType = {
   icon: ReactNode;
 };
 
-export default function CraftGrid() {
-  const craftItems: CraftItemType[] = [
-    {
-      heading: "Sourcing the Finest Beans",
-      text: "We work directly with farmers who share our commitment to quality and sustainability.",
-      icon: <PlantIcon size={32} weight="light" />,
-    },
-    {
-      heading: "Roasting with Precision",
-      text: "Each batch is roasted to highlight the unique characteristics of its origin.",
-      icon: <FireIcon size={32} weight="light" />,
-    },
-    {
-      heading: "Quality Without Compromise",
-      text: "We taste and test every batch; only the best reaches your cup.",
-      icon: <SealCheckIcon size={32} weight="light" />,
-    },
-  ];
+const craftItems: CraftItemType[] = [
+  {
+    heading: "Sourcing the Finest Beans",
+    text: "We work directly with farmers who share our commitment to quality and sustainability.",
+    icon: <PlantIcon size={32} weight="light" />,
+  },
+  {
+    heading: "Roasting with Precision",
+    text: "Each batch is roasted to highlight the unique characteristics of its origin.",
+    icon: <FireIcon size={32} weight="light" />,
+  },
+  {
+    heading: "Quality Without Compromise",
+    text: "We taste and test every batch; only the best reaches your cup.",
+    icon: <SealCheckIcon size={32} weight="light" />,
+  },
+];
 
+export default function CraftGrid() {
   return (
     <section className="max-w-7xl mx-auto px-6">
-      {/* header */}
-      <div className="mb-12 lg:mb-24 text-center max-w-3xl mx-auto space-y-4">
-        <h5 className="mb-1 text-lg font-heading">Craft</h5>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-          How we bring exceptional coffee to your cup
-        </h2>
-        <p className="text-body">
-          We select beans with precision, roast with care, and deliver pure
-          flavor in every package.
-        </p>
+      <div className="mb-12 lg:mb-24">
+        <div className="mx-auto text-center space-y-4">
+          <h5 className="text-lg font-heading">Craft</h5>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
+            How we bring exceptional coffee to your cup
+          </h2>
+          <p className="text-body">
+            We select beans with precision, roast with care, and deliver pure
+            flavor in every package.
+          </p>
+        </div>
       </div>
 
-      {/* grid */}
       <div className="grid gap-8 md:grid-cols-3">
         {craftItems.map((item, idx) => (
           <div key={idx} className="text-center space-y-2">
@@ -60,7 +60,6 @@ export default function CraftGrid() {
         ))}
       </div>
 
-      {/* links */}
       <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
         <Link
           href="/collection"

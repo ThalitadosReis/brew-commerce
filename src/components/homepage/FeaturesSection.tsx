@@ -3,13 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { CaretRightIcon } from "@phosphor-icons/react";
 
-export default function FeaturesSection() {
-  const imageUrls = [
-    "https://images.pexels.com/photos/7125492/pexels-photo-7125492.jpeg",
-    "https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg",
-    "https://images.pexels.com/photos/7175997/pexels-photo-7175997.jpeg",
-  ];
+const imageUrls = [
+  "https://images.pexels.com/photos/7125492/pexels-photo-7125492.jpeg",
+  "https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg",
+  "https://images.pexels.com/photos/7175997/pexels-photo-7175997.jpeg",
+];
 
+export default function FeaturesSection() {
   return (
     <>
       <Head>
@@ -19,14 +19,13 @@ export default function FeaturesSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        {/* header */}
         <div className="mb-12 lg:mb-24">
-          <div className="mx-auto max-w-lg text-center space-y-4">
-            <h5 className="mb-1 text-lg font-heading">Our craft</h5>
+          <div className="mx-auto text-center space-y-4">
+            <h5 className="text-lg font-heading">Our craft</h5>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
               Exceptional coffee experiences
             </h2>
-            <p className="font-body text-black/70">
+            <p className="font-body">
               Carefully sourced beans from sustainable farms worldwide
             </p>
           </div>

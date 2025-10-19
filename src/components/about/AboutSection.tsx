@@ -1,12 +1,12 @@
 import Head from "next/head";
 import Image from "next/image";
 
-export default function AboutSection() {
-  const images = [
-    "https://images.pexels.com/photos/7125434/pexels-photo-7125434.jpeg",
-    "https://images.pexels.com/photos/29745520/pexels-photo-29745520.jpeg",
-  ];
+const images = [
+  "https://images.pexels.com/photos/7125434/pexels-photo-7125434.jpeg",
+  "https://images.pexels.com/photos/29745520/pexels-photo-29745520.jpeg",
+];
 
+export default function AboutSection() {
   return (
     <>
       <Head>
@@ -16,15 +16,16 @@ export default function AboutSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        {/* header */}
-        <div className="mb-12 lg:mb-24 text-center max-w-3xl mx-auto space-y-4">
-          <h5 className="mb-1 text-lg font-heading">Pure</h5>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-            Why our coffee is different
-          </h2>
-          <p className="text-body">
-            Sustainable, ethical, and delicious coffee that makes a difference
-          </p>
+        <div className="mb-12 lg:mb-24">
+          <div className="mx-auto text-center space-y-4">
+            <h5 className="text-lg font-heading">Pure</h5>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
+              Why our coffee is different
+            </h2>
+            <p className="text-body">
+              Sustainable, ethical, and delicious coffee that makes a difference
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">

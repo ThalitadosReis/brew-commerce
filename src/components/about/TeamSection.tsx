@@ -117,16 +117,17 @@ export default function TeamSection() {
 
   return (
     <section className="max-w-7xl mx-auto px-6">
-      {/* header */}
-      <div className="mb-12 lg:mb-24 max-w-3xl space-y-4">
-        <h5 className="mb-1 text-lg font-heading">Team</h5>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-          Our team
-        </h2>
-        <p className="text-body">
-          The passionate people behind every cup of your carefully crafted
-          coffee.
-        </p>
+      <div className="mb-12 lg:mb-24">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <h5 className="text-lg font-heading">Team</h5>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
+            Our team
+          </h2>
+          <p className="text-body">
+            The passionate people behind every cup of your carefully crafted
+            coffee.
+          </p>
+        </div>
       </div>
 
       <div

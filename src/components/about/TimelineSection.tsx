@@ -69,15 +69,17 @@ export default function TimelineSection() {
   return (
     <>
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24 text-center max-w-2xl mx-auto space-y-4">
-          <h5 className="mb-1 text-lg font-heading">Our Coffee Journey</h5>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-            From Local Passion to Global Coffee Culture
-          </h2>
-          <p className="text-body">
-            Discover how we built meaningful relationships with coffee farmers
-            across continents and delivered their craft to mugs worldwide.
-          </p>
+        <div className="mb-12 lg:mb-24">
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            <h5 className="text-lg font-heading">Our Coffee Journey</h5>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
+              From Local Passion to Global Coffee Culture
+            </h2>
+            <p className="text-body">
+              Discover how we built meaningful relationships with coffee farmers
+              across continents and delivered their craft to mugs worldwide.
+            </p>
+          </div>
         </div>
 
         <div className="relative">
