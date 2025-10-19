@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Head from "next/head";
 import Image from "next/image";
 import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 
@@ -57,12 +56,6 @@ export default function TestimonialSection() {
 
   return (
     <>
-      <Head>
-        {testimonials.map((t) => (
-          <link key={t.image} rel="preload" as="image" href={t.image} />
-        ))}
-      </Head>
-
       <section className="max-w-7xl mx-auto px-6">
         <div
           className="relative overflow-hidden"

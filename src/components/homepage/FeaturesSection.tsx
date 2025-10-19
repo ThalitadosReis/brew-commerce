@@ -36,7 +36,7 @@ export default function FeaturesSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex flex-col gap-8">
             {/* card 1 */}
-            <div className="flex flex-col md:flex-row border border-primary/20 overflow-hidden">
+            <div className="flex flex-col md:flex-row border border-black/10 overflow-hidden">
               <div className="flex flex-col justify-center flex-1">
                 <div className="p-6 space-y-4">
                   <p className="mb-1 font-heading">Origin</p>
@@ -78,10 +78,8 @@ export default function FeaturesSection() {
                 <div className="p-6 space-y-4">
                   <p className="mb-1 font-heading">Craft</p>
                   <h3 className="font-semibold">
-                    {" "}
                     Learn about our meticulous roasting process
                   </h3>
-
                   <p className="text-black/70">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Suspendisse varius enim in eros elementum tristique.
@@ -126,7 +124,6 @@ export default function FeaturesSection() {
                   cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
                   commodo diam libero vitae erat.
                 </p>
-
                 <Link
                   href="/contact"
                   className="inline-flex items-center justify-center gap-2 group"
