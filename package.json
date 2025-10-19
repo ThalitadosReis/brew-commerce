@@ -13,6 +13,7 @@
     "@clerk/nextjs": "^6.33.3",
     "@phosphor-icons/react": "^2.1.10",
     "@stripe/stripe-js": "^7.9.0",
+    "@types/nodemailer": "^7.0.2",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.3",
     "jose": "^6.1.0",
@@ -20,6 +21,7 @@
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.1",
     "next": "15.5.4",
+    "nodemailer": "^7.0.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "stripe": "^18.5.0"

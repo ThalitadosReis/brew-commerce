@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { ArrowUpIcon } from "@phosphor-icons/react";
+
 import HeroSection from "@/components/homepage/HeroSection";
 import FeaturesSection from "@/components/homepage/FeaturesSection";
 import BenefitsSection from "@/components/homepage/BenefitsSection";
 import CraftSection from "@/components/homepage/CraftSection";
-import SubscribeSection from "@/components/homepage/SubscribeSection";
 import TestimonialsSection from "@/components/homepage/TestimonialsSection";
-import { ArrowUpIcon } from "@phosphor-icons/react";
+import ContactSection from "@/components/homepage/ContactSection";
 
 export default function Homepage() {
   const [showScroll, setShowScroll] = useState(false);
@@ -43,7 +44,7 @@ export default function Homepage() {
         <BenefitsSection />
         <CraftSection />
         <TestimonialsSection />
-        <SubscribeSection />
+        <ContactSection />
       </div>
 
       {showScroll && (

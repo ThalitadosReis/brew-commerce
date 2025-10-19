@@ -5,7 +5,7 @@ import Link from "next/link";
 const imageUrl =
   "https://images.pexels.com/photos/4820847/pexels-photo-4820847.jpeg";
 
-export default function SubscribeSection() {
+export default function ContactSection() {
   return (
     <>
       <Head>
@@ -31,7 +31,7 @@ export default function SubscribeSection() {
                 href="/contact"
                 className="text-white bg-black hover:opacity-70 font-medium px-6 py-3"
               >
-                Subscribe
+                Contact us
               </Link>
               <Link
                 href="/collection"
