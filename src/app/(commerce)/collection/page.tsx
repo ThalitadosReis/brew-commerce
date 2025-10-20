@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Product } from "@/types/product";
 import Filter, { SortOption } from "@/components/collection/Filter";
 import CollectionContent from "@/components/collection/CollectionContent";
-import ReviewSection from "@/components/collection/ReviewSection";
+import QualitySection from "@/components/collection/QualitySection";
 import ContactSection from "@/components/collection/ContactSection";
 
 export default function CollectionPage() {
@@ -40,6 +40,17 @@ export default function CollectionPage() {
     fetchProducts();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="bg-black/5 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4" />
+          <p className="text-black">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-black/5 py-24 space-y-24 lg:space-y-32">
       <div className="max-w-2xl mx-auto text-center pt-24 px-6 space-y-8">
@@ -73,21 +84,14 @@ export default function CollectionPage() {
           />
         </div>
 
-        {loading ? (
-          <div className="text-center py-24">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4" />
-            <p className="text-black/70">Loading products...</p>
-          </div>
-        ) : (
-          <CollectionContent
-            filteredProducts={filteredProducts}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-          />
-        )}
+        <CollectionContent
+          filteredProducts={filteredProducts}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+        />
       </div>
 
-      <ReviewSection />
+      <QualitySection />
       <ContactSection />
     </div>
   );

@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Product } from "@/types/product";
 
-import CoffeeCraftSection from "@/components/product/CoffeeCraftSection";
-import FlavourSection from "@/components/product/FlavourSection";
-import CoffeeMoments from "@/components/product/CoffeeMoments";
-import ProductSection from "@/components/product/ProductSection";
+import CoffeeCraftSection from "@/components/collection[id]/CoffeeCraftSection";
+import FlavourSection from "@/components/collection[id]/FlavourSection";
+import CoffeeMoments from "@/components/collection[id]/CoffeeMoments";
+import ProductSection from "@/components/collection[id]/ProductSection";
 
 export default function ProductPage() {
   const params = useParams();
