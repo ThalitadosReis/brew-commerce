@@ -46,7 +46,7 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="bg-black/5 py-24 space-y-24 lg:space-y-32">
+    <div className="bg-black/5 py-24 space-y-24">
       <ProductSection product={product} />
       <CoffeeCraftSection />
       <FlavourSection />

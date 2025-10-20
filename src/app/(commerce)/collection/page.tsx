@@ -52,12 +52,12 @@ export default function CollectionPage() {
   }
 
   return (
-    <div className="bg-black/5 py-24 space-y-24 lg:space-y-32">
+    <div className="bg-black/5 py-24 space-y-24">
       <div className="max-w-2xl mx-auto text-center pt-24 px-6 space-y-8">
         <h1 className="text-5xl md:text-6xl font-heading text-black">
           Craft coffee selection
         </h1>
-        <p className="text-sm font-body text-black/70">
+        <p className="text-sm font-body">
           {`Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions.`}
         </p>
       </div>

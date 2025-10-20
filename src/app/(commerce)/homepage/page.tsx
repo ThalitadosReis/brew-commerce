@@ -35,7 +35,7 @@ export default function Homepage() {
 
   return (
     <>
-      <div className="bg-black/5 pb-24 space-y-24 lg:space-y-32">
+      <div className="bg-black/5 pb-24 space-y-24">
         <div ref={heroRef}>
           <HeroSection />
         </div>

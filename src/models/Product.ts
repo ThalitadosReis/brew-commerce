@@ -10,7 +10,6 @@ export interface IProduct {
   name: string;
   description: string;
   price: number;
-  image: string;
   images: string[];
   category: string;
   country: string;
@@ -34,7 +33,6 @@ const ProductSchema = new Schema<IProduct>(
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: false, default: 0 },
-    image: { type: String, required: true },
     images: { type: [String], default: [] },
     category: { type: String, required: true },
     country: { type: String, required: true },

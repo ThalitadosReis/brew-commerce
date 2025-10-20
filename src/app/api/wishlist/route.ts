@@ -28,17 +28,11 @@ export async function GET() {
         );
         if (!product) return null;
 
-        const productImages = product.images?.length
-          ? product.images
-          : product.image
-          ? [product.image]
-          : [];
-
         return {
           id: product._id.toString(),
           name: product.name,
           price: product.price,
-          images: productImages,
+          images: product.images || [],
           country: product.country,
           addedAt: item.addedAt || new Date(),
         };

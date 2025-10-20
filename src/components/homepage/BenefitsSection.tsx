@@ -49,7 +49,7 @@ export default function BenefitsSection() {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
               Highest grade arabica beans
             </h2>
-            <p className="font-body text-black/70">
+            <p className="font-body">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit
             </p>
           </div>

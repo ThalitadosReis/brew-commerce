@@ -3,13 +3,17 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { SortDropdown, SortOption } from "@/components/Filter";
-import { CaretRightIcon } from "@phosphor-icons/react";
-import ImageCard from "@/components/ImageCard";
+import { SortDropdown, SortOption } from "@/components/collection/Filter";
+import ImageCard from "@/components/collection/ImageCard";
+import { CaretRightIcon, XIcon } from "@phosphor-icons/react";
+import Image from "next/image";
+import Head from "next/head";
+
+const image =
+  "https://images.pexels.com/photos/7541876/pexels-photo-7541876.jpeg";
 
 export default function FavoritesPage() {
   const { wishlist, removeFromWishlist, loading } = useWishlist();
-
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
 
   const sortedWishlist = useMemo(() => {
@@ -29,93 +33,107 @@ export default function FavoritesPage() {
 
   if (loading) {
     return (
-      <section className="min-h-screen bg-secondary/10 py-20">
-        <div className="max-w-7xl mx-auto px-6 py-10">
-          <h1 className="font-display italic text-5xl md:text-6xl lg:text-7xl text-center mb-8">
-            Favorites
-          </h1>
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-secondary/70">Loading your favorites...</p>
-          </div>
+      <div className="bg-black/5 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4" />
+          <p className="text-black">Loading your favorites...</p>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section className="min-h-screen bg-secondary/10 py-20">
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* header */}
-        <h1 className="font-display italic text-5xl md:text-6xl lg:text-7xl text-center mb-8">
-          Favorites
-        </h1>
+    <>
+      <Head>
+        <link rel="preload" as="image" href={image} />
+      </Head>
 
-        {/* breadcrumb + sort */}
-        <div className="flex items-center justify-between m-4">
-          <div className="flex gap-2 items-center text-sm">
-            <Link
-              href="/"
-              className="text-secondary/70 hover:text-primary cursor-pointer"
-            >
-              Home
-            </Link>
-            <CaretRightIcon
-              size={12}
-              weight="light"
-              className="text-secondary/70"
-            />
-            <Link
-              href="/collection"
-              className="text-secondary/70 hover:text-primary cursor-pointer"
-            >
-              Shop
-            </Link>
-            <CaretRightIcon
-              size={12}
-              weight="light"
-              className="text-secondary/70"
-            />
-            <span className="text-primary underline">Favorites</span>
-          </div>
-
-          <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
+      <div className="bg-black/5 py-24 space-y-24">
+        <div className="max-w-2xl mx-auto text-center pt-24 px-6 space-y-8">
+          <h1 className="text-5xl md:text-6xl font-heading text-black">
+            Favourites
+          </h1>
+          <p className="text-sm font-body">
+            Your carefully selected coffee selection tells a story of taste and
+            passion.
+          </p>
         </div>
 
-        {/* content */}
-        {sortedWishlist.length > 0 ? (
-          <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedWishlist.map((product) => (
-              <ImageCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                images={product.images}
-                price={product.price}
-                country={product.country}
-                isInWishlist={true}
-                onToggleWishlist={() => removeFromWishlist(product.id)}
+        <section className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-end mb-4">
+            <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
+          </div>
+
+          {sortedWishlist.length > 0 ? (
+            <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6">
+              {sortedWishlist.map((product) => (
+                <div key={product.id} className="relative group">
+                  <ImageCard
+                    id={product.id}
+                    name={product.name}
+                    images={product.images}
+                    price={product.price}
+                    country={product.country}
+                  />
+                  <button
+                    onClick={() => removeFromWishlist(product.id)}
+                    className="absolute top-4 right-4 hover:opacity-70"
+                  >
+                    <XIcon size={20} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-24 bg-black/10">
+              <p className="text-body text-black/70 mb-4">
+                No favorites yet
+                <br />
+                Start adding products to your wishlist
+              </p>
+              <Link
+                href="/collection"
+                className="inline-flex items-center gap-2 text-sm font-body relative group mt-8"
+              >
+                Start shopping
+                <CaretRightIcon className="transition-transform duration-300 ease-out group-hover:translate-x-1" />
+              </Link>
+            </div>
+          )}
+        </section>
+
+        <section className="max-w-7xl mx-auto px-6">
+          <div className="grid auto-cols-fr grid-cols-1 overflow-hidden md:grid-cols-2 gap-8">
+            <div className="max-w-lg m-auto space-y-4">
+              <h2 className="text-4xl lg:text-5xl font-heading">
+                Ready to brew your favorites?
+              </h2>
+              <p className="font-body text-black/70">
+                Transform your saved selections into a delicious reality. Each
+                coffee tells a story waiting to be savored.
+              </p>
+              <Link
+                href="/collection"
+                className="block w-fit bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
+              >
+                Explore more
+              </Link>
+            </div>
+
+            <div className="relative aspect-square">
+              <Image
+                src={image}
+                alt="Packing coffee beans"
+                width={600}
+                height={400}
+                className="w-full h-full object-cover"
+                priority
               />
-            ))}
+              <div className="absolute inset-0 bg-black/30" />
+            </div>
           </div>
-        ) : (
-          <div className="text-center py-20 rounded-xl bg-accent/10">
-            <p className="text-secondary/70 mb-4">
-              No favorites yet
-              <br />
-              Start adding products to your wishlist
-            </p>
-            <Link
-              href="/collection"
-              className="inline-block text-sm relative group"
-            >
-              Shop Collection
-              <span className="absolute bottom-0 left-0 w-full h-px bg-secondary" />
-              <span className="absolute bottom-0 right-0 w-0 h-px bg-muted transition-all duration-300 ease-out group-hover:w-2/3" />
-            </Link>
-          </div>
-        )}
+        </section>
       </div>
-    </section>
+    </>
   );
 }
