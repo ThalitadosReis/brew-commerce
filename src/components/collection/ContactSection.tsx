@@ -2,10 +2,10 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
-const image =
-  "https://images.pexels.com/photos/4820846/pexels-photo-4820846.jpeg";
-
 export default function ContactSection() {
+  const image =
+    "https://images.pexels.com/photos/4820846/pexels-photo-4820846.jpeg";
+
   return (
     <>
       <Head>

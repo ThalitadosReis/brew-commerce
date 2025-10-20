@@ -2,54 +2,54 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 
-const teamMembers = [
-  {
-    name: "Emma Rodriguez",
-    title: "Founder and CEO",
-    description:
-      "A coffee lover who turned her passion into a mission to bring pure, exceptional coffee to everyone.",
-    image: "https://randomuser.me/api/portraits/women/45.jpg",
-  },
-  {
-    name: "Jack Thompson",
-    title: "Head Roaster",
-    description:
-      "A master of flavor who understands the art of transforming raw beans into perfect roasts.",
-    image: "https://randomuser.me/api/portraits/men/31.jpg",
-  },
-  {
-    name: "Sarah Kim",
-    title: "Sustainability Director",
-    description:
-      "Ensuring our coffee supports farmers and protects the environment with every batch.",
-    image: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    name: "Michael Chen",
-    title: "Head of Sourcing",
-    description:
-      "Traveling the world to find the most exceptional coffee beans and support local communities.",
-    image: "https://randomuser.me/api/portraits/men/67.jpg",
-  },
-  {
-    name: "David Martinez",
-    title: "Quality Control",
-    description:
-      "Tasting and testing every batch to guarantee the highest standards of flavor and quality.",
-    image: "https://randomuser.me/api/portraits/men/12.jpg",
-  },
-  {
-    name: "Olivia Parker",
-    title: "Customer Experience",
-    description:
-      "Passionate about connecting coffee lovers with their perfect brew and exceptional service.",
-    image: "https://randomuser.me/api/portraits/women/51.jpg",
-  },
-];
-
 export default function TeamSection() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const prevButtonRef = useRef<HTMLButtonElement>(null);
+
+  const teamMembers = [
+    {
+      name: "Emma Rodriguez",
+      title: "Founder and CEO",
+      description:
+        "A coffee lover who turned her passion into a mission to bring pure, exceptional coffee to everyone.",
+      image: "https://randomuser.me/api/portraits/women/45.jpg",
+    },
+    {
+      name: "Jack Thompson",
+      title: "Head Roaster",
+      description:
+        "A master of flavor who understands the art of transforming raw beans into perfect roasts.",
+      image: "https://randomuser.me/api/portraits/men/31.jpg",
+    },
+    {
+      name: "Sarah Kim",
+      title: "Sustainability Director",
+      description:
+        "Ensuring our coffee supports farmers and protects the environment with every batch.",
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
+    },
+    {
+      name: "Michael Chen",
+      title: "Head of Sourcing",
+      description:
+        "Traveling the world to find the most exceptional coffee beans and support local communities.",
+      image: "https://randomuser.me/api/portraits/men/67.jpg",
+    },
+    {
+      name: "David Martinez",
+      title: "Quality Control",
+      description:
+        "Tasting and testing every batch to guarantee the highest standards of flavor and quality.",
+      image: "https://randomuser.me/api/portraits/men/12.jpg",
+    },
+    {
+      name: "Olivia Parker",
+      title: "Customer Experience",
+      description:
+        "Passionate about connecting coffee lovers with their perfect brew and exceptional service.",
+      image: "https://randomuser.me/api/portraits/women/51.jpg",
+    },
+  ];
 
   const updatePrev = () => {
     if (!carouselRef.current || !prevButtonRef.current) return;
@@ -118,7 +118,7 @@ export default function TeamSection() {
   return (
     <section className="max-w-7xl mx-auto px-6">
       <div className="mb-12 lg:mb-24">
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="space-y-4">
           <h5 className="text-lg font-heading">Team</h5>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
             Our team

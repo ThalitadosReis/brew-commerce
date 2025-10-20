@@ -49,7 +49,7 @@ export default function CollectionContent({
             weight="light"
             className="mx-auto mb-2 text-black/70"
           />
-          <h3 className="font-heading text-2xl text-black">
+          <h3 className="font-heading text-2xl">
             No products found
           </h3>
           <p className="font-body text-black/70">Try adjusting your filters</p>
@@ -63,11 +63,7 @@ export default function CollectionContent({
                 key={product._id}
                 id={product._id}
                 name={product.name}
-                images={
-                  product.images && product.images.length > 0
-                    ? [product.image, ...product.images]
-                    : [product.image, product.image]
-                }
+                images={product.images}
                 price={product.price}
                 country={product.country}
               />

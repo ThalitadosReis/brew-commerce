@@ -2,41 +2,34 @@ import { useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
 
-type LocationType = {
-  name: string;
-  description: string;
-  image: string;
-  linkText: string;
-  mapLink: string;
-};
-
-const locations: LocationType[] = [
-  {
-    name: "Amsterdam",
-    description: "Our home base in the heart of Amsterdam's coffee culture.",
-    image: "https://images.pexels.com/photos/2031706/pexels-photo-2031706.jpeg",
-    linkText: "View office",
-    mapLink: "https://www.google.com/maps/place/Amsterdam,+Netherlands",
-  },
-  {
-    name: "Barcelona",
-    description: "Bringing coffee craft to the bustling streets.",
-    image:
-      "https://images.pexels.com/photos/21063441/pexels-photo-21063441.jpeg",
-    linkText: "View office",
-    mapLink: "https://www.google.com/maps/place/Barcelona,+Spain",
-  },
-  {
-    name: "Zürich",
-    description: "Sharing our coffee story in the Zürich's vibrant scene.",
-    image: "https://images.pexels.com/photos/773471/pexels-photo-773471.jpeg",
-    linkText: "View office",
-    mapLink: "https://www.google.com/maps/place/Z%C3%BCrich,+Switzerland",
-  },
-];
-
 export default function LocationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const locations = [
+    {
+      name: "Amsterdam",
+      description: "Our home base in the heart of Amsterdam's coffee culture.",
+      image:
+        "https://images.pexels.com/photos/2031706/pexels-photo-2031706.jpeg",
+      linkText: "View office",
+      mapLink: "https://www.google.com/maps/place/Amsterdam,+Netherlands",
+    },
+    {
+      name: "Barcelona",
+      description: "Bringing coffee craft to the bustling streets.",
+      image:
+        "https://images.pexels.com/photos/21063441/pexels-photo-21063441.jpeg",
+      linkText: "View office",
+      mapLink: "https://www.google.com/maps/place/Barcelona,+Spain",
+    },
+    {
+      name: "Zürich",
+      description: "Sharing our coffee story in the Zürich's vibrant scene.",
+      image: "https://images.pexels.com/photos/773471/pexels-photo-773471.jpeg",
+      linkText: "View office",
+      mapLink: "https://www.google.com/maps/place/Z%C3%BCrich,+Switzerland",
+    },
+  ];
 
   return (
     <>

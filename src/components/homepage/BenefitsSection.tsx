@@ -9,37 +9,37 @@ import {
   GearIcon,
 } from "@phosphor-icons/react";
 
-const imageSrc =
-  "https://images.pexels.com/photos/10433516/pexels-photo-10433516.jpeg";
-
-const benefits = [
-  {
-    title: "Why choose our coffee",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    icon: <CoffeeIcon size={40} weight="thin" />,
-  },
-  {
-    title: "Expert roasting",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    icon: <TimerIcon size={40} weight="thin" />,
-  },
-  {
-    title: "Sustainable practices",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    icon: <PlantIcon size={40} weight="thin" />,
-  },
-  {
-    title: "Crafted for your experience",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    icon: <GearIcon size={40} weight="thin" />,
-  },
-];
-
 export default function BenefitsSection() {
+  const image =
+    "https://images.pexels.com/photos/10433516/pexels-photo-10433516.jpeg";
+
+  const benefits = [
+    {
+      title: "Why choose our coffee",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      icon: <CoffeeIcon size={40} weight="thin" />,
+    },
+    {
+      title: "Expert roasting",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      icon: <TimerIcon size={40} weight="thin" />,
+    },
+    {
+      title: "Sustainable practices",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      icon: <PlantIcon size={40} weight="thin" />,
+    },
+    {
+      title: "Crafted for your experience",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      icon: <GearIcon size={40} weight="thin" />,
+    },
+  ];
+
   return (
     <>
       <Head>
-        <link rel="preload" as="image" href={imageSrc} />
+        <link rel="preload" as="image" href={image} />
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
@@ -77,7 +77,7 @@ export default function BenefitsSection() {
           <div className="relative order-last w-full sm:col-span-2 lg:order-none lg:col-span-1">
             <div className="relative h-[500px] w-full overflow-hidden">
               <Image
-                src={imageSrc}
+                src={image}
                 alt="Coffee beans in a cup, illustrating benefits section"
                 fill
                 className="object-cover"

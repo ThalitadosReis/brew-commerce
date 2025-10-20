@@ -3,17 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { CaretRightIcon } from "@phosphor-icons/react";
 
-const imageUrls = [
-  "https://images.pexels.com/photos/7125492/pexels-photo-7125492.jpeg",
-  "https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg",
-  "https://images.pexels.com/photos/7175997/pexels-photo-7175997.jpeg",
-];
-
 export default function FeaturesSection() {
+  const images = [
+    "https://images.pexels.com/photos/7125492/pexels-photo-7125492.jpeg",
+    "https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg",
+    "https://images.pexels.com/photos/7175997/pexels-photo-7175997.jpeg",
+  ];
+
   return (
     <>
       <Head>
-        {imageUrls.map((url) => (
+        {images.map((url) => (
           <link key={url} rel="preload" as="image" href={url} />
         ))}
       </Head>
@@ -61,7 +61,7 @@ export default function FeaturesSection() {
               </div>
               <div className="flex-shrink-0 w-full md:w-1/2">
                 <Image
-                  src={imageUrls[0]}
+                  src={images[0]}
                   alt="Image 1"
                   width={400}
                   height={600}
@@ -72,7 +72,7 @@ export default function FeaturesSection() {
             </div>
 
             {/* card 2 */}
-            <div className="flex flex-col md:flex-row border border-primary/20 overflow-hidden">
+            <div className="flex flex-col md:flex-row border border-black/20 overflow-hidden">
               <div className="flex flex-col justify-center flex-1">
                 <div className="p-6 space-y-4">
                   <p className="mb-1 font-heading">Craft</p>
@@ -98,7 +98,7 @@ export default function FeaturesSection() {
               </div>
               <div className="flex-shrink-0 w-full md:w-1/2">
                 <Image
-                  src={imageUrls[1]}
+                  src={images[1]}
                   alt="Image 2"
                   width={400}
                   height={600}
@@ -110,7 +110,7 @@ export default function FeaturesSection() {
           </div>
 
           {/* card 3 */}
-          <div className="flex flex-col border border-primary/20 overflow-hidden">
+          <div className="flex flex-col border border-black/20 overflow-hidden">
             <div className="flex flex-col justify-center flex-1">
               <div className="p-6 space-y-4">
                 <p className="font-heading mb-1">brew.</p>
@@ -139,7 +139,7 @@ export default function FeaturesSection() {
 
             <div className="relative w-full h-[50%] min-h-[300px]">
               <Image
-                src={imageUrls[2]}
+                src={images[2]}
                 alt="Image 3"
                 fill
                 className="object-cover object-[25%_42%]"

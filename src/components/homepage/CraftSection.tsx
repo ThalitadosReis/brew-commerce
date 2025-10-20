@@ -3,42 +3,46 @@ import Image from "next/image";
 import Link from "next/link";
 import { CaretRightIcon } from "@phosphor-icons/react";
 
-const crafts = [
-  {
-    tag: "Craft",
-    image: "https://images.pexels.com/photos/7175974/pexels-photo-7175974.jpeg",
-    title: "Roasted with intention, brewed with care",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    link: "/about",
-    buttonText: "Our Story",
-  },
-  {
-    tag: "Passion",
-    image: "https://images.pexels.com/photos/6205781/pexels-photo-6205781.jpeg",
-    title: "Connecting coffee lovers with global traditions",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    link: "/collection",
-    buttonText: "Our Collection",
-  },
-  {
-    tag: "Heritage",
-    image: "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
-    title: "Sustainable practices that support global communities",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    link: "/about",
-    buttonText: "Learn More",
-  },
-  {
-    tag: "Innovation",
-    image: "https://images.pexels.com/photos/6280321/pexels-photo-6280321.jpeg",
-    title: "Reimagining coffee through modern techniques",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-    link: "/contact",
-    buttonText: "Get in Touch",
-  },
-];
-
 export default function CraftSection() {
+  const crafts = [
+    {
+      tag: "Craft",
+      image:
+        "https://images.pexels.com/photos/7175974/pexels-photo-7175974.jpeg",
+      title: "Roasted with intention, brewed with care",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      link: "/about",
+      buttonText: "Our Story",
+    },
+    {
+      tag: "Passion",
+      image:
+        "https://images.pexels.com/photos/6205781/pexels-photo-6205781.jpeg",
+      title: "Connecting coffee lovers with global traditions",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      link: "/collection",
+      buttonText: "Our Collection",
+    },
+    {
+      tag: "Heritage",
+      image:
+        "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
+      title: "Sustainable practices that support global communities",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      link: "/about",
+      buttonText: "Learn More",
+    },
+    {
+      tag: "Innovation",
+      image:
+        "https://images.pexels.com/photos/6280321/pexels-photo-6280321.jpeg",
+      title: "Reimagining coffee through modern techniques",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      link: "/contact",
+      buttonText: "Get in Touch",
+    },
+  ];
+  
   return (
     <>
       <Head>

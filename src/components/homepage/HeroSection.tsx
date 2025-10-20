@@ -3,11 +3,11 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
-const imageUrl =
-  "https://res.cloudinary.com/douen1dwv/image/upload/v1758990337/default/brew..jpg";
-
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
+
+  const image =
+    "https://res.cloudinary.com/douen1dwv/image/upload/v1758990337/default/brew..jpg";
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -18,7 +18,7 @@ export default function HeroSection() {
   return (
     <>
       <Head>
-        <link rel="preload" as="image" href={imageUrl} />
+        <link rel="preload" as="image" href={image} />
       </Head>
 
       <section className="relative min-h-screen flex items-center px-8 md:px-16 lg:px-24 overflow-hidden">
@@ -27,7 +27,7 @@ export default function HeroSection() {
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
           <Image
-            src={imageUrl}
+            src={image}
             alt="Coffee background"
             fill
             className="object-cover w-full h-full"

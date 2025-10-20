@@ -2,14 +2,14 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
-const imageUrl =
-  "https://images.pexels.com/photos/4820847/pexels-photo-4820847.jpeg";
-
 export default function ContactSection() {
+  const image =
+    "https://images.pexels.com/photos/4820847/pexels-photo-4820847.jpeg";
+
   return (
     <>
       <Head>
-        <link rel="preload" as="image" href={imageUrl} />
+        <link rel="preload" as="image" href={image} />
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
@@ -44,7 +44,7 @@ export default function ContactSection() {
 
           <div className="relative flex items-center justify-center">
             <Image
-              src={imageUrl}
+              src={image}
               alt="Packing coffee beans"
               width={800}
               height={600}

@@ -1,12 +1,12 @@
 import Head from "next/head";
 import Image from "next/image";
 
-const images = [
-  "https://images.pexels.com/photos/7125434/pexels-photo-7125434.jpeg",
-  "https://images.pexels.com/photos/29745520/pexels-photo-29745520.jpeg",
-];
-
 export default function AboutSection() {
+  const images = [
+    "https://images.pexels.com/photos/7125434/pexels-photo-7125434.jpeg",
+    "https://images.pexels.com/photos/29745520/pexels-photo-29745520.jpeg",
+  ];
+
   return (
     <>
       <Head>

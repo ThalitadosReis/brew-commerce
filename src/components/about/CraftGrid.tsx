@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import Link from "next/link";
 
 import {
@@ -8,31 +7,25 @@ import {
   SealCheckIcon,
 } from "@phosphor-icons/react";
 
-type CraftItemType = {
-  heading: string;
-  text: string;
-  icon: ReactNode;
-};
-
-const craftItems: CraftItemType[] = [
-  {
-    heading: "Sourcing the Finest Beans",
-    text: "We work directly with farmers who share our commitment to quality and sustainability.",
-    icon: <PlantIcon size={32} weight="light" />,
-  },
-  {
-    heading: "Roasting with Precision",
-    text: "Each batch is roasted to highlight the unique characteristics of its origin.",
-    icon: <FireIcon size={32} weight="light" />,
-  },
-  {
-    heading: "Quality Without Compromise",
-    text: "We taste and test every batch; only the best reaches your cup.",
-    icon: <SealCheckIcon size={32} weight="light" />,
-  },
-];
-
 export default function CraftGrid() {
+  const craftItems = [
+    {
+      heading: "Sourcing the Finest Beans",
+      text: "We work directly with farmers who share our commitment to quality and sustainability.",
+      icon: <PlantIcon size={32} weight="light" />,
+    },
+    {
+      heading: "Roasting with Precision",
+      text: "Each batch is roasted to highlight the unique characteristics of its origin.",
+      icon: <FireIcon size={32} weight="light" />,
+    },
+    {
+      heading: "Quality Without Compromise",
+      text: "We taste and test every batch; only the best reaches your cup.",
+      icon: <SealCheckIcon size={32} weight="light" />,
+    },
+  ];
+
   return (
     <section className="max-w-7xl mx-auto px-6">
       <div className="mb-12 lg:mb-24">

@@ -2,17 +2,17 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Head from "next/head";
 
-const images = [
-  "https://images.pexels.com/photos/13819623/pexels-photo-13819623.jpeg",
-  "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
-  "https://images.pexels.com/photos/7125433/pexels-photo-7125433.jpeg",
-  "https://images.pexels.com/photos/7125565/pexels-photo-7125565.jpeg",
-  "https://images.pexels.com/photos/7125756/pexels-photo-7125756.jpeg",
-  "https://images.pexels.com/photos/6439132/pexels-photo-6439132.jpeg",
-];
-
 export default function StorySection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const images = [
+    "https://images.pexels.com/photos/13819623/pexels-photo-13819623.jpeg",
+    "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
+    "https://images.pexels.com/photos/7125433/pexels-photo-7125433.jpeg",
+    "https://images.pexels.com/photos/7125565/pexels-photo-7125565.jpeg",
+    "https://images.pexels.com/photos/7125756/pexels-photo-7125756.jpeg",
+    "https://images.pexels.com/photos/6439132/pexels-photo-6439132.jpeg",
+  ];
 
   useEffect(() => {
     const container = scrollRef.current;
