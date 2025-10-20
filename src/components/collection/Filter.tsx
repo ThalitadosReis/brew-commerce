@@ -40,14 +40,14 @@ export function SortDropdown({
   return (
     <div className="relative inline-flex items-center">
       <span className="text-sm select-none pointer-events-none">
-        <span className="text-secondary/70">Sort by </span>
+        <span className="text-black/70">Sort by </span>
         {options.find((o) => o.value === sortBy)?.label}
       </span>
 
       <CaretDownIcon
         size={12}
         weight="light"
-        className="ml-1 text-secondary pointer-events-none"
+        className="ml-1 pointer-events-none"
       />
 
       {/* invisible native select */}
@@ -146,14 +146,14 @@ export default function Filter({
   ]);
 
   return (
-    <div className="lg:w-42">
-      <div className="w-full space-y-8">
+    <div className="lg:w-40 pb-8">
+      <div className="w-full space-y-8 mb-8">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className="w-full p-4 lg:p-0 flex items-center justify-between bg-secondary/10 lg:bg-transparent rounded-xl lg:rounded-none transition-colors lg:mb-2"
+          className="w-full p-4 lg:p-0 flex items-center justify-between bg-black/5 lg:bg-transparent transition-colors"
         >
           <div className="flex items-center gap-2">
-            <span className="text-xl font-display italic">Filters</span>
+            <span className="text-xl font-heading">Filters</span>
             <CaretDownIcon
               size={12}
               weight="light"
@@ -169,7 +169,7 @@ export default function Filter({
                 e.stopPropagation();
                 resetFilters();
               }}
-              className="underline text-sm text-secondary/70 hover:text-primary"
+              className="text-xs text-black/70 hover:underline"
             >
               Reset
             </span>
@@ -182,39 +182,49 @@ export default function Filter({
           }`}
         >
           {/* size */}
-          <div className="my-4">
-            <span className="text-lg font-light font-display italic text-secondary/70">
-              Size
-            </span>
-            <div className="w-full flex lg:grid lg:grid-cols-2 gap-2 mt-2">
-              {sizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() =>
-                    selectedSizes.includes(size)
-                      ? setSelectedSizes(
-                          selectedSizes.filter((s) => s !== size)
-                        )
-                      : setSelectedSizes([...selectedSizes, size])
-                  }
-                  className={`w-full px-6 py-2 text-xs rounded-lg transition-colors ${
-                    selectedSizes.includes(size)
-                      ? "bg-accent text-white hover:opacity-80"
-                      : "bg-accent/10 hover:bg-accent/20"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
+          <div className="my-6">
+            <h3 className="font-heading">Size</h3>
+            <div className="w-full flex flex-col gap-2 mt-2">
+              {sizes.map((size) => {
+                const isSelected = selectedSizes.includes(size);
+                return (
+                  <button
+                    key={size}
+                    onClick={() =>
+                      isSelected
+                        ? setSelectedSizes(
+                            selectedSizes.filter((s) => s !== size)
+                          )
+                        : setSelectedSizes([...selectedSizes, size])
+                    }
+                    className="flex items-center gap-2 text-sm transition-colors"
+                  >
+                    <span
+                      className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
+                        isSelected
+                          ? "border-black bg-black"
+                          : "border-black/20 hover:border-black"
+                      }`}
+                    >
+                      {isSelected && (
+                        <CheckIcon
+                          size={12}
+                          weight="bold"
+                          className="text-white"
+                        />
+                      )}
+                    </span>
+                    <span>{size}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* roast */}
           {availableRoasts.length > 0 && (
-            <div className="my-4">
-              <span className="text-lg font-light font-display italic text-secondary/70">
-                Roast
-              </span>
+            <div className="my-6">
+              <h3 className="font-heading">Roast</h3>
               <div className="w-full flex flex-col gap-2 mt-2">
                 {availableRoasts.map((roast) => {
                   const isSelected = selectedRoasts.includes(roast);
@@ -228,20 +238,20 @@ export default function Filter({
                             )
                           : setSelectedRoasts([...selectedRoasts, roast])
                       }
-                      className="flex items-center gap-2 text-sm text-primary transition-colors"
+                      className="flex items-center gap-2 text-sm transition-colors"
                     >
                       <span
                         className={`w-5 h-5 flex items-center justify-center border-1 rounded-sm ${
                           isSelected
-                            ? "border-accent"
-                            : "border-secondary/20 hover:border-accent"
+                            ? "border-black bg-black"
+                            : "border-black/20 hover:border-black"
                         }`}
                       >
                         {isSelected && (
                           <CheckIcon
                             size={12}
                             weight="bold"
-                            className="text-accent"
+                            className="text-white"
                           />
                         )}
                       </span>
@@ -255,10 +265,8 @@ export default function Filter({
 
           {/* countries */}
           {availableCountries.length > 0 && (
-            <div className="my-4">
-              <span className="text-lg font-light font-display italic text-secondary/70">
-                Country
-              </span>
+            <div>
+              <span className="font-heading">Country</span>
               <div className="w-full flex flex-col gap-2 mt-2">
                 {availableCountries.map((country) => {
                   const isSelected = selectedCountries.includes(country);
@@ -275,20 +283,20 @@ export default function Filter({
                               country,
                             ])
                       }
-                      className="flex items-center gap-2 text-sm text-primary transition-colors"
+                      className="flex items-center gap-2 text-sm transition-colors"
                     >
                       <span
                         className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
                           isSelected
-                            ? "border-accent"
-                            : "border-secondary/20 hover:border-accent"
+                            ? "border-black bg-black"
+                            : "border-black/20 hover:border-black"
                         }`}
                       >
                         {isSelected && (
                           <CheckIcon
                             size={12}
                             weight="bold"
-                            className="text-accent"
+                            className="text-white"
                           />
                         )}
                       </span>

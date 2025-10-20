@@ -21,7 +21,7 @@ export default function FeaturesSection() {
       <section className="max-w-7xl mx-auto px-6">
         <div className="mb-12 lg:mb-24">
           <div className="mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">Our craft</h5>
+            <h5 className="mb-1 text-lg font-heading">Our craft</h5>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
               Exceptional coffee experiences
             </h2>

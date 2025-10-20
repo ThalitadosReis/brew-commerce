@@ -65,7 +65,7 @@ export default function CraftSection() {
                 <div className="flex items-center gap-4">
                   <Link
                     href={item.link}
-                    className="inline-flex items-center justify-center bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
+                    className="bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
                   >
                     {item.buttonText}
                   </Link>

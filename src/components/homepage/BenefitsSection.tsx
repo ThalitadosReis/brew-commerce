@@ -108,7 +108,7 @@ export default function BenefitsSection() {
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/collection"
-            className="inline-flex items-center justify-center bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
+            className="bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
           >
             Learn more
           </Link>
