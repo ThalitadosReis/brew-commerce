@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAdmin, AuthenticatedRequest } from "@/middleware/auth";
 import connectDB from "@/lib/mongodb";
-import Order from "@/models/Order";
-import Product from "@/models/Product";
+import Order, { IOrder } from "@/models/Order";
+import Product, { IProduct } from "@/models/Product";
+
+interface OrderItem {
+  productId: string;
+  size?: string;
+  quantity: number;
+}
 
 // admin get all orders
 async function getOrders(request: AuthenticatedRequest) {
   try {
     await connectDB();
-    const orders = await Order.find().sort({ createdAt: -1 }).lean();
-
+    const orders = await Order.find().sort({ createdAt: -1 }).lean<IOrder[]>();
     return NextResponse.json({ orders });
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -25,6 +30,7 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB();
     const body = await request.json();
+
     const {
       sessionId,
       items,
@@ -33,19 +39,25 @@ export async function POST(request: NextRequest) {
       total,
       userId,
       customerEmail,
-      shippingAddress,
     } = body;
 
     // validate required fields
-    if (!sessionId || !items || items.length === 0) {
+    if (!sessionId || typeof sessionId !== "string") {
       return NextResponse.json(
-        { error: "Missing required fields: sessionId and items" },
+        { error: "Valid sessionId is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { error: "Items array is required and must not be empty" },
         { status: 400 }
       );
     }
 
     // check if order already exists
-    const existingOrder = await Order.findOne({ sessionId });
+    const existingOrder = await Order.findOne({ sessionId }).lean<IOrder>();
     if (existingOrder) {
       return NextResponse.json(
         { error: "Order already exists", order: existingOrder },
@@ -54,28 +66,28 @@ export async function POST(request: NextRequest) {
     }
 
     // update stock for each item
-    for (const item of items) {
-      const product = await Product.findById(item.productId);
+    for (const item of items as OrderItem[]) {
+      const product = await Product.findById(item.productId).lean<IProduct>();
 
       if (!product) {
         console.warn(`Product not found: ${item.productId}`);
         continue;
       }
 
-      // find the specific size and decrease its stock
-      if (item.size) {
-        const sizeIndex = product.sizes.findIndex(
-          (s: { size: string }) => s.size === item.size
-        );
+      if (item.size && item.size !== "default") {
+        const sizeIndex = product.sizes.findIndex((s) => s.size === item.size);
 
         if (sizeIndex !== -1) {
           const currentStock = product.sizes[sizeIndex].stock;
           const newStock = Math.max(0, currentStock - item.quantity);
-          product.sizes[sizeIndex].stock = newStock;
 
-          await product.save();
-          console.log(
-            `Updated stock for ${product.name} (${item.size}): ${currentStock} → ${newStock}`
+          await Product.updateOne(
+            { _id: item.productId },
+            { $set: { [`sizes.${sizeIndex}.stock`]: newStock } }
+          );
+        } else {
+          console.warn(
+            `Size ${item.size} not found for product ${product.name}`
           );
         }
       }
@@ -90,7 +102,6 @@ export async function POST(request: NextRequest) {
       total: total || 0,
       userId,
       customerEmail,
-      shippingAddress,
       status: "completed",
     });
 
@@ -100,8 +111,15 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Error creating order:", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to create order";
+
     return NextResponse.json(
-      { error: "Failed to create order" },
+      {
+        error: errorMessage,
+        details: error instanceof Error ? error.toString() : String(error),
+      },
       { status: 500 }
     );
   }

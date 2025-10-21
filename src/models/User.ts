@@ -1,6 +1,7 @@
-import mongoose, { Schema, models } from "mongoose";
+import mongoose, { Schema, models, Types } from "mongoose";
 
 export interface IUser {
+  _id?: Types.ObjectId;
   email: string;
   name: string;
   password: string;
@@ -8,7 +9,8 @@ export interface IUser {
   role: "user" | "admin";
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
-  createdAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -17,10 +19,14 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
+      trim: true,
+      lowercase: true,
+      index: true,
     },
     name: {
       type: String,
       required: true,
+      trim: true,
     },
     password: {
       type: String,

@@ -3,42 +3,50 @@ import { getServerStripe, formatAmountForStripe } from "@/lib/stripe";
 
 const stripe = getServerStripe();
 
+interface CheckoutItem {
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { items } = await req.json();
+    const { items, email } = await req.json();
 
-    if (!items || items.length === 0) {
+    // Validate items
+    if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "No items provided" }, { status: 400 });
     }
 
-    // calculate subtotal
+    // Validate email
+    if (!email || typeof email !== "string") {
+      return NextResponse.json(
+        { error: "Valid email is required" },
+        { status: 400 }
+      );
+    }
+
+    // Calculate subtotal
     const subtotal = items.reduce(
-      (sum: number, item: { price: number; quantity: number }) =>
-        sum + item.price * item.quantity,
+      (sum: number, item: CheckoutItem) => sum + item.price * item.quantity,
       0
     );
 
-    // create line items for Stripe
-    const lineItems = items.map(
-      (item: {
-        name: string;
-        description: string;
-        price: number;
-        quantity: number;
-      }) => ({
-        price_data: {
-          currency: "chf",
-          product_data: {
-            name: item.name,
-            description: item.description,
-          },
-          unit_amount: formatAmountForStripe(item.price),
+    // Create line items for Stripe
+    const lineItems = items.map((item: CheckoutItem) => ({
+      price_data: {
+        currency: "chf",
+        product_data: {
+          name: item.name,
+          description: item.description,
         },
-        quantity: item.quantity,
-      })
-    );
+        unit_amount: formatAmountForStripe(item.price),
+      },
+      quantity: item.quantity,
+    }));
 
-    // determine shipping options based on subtotal
+    // Determine shipping options based on subtotal
     const shippingOptions =
       subtotal >= 50
         ? [
@@ -86,19 +94,27 @@ export async function POST(req: NextRequest) {
             },
           ];
 
-    // create checkout session
+    // Get origin for redirect URLs
+    const origin = req.headers.get("origin");
+    if (!origin) {
+      return NextResponse.json(
+        { error: "Origin header is required" },
+        { status: 400 }
+      );
+    }
+
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${req.headers.get(
-        "origin"
-      )}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/cart`,
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/cart`,
       shipping_address_collection: {
         allowed_countries: ["CH", "DE", "AT", "FR", "IT"],
       },
       shipping_options: shippingOptions,
+      customer_email: email,
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
@@ -106,7 +122,7 @@ export async function POST(req: NextRequest) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
 
-    console.error("Stripe error:", error);
+    console.error("Checkout error:", error);
 
     return NextResponse.json({ error: message }, { status: 500 });
   }

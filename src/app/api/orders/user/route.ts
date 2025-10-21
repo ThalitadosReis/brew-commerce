@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import connectDB from "@/lib/mongodb";
-import Order from "@/models/Order";
+import Order, { IOrder } from "@/models/Order";
 
 // get orders for current user
 export async function GET(request: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     // fetch orders for this user's email
     const orders = await Order.find({ customerEmail: email })
       .sort({ createdAt: -1 })
-      .lean();
+      .lean<IOrder[]>();
 
     return NextResponse.json({ orders });
   } catch (error) {
