@@ -8,8 +8,8 @@ export interface IWishlistItem {
 export interface IWishlist extends Document {
   userId: string; // clerk user ID
   items: IWishlistItem[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const WishlistItemSchema = new Schema<IWishlistItem>(

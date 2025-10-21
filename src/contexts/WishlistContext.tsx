@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Product } from "@/types/cart";
+import { Product } from "@/types/product";
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -61,7 +61,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
                 fetch("/api/wishlist", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ productId: item.id }),
+                  body: JSON.stringify({ productId: item._id }),
                 }).catch((err) => console.error("Failed to migrate item:", err))
               );
 
@@ -119,12 +119,12 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         const response = await fetch("/api/wishlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: product.id }),
+          body: JSON.stringify({ productId: product._id }),
         });
 
         if (response.ok) {
           setWishlist((prev) => {
-            if (!prev.find((item) => item.id === product.id)) {
+            if (!prev.find((item) => item._id === product._id)) {
               return [...prev, product];
             }
             return prev;
@@ -138,7 +138,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     } else {
       // add to localStorage
       setWishlist((prev) => {
-        if (!prev.find((item) => item.id === product.id)) {
+        if (!prev.find((item) => item._id === product._id)) {
           return [...prev, product];
         }
         return prev;
@@ -155,7 +155,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (response.ok) {
-          setWishlist((prev) => prev.filter((item) => item.id !== productId));
+          setWishlist((prev) => prev.filter((item) => item._id !== productId));
         } else {
           console.error("Failed to remove from wishlist:", response.status);
         }
@@ -164,12 +164,12 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       }
     } else {
       // remove from localStorage
-      setWishlist((prev) => prev.filter((item) => item.id !== productId));
+      setWishlist((prev) => prev.filter((item) => item._id !== productId));
     }
   };
 
   const isInWishlist = (productId: string | number) => {
-    return wishlist.some((item) => item.id === productId);
+    return wishlist.some((item) => item._id === productId);
   };
 
   const getTotalWishlistItems = () => {

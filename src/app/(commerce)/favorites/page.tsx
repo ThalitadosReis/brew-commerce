@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
 import ImageCard from "@/components/collection/ImageCard";
-import { CaretRightIcon, XIcon } from "@phosphor-icons/react";
+import { CaretRightIcon } from "@phosphor-icons/react";
 import Image from "next/image";
 import Head from "next/head";
 
@@ -13,7 +13,7 @@ const image =
   "https://images.pexels.com/photos/7541876/pexels-photo-7541876.jpeg";
 
 export default function FavoritesPage() {
-  const { wishlist, removeFromWishlist, loading } = useWishlist();
+  const { wishlist, loading } = useWishlist();
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
 
   const sortedWishlist = useMemo(() => {
@@ -67,21 +67,15 @@ export default function FavoritesPage() {
           {sortedWishlist.length > 0 ? (
             <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedWishlist.map((product) => (
-                <div key={product.id} className="relative group">
-                  <ImageCard
-                    id={product.id}
-                    name={product.name}
-                    images={product.images}
-                    price={product.price}
-                    country={product.country}
-                  />
-                  <button
-                    onClick={() => removeFromWishlist(product.id)}
-                    className="absolute top-4 right-4 hover:opacity-70"
-                  >
-                    <XIcon size={20} />
-                  </button>
-                </div>
+                <ImageCard
+                  key={product._id}
+                  id={product._id}
+                  name={product.name}
+                  images={product.images}
+                  price={product.price}
+                  country={product.country}
+                  product={product}
+                />
               ))}
             </div>
           ) : (
