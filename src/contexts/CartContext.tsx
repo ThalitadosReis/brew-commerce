@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useEffect } from "react";
-import { CartItem, Product, CartContextType } from "@/types/cart";
+import { CartItem, Product, CartContextType } from "@/types/product";
 
 type CartAction =
   | { type: "ADD_TO_CART"; payload: CartItem }
@@ -81,6 +81,29 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// helper function to validate stock for selected sizes
+function validateStock(
+  selectedSizes: string[],
+  sizes: { size: string; stock: number; price: number }[],
+  quantity: number
+): { isValid: boolean; errorMessage?: string } {
+  for (const sizeStr of selectedSizes) {
+    const sizeData = sizes.find((s) => s.size === sizeStr);
+    if (!sizeData) {
+      console.warn(`Size ${sizeStr} not found in product`);
+      continue;
+    }
+
+    if (quantity > sizeData.stock) {
+      return {
+        isValid: false,
+        errorMessage: `Only ${sizeData.stock} available in stock for size ${sizeStr}.`,
+      };
+    }
+  }
+  return { isValid: true };
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
   const [isClient, setIsClient] = React.useState(false);
@@ -126,15 +149,66 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event("cartUpdated"));
   }, [items, isClient]);
 
-  // add to cart
+  // add to cart with stock validation
   const addToCart = (
     product: Product,
     selectedSizes: string[],
     quantity: number
   ) => {
+    // check existing quantity in cart for this product and size combination
+    const existingItem = items.find(
+      (item) =>
+        item.id === product._id &&
+        JSON.stringify(item.selectedSizes) === JSON.stringify(selectedSizes)
+    );
+
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    const newTotalQuantity = currentQuantity + quantity;
+
+    // validate stock for each selected size
+    const stockValidation = validateStock(
+      selectedSizes,
+      product.sizes,
+      newTotalQuantity
+    );
+
+    if (!stockValidation.isValid) {
+      alert(`Cannot add ${quantity} item(s). ${stockValidation.errorMessage}`);
+      return;
+    }
+
+    // get the correct price for the selected size
+    const selectedSizeData = product.sizes.find(
+      (s) => s.size === selectedSizes[0]
+    );
+    const correctPrice = selectedSizeData
+      ? selectedSizeData.price
+      : product.price;
+
+    console.log("CartContext - Dispatching ADD_TO_CART:", {
+      productId: product._id,
+      selectedSizes,
+      quantity,
+      currentQuantity,
+      newTotalQuantity,
+      price: correctPrice,
+    });
+
     dispatch({
       type: "ADD_TO_CART",
-      payload: { ...product, selectedSizes, quantity },
+      payload: {
+        id: product._id,
+        _id: product._id,
+        name: product.name,
+        description: product.description,
+        price: correctPrice,
+        images: product.images,
+        category: product.category,
+        country: product.country,
+        selectedSizes,
+        quantity,
+        sizes: product.sizes,
+      },
     });
   };
 
@@ -144,6 +218,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     quantity: number,
     selectedSizes?: string[]
   ) => {
+    // find the item in cart
+    const item = items.find(
+      (i) =>
+        i.id === productId &&
+        JSON.stringify(i.selectedSizes) === JSON.stringify(selectedSizes)
+    );
+
+    if (!item) {
+      console.warn("Item not found in cart");
+      return;
+    }
+
+    // validate stock for each selected size
+    const stockValidation = validateStock(
+      item.selectedSizes,
+      item.sizes,
+      quantity
+    );
+
+    if (!stockValidation.isValid) {
+      alert(
+        `Cannot set quantity to ${quantity}. ${stockValidation.errorMessage}`
+      );
+      return;
+    }
+
     dispatch({
       type: "UPDATE_QUANTITY",
       payload: { id: productId, quantity, selectedSizes },
