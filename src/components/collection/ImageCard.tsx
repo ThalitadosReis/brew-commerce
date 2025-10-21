@@ -56,6 +56,9 @@ export default function ImageCard({
           <HeartIcon
             size={20}
             weight={isProductInWishlist || isHovered ? "fill" : "light"}
+            className={`text-black transition-opacity ${
+              isProductInWishlist && isHovered ? "opacity-50" : "opacity-100"
+            }`}
           />
         </button>
 

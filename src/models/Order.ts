@@ -1,4 +1,4 @@
-import mongoose, { Schema, models } from "mongoose";
+import mongoose, { Schema, models, Types } from "mongoose";
 
 export interface IOrderItem {
   productId: string;
@@ -6,9 +6,11 @@ export interface IOrderItem {
   quantity: number;
   price: number;
   size?: string;
+  image?: string;
 }
 
 export interface IOrder {
+  _id?: Types.ObjectId;
   userId?: string;
   sessionId: string;
   items: IOrderItem[];
@@ -17,31 +19,40 @@ export interface IOrder {
   total: number;
   status: "pending" | "processing" | "completed" | "cancelled";
   customerEmail?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const OrderItemSchema = new Schema<IOrderItem>({
-  productId: {
-    type: String,
-    required: true,
+const OrderItemSchema = new Schema<IOrderItem>(
+  {
+    productId: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    size: {
+      type: String,
+    },
+    image: {
+      type: String,
+    },
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  size: {
-    type: String,
-  },
-});
+  { _id: false }
+);
 
 const OrderSchema = new Schema<IOrder>(
   {
@@ -53,20 +64,31 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       required: true,
       unique: true,
+      index: true,
     },
-    items: [OrderItemSchema],
+    items: {
+      type: [OrderItemSchema],
+      required: true,
+      validate: {
+        validator: (val: IOrderItem[]) => val.length > 0,
+        message: "At least one item is required",
+      },
+    },
     subtotal: {
       type: Number,
       required: true,
+      min: 0,
     },
     shipping: {
       type: Number,
       required: true,
+      min: 0,
       default: 0,
     },
     total: {
       type: Number,
       required: true,
+      min: 0,
     },
     status: {
       type: String,
@@ -75,6 +97,8 @@ const OrderSchema = new Schema<IOrder>(
     },
     customerEmail: {
       type: String,
+      trim: true,
+      lowercase: true,
     },
   },
   {
@@ -82,11 +106,6 @@ const OrderSchema = new Schema<IOrder>(
   }
 );
 
-// delete the existing model if it exists to avoid caching issues
-if (models.Order) {
-  delete models.Order;
-}
-
-const Order = mongoose.model<IOrder>("Order", OrderSchema);
+const Order = models.Order || mongoose.model<IOrder>("Order", OrderSchema);
 
 export default Order;

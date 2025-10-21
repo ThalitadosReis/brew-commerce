@@ -66,6 +66,7 @@ export default function CollectionContent({
                 images={product.images}
                 price={product.price}
                 country={product.country}
+                product={product}
               />
             ))}
           </div>

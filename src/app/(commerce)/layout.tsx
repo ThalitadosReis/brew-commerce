@@ -1,12 +1,15 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
+
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ToastProvider } from "@/contexts/ToastContext";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { usePathname } from "next/navigation";
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -19,15 +22,17 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   if (hideLayout) return <>{children}</>;
 
   return (
-    <AuthProvider>
-      <WishlistProvider>
-        <CartProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </CartProvider>
-      </WishlistProvider>
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <WishlistProvider>
+          <CartProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </CartProvider>
+        </WishlistProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 
