@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
+import SectionHeader from "../common/SectionHeader";
 
 export default function TeamSection() {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -117,18 +118,12 @@ export default function TeamSection() {
 
   return (
     <section className="max-w-7xl mx-auto px-6">
-      <div className="mb-12 lg:mb-24">
-        <div className="space-y-4">
-          <h5 className="text-lg font-heading">Team</h5>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-            Our team
-          </h2>
-          <p className="text-body">
-            The passionate people behind every cup of your carefully crafted
-            coffee.
-          </p>
-        </div>
-      </div>
+      <SectionHeader
+        className="ml-0 text-left"
+        subtitle="Team"
+        title="Our team"
+        description="The passionate people behind every cup of your carefully crafted coffee."
+      />
 
       <div
         className="relative space-y-12"

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
+import SectionHeader from "../common/SectionHeader";
 
 export default function LocationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -40,17 +41,11 @@ export default function LocationSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">brew.</h5>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-              Locations
-            </h2>
-            <p className="text-body">
-              Find us in the cities where coffee passion runs deep.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          subtitle="brew."
+          title="Locations"
+          description="Find us in the cities where coffee passion runs deep."
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-[.5fr_1fr] gap-8">
           <div className="grid gap-y-12">

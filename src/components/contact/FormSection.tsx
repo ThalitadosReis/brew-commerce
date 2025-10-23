@@ -9,6 +9,7 @@ import {
   PhoneIcon,
 } from "@phosphor-icons/react";
 import Button from "../common/Button";
+import SectionHeader from "../common/SectionHeader";
 
 type ContactItemType = {
   heading: string;
@@ -114,16 +115,12 @@ export default function FormSection() {
 
   return (
     <section className="max-w-7xl mx-auto px-6">
-      <div className="mb-12 lg:mb-24 space-y-4">
-        <h5 className="text-lg font-heading">Reach</h5>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-          Get in Touch
-        </h2>
-        <p className="text-body">
-          We select beans with precision, roast with care, and deliver pure
-          flavor in every package.
-        </p>
-      </div>
+      <SectionHeader
+        className="ml-0 text-left"
+        subtitle="Reach"
+        title="Get in Touch"
+        description="We select beans with precision, roast with care, and deliver pure flavor in every package."
+      />
 
       <div className="grid lg:grid-cols-2 gap-16">
         {/* form */}

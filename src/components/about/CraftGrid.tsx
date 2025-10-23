@@ -1,11 +1,8 @@
 import Link from "next/link";
 
-import {
-  FireIcon,
-  PlantIcon,
-  SealCheckIcon,
-} from "@phosphor-icons/react";
+import { FireIcon, PlantIcon, SealCheckIcon } from "@phosphor-icons/react";
 import Button from "../common/Button";
+import SectionHeader from "../common/SectionHeader";
 
 export default function CraftGrid() {
   const craftItems = [
@@ -28,18 +25,11 @@ export default function CraftGrid() {
 
   return (
     <section className="max-w-7xl mx-auto px-6">
-      <div className="mb-12 lg:mb-24">
-        <div className="mx-auto text-center space-y-4">
-          <h5 className="text-lg font-heading">Craft</h5>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-            How we bring exceptional coffee to your cup
-          </h2>
-          <p className="text-body">
-            We select beans with precision, roast with care, and deliver pure
-            flavor in every package.
-          </p>
-        </div>
-      </div>
+      <SectionHeader
+        subtitle="Craft"
+        title="How we bring exceptional coffee to your cup"
+        description="We select beans with precision, roast with care, and deliver pure flavor in every package."
+      />
 
       <div className="grid gap-8 md:grid-cols-3">
         {craftItems.map((item, idx) => (

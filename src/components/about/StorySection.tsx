@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Head from "next/head";
+import SectionHeader from "../common/SectionHeader";
 
 export default function StorySection() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -45,18 +46,12 @@ export default function StorySection() {
       </Head>
 
       <section className="max-w-7xl mx-auto">
-        <div className="mb-12 lg:mb-24">
-          <div className="max-w-3xl mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">Roots</h5>
-            <h2 className="text-4xl lg:text-6xl font-heading">
-              A journey of passion and precision in coffee
-            </h2>
-            <p className="text-body">
-              Born from a deep love of coffee and commitment to craft, our small
-              business began in a tiny kitchen with a single mission.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          className="px-6"
+          subtitle="Roots"
+          title="A journey of passion and precision in coffee"
+          description="Born from a deep love of coffee and commitment to craft, our small business began in a tiny kitchen with a single mission."
+        />
 
         <div
           ref={scrollRef}

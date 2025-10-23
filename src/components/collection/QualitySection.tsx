@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
+import SectionHeader from "../common/SectionHeader";
 
 export default function QualitySection() {
   const [activeTab, setActiveTab] = useState("farm");
@@ -30,19 +31,11 @@ export default function QualitySection() {
 
   return (
     <section className="max-w-7xl mx-auto px-6">
-      <div className="mb-12 lg:mb-24">
-        <div className="mx-auto text-center space-y-4">
-          <h5 className="text-lg font-heading">Quality</h5>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-            Beyond the perfect cup
-          </h2>
-          <p className="text-body">
-            {
-              "Our commitment extends from farm to cup. We ensure quality at every step of our coffee's journey."
-            }
-          </p>
-        </div>
-      </div>
+      <SectionHeader
+        subtitle="Quality"
+        title="Beyond the perfect cup"
+        description="Our commitment extends from farm to cup. We ensure quality at every step of our coffee's journey."
+      />
 
       <div className="grid md:grid-cols-2 gap-x-12 items-stretch">
         <div className="flex flex-col mb-8 md:mb-0">

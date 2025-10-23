@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
+import SectionHeader from "../common/SectionHeader";
 
 interface TabContentItem {
   title: string;
@@ -49,19 +50,11 @@ export default function FlavourSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="max-w-2xl mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">Origin</h5>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-              Taste the difference
-            </h2>
-            <p className="text-body">
-              {
-                "Our coffee represents more than a drink. It's a journey through Ethiopian landscapes and traditions."
-              }
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          subtitle="Origin"
+          title="Taste the difference"
+          description="Our coffee represents more than a drink. It's a journey through Ethiopian landscapes and traditions."
+        />
 
         <div className="flex flex-col items-center">
           <div className="relative mb-8 flex items-center gap-x-6">

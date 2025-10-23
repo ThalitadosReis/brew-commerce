@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import SectionHeader from "../common/SectionHeader";
 
 export default function AboutSection() {
   const images = [
@@ -16,17 +17,11 @@ export default function AboutSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">Pure</h5>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-              Why our coffee is different
-            </h2>
-            <p className="text-body">
-              Sustainable, ethical, and delicious coffee that makes a difference
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          subtitle="Pure"
+          title="Why our coffee is different"
+          description="Sustainable, ethical, and delicious coffee that makes a difference"
+        />
 
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex flex-col md:flex-row border border-black/10 overflow-hidden relative">

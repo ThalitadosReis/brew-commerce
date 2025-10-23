@@ -2,6 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { CaretRightIcon } from "@phosphor-icons/react";
+import SectionHeader from "../common/SectionHeader";
 
 export default function FeaturesSection() {
   const images = [
@@ -19,17 +20,11 @@ export default function FeaturesSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="mx-auto text-center space-y-4">
-            <h5 className="mb-1 text-lg font-heading">Our craft</h5>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-              Exceptional coffee experiences
-            </h2>
-            <p className="font-body">
-              Carefully sourced beans from sustainable farms worldwide
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          subtitle="Our craft"
+          title="Exceptional coffee experiences"
+          description="Carefully sourced beans from sustainable farms worldwide"
+        />
 
         {/* content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

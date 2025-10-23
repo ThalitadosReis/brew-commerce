@@ -8,6 +8,7 @@ import {
   GearIcon,
 } from "@phosphor-icons/react";
 import Button from "../common/Button";
+import SectionHeader from "../common/SectionHeader";
 
 export default function BenefitsSection() {
   const image =
@@ -43,17 +44,11 @@ export default function BenefitsSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">Benefits</h5>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-              Highest grade arabica beans
-            </h2>
-            <p className="font-body">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          subtitle="Benefits"
+          title="Highest grade arabica beans"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        />
 
         {/* content grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] items-center gap-y-8 md:gap-y-16 lg:gap-x-8">

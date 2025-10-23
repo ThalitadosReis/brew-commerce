@@ -1,4 +1,5 @@
 import React from "react";
+import SectionHeader from "../common/SectionHeader";
 
 type TimelineCardType = {
   date: string;
@@ -69,18 +70,11 @@ export default function TimelineSection() {
   return (
     <>
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="max-w-3xl mx-auto text-center space-y-4">
-            <h5 className="text-lg font-heading">Our Coffee Journey</h5>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading">
-              From Local Passion to Global Coffee Culture
-            </h2>
-            <p className="text-body">
-              Discover how we built meaningful relationships with coffee farmers
-              across continents and delivered their craft to mugs worldwide.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          subtitle="Our Coffee Journey"
+          title="From Local Passion to Global Coffee Culture"
+          description="Discover how we built meaningful relationships with coffee farmers across continents and delivered their craft to mugs worldwide."
+        />
 
         <div className="relative">
           <div className="absolute top-0 bottom-0 left-4 lg:left-1/2 lg:-translate-x-1/2 w-1 bg-black/10 z-0" />
