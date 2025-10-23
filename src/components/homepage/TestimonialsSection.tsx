@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
+import Button from "@/components/common/Button";
 
 const testimonials = [
   {
@@ -35,7 +36,7 @@ const testimonials = [
     name: "Olivia Martinez",
     quote:
       "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Proin eget tortor risus.",
-    image: "https://randomuser.me/api/portraits/women/45.jpg",
+    image: "https://randomuser.me/api/portraits/women/49.jpg",
     role: "Coffee Blogger, Madrid",
   },
 ];
@@ -50,86 +51,82 @@ export default function TestimonialSection() {
   useEffect(() => {
     const timer = setInterval(() => {
       setActive((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <>
-      <section className="max-w-7xl mx-auto py-24 px-6">
+    <section className="max-w-7xl mx-auto py-24 px-6">
+      <div
+        className="relative overflow-hidden group"
+        role="region"
+        aria-roledescription="carousel"
+      >
         <div
-          className="relative overflow-hidden"
-          role="region"
-          aria-roledescription="carousel"
+          className="flex transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${active * 100}%)` }}
         >
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{
-              transform: `translateX(-${active * 100}%)`,
-            }}
-          >
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                role="group"
-                aria-roledescription="slide"
-                className="shrink-0 basis-full mb-8"
-              >
-                <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center text-center space-y-8">
-                  <blockquote className="text-lg lg:text-xl font-light">
-                    “{t.quote}”
-                  </blockquote>
+          {testimonials.map((t, i) => (
+            <div
+              key={i}
+              role="group"
+              aria-roledescription="slide"
+              className="shrink-0 basis-full mb-8"
+            >
+              <div className="max-w-xl mx-auto flex flex-col items-center justify-center text-center space-y-8">
+                <blockquote className="text-lg lg:text-xl font-light">
+                  “{t.quote}”
+                </blockquote>
 
-                  <div className="flex flex-col items-center">
-                    <div className="mb-2">
-                      <Image
-                        src={t.image}
-                        alt={`${t.name} avatar`}
-                        width={40}
-                        height={40}
-                        className="w-full rounded-full object-cover"
-                      />
-                    </div>
-                    <p className="font-semibold">{t.name}</p>
-                    <p className="text-sm text-black/70">{t.role}</p>
+                <div className="flex flex-col items-center">
+                  <div className="mb-2">
+                    <Image
+                      src={t.image}
+                      alt={`${t.name} avatar`}
+                      width={40}
+                      height={40}
+                      className="w-full rounded-full object-cover"
+                    />
                   </div>
+                  <p className="font-semibold">{t.name}</p>
+                  <p className="text-sm text-black/70">{t.role}</p>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* controls */}
-          <button
-            onClick={prevSlide}
-            aria-label="Previous slide"
-            className="absolute left-0 top-1/2 -translate-y-1/2 hidden md:flex p-3 items-center justify-center bg-black/5 hover:bg-black/10"
-          >
-            <ArrowLeftIcon size={24} weight="light" />
-          </button>
-
-          <button
-            onClick={nextSlide}
-            aria-label="Next slide"
-            className="absolute right-0 top-1/2 -translate-y-1/2 hidden md:flex p-3 items-center justify-center bg-black/5 hover:bg-black/10"
-          >
-            <ArrowRightIcon size={24} weight="light" />
-          </button>
-
-          {/* dots nav */}
-          <div className="flex justify-center space-x-2">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  i === active ? "bg-black" : "bg-black/20 hover:bg-black/30"
-                }`}
-              />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
-    </>
+
+        <Button
+          className="hidden md:flex !p-3 !absolute left-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          onClick={prevSlide}
+          aria-label="Previous slide"
+          variant="secondary"
+        >
+          <CaretLeftIcon size={24} weight="light" />
+        </Button>
+        <Button
+          className="hidden md:flex !p-3 !absolute right-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          onClick={nextSlide}
+          aria-label="Next slide"
+          variant="secondary"
+        >
+          <CaretRightIcon size={24} weight="light" />
+        </Button>
+
+        {/* dots nav */}
+        <div className="flex justify-center space-x-2">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === active ? "bg-black" : "bg-black/20 hover:bg-black/50"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
+
+const image =
+  "https://images.pexels.com/photos/4816479/pexels-photo-4816479.jpeg";
 
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
-
-  const image =
-    "https://res.cloudinary.com/douen1dwv/image/upload/v1758990337/default/brew..jpg";
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -21,7 +22,7 @@ export default function HeroSection() {
         <link rel="preload" as="image" href={image} />
       </Head>
 
-      <section className="relative min-h-screen flex items-center px-8 md:px-16 lg:px-24 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 -z-10"
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
@@ -36,25 +37,15 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-black/30" />
         </div>
 
-        <div className="relative z-10 max-w-xl space-y-8">
-          <h1 className="text-5xl md:text-6xl font-heading text-white">
+        <div className="relative z-10 text-center max-w-3xl space-y-6 px-8">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading text-white">
             Craft coffee that tells a story in every cup
           </h1>
-
-          <p className="font-body text-white/70">
+          <p className="text-white/70 font-body text-lg md:text-xl">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
             varius enim in eros elementum tristique. Duis cursus, mi quis
             viverra ornare.
           </p>
-
-          <Link
-            href="/collection"
-            className="inline-block font-heading text-white relative z-10 group"
-          >
-            Shop Now
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white pointer-events-none" />
-            <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-out group-hover:w-2/3 pointer-events-none" />
-          </Link>
         </div>
       </section>
     </>
