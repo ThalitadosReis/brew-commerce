@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import {
-  CaretRightIcon,
   FireIcon,
   PlantIcon,
   SealCheckIcon,
 } from "@phosphor-icons/react";
+import Button from "../common/Button";
 
 export default function CraftGrid() {
   const craftItems = [
@@ -52,26 +52,13 @@ export default function CraftGrid() {
           </div>
         ))}
       </div>
-
-      <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-        <Link
-          href="/collection"
-          className="inline-flex items-center justify-center bg-black/5 hover:bg-black/10 font-medium px-6 py-3 rounded"
-        >
-          Shop now
-        </Link>
-
-        <Link
-          href="/contact"
-          className="inline-flex items-center justify-center font-medium gap-2 group"
-        >
-          Contact
-          <CaretRightIcon
-            size={16}
-            weight="bold"
-            className="transform transition-transform duration-200 ease-in-out group-hover:translate-x-1"
-          />
-        </Link>
+      <div className="mt-8 flex items-center justify-center gap-4">
+        <Button variant="secondary">
+          <Link href="/collection"> Shop now</Link>
+        </Button>
+        <Button variant="tertiary">
+          <Link href="/contact"> Contact</Link>
+        </Button>
       </div>
     </section>
   );

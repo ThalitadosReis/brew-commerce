@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import Button from "../common/Button";
 
 export default function ContactSection() {
   const image =
@@ -14,7 +15,7 @@ export default function ContactSection() {
 
       <section className="max-w-7xl mx-auto px-6">
         <div className="grid auto-cols-fr grid-cols-1 overflow-hidden md:grid-cols-2 bg-white">
-          <div className="flex flex-col justify-center p-8">
+          <div className="flex flex-col justify-center p-8 space-y-8">
             <div className="max-w-lg space-y-4">
               <h2 className="text-4xl lg:text-5xl font-heading">
                 Brew your perfect moment
@@ -26,19 +27,13 @@ export default function ContactSection() {
             </div>
 
             {/* links */}
-            <div className="mt-8 flex gap-4">
-              <Link
-                href="/contact"
-                className="text-white bg-black hover:opacity-70 font-medium px-6 py-3"
-              >
-                Contact us
-              </Link>
-              <Link
-                href="/about"
-                className="bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
-              >
-                Learn more
-              </Link>
+            <div className="flex gap-4">
+              <Button variant="primary">
+                <Link href="/contact">Contact us</Link>
+              </Button>
+              <Button variant="secondary">
+                <Link href="/about">Learn more</Link>
+              </Button>
             </div>
           </div>
 

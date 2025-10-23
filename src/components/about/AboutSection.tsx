@@ -54,7 +54,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row border border-primary/20 overflow-hidden relative">
+          <div className="flex flex-col md:flex-row border border-black/10 overflow-hidden relative">
             <div className="flex flex-col justify-center flex-1">
               <div className="p-6 space-y-4">
                 <p className="mb-1 font-heading">Ethical</p>

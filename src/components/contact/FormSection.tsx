@@ -8,6 +8,7 @@ import {
   MapPinIcon,
   PhoneIcon,
 } from "@phosphor-icons/react";
+import Button from "../common/Button";
 
 type ContactItemType = {
   heading: string;
@@ -190,17 +191,17 @@ export default function FormSection() {
               className="w-full px-4 py-3 bg-black/5 border border-transparent placeholder-black/30 focus:outline-none focus:border-black/10 focus:bg-white transition-all resize-none"
             />
           </div>
-
-          <button
+          <Button
             type="submit"
+            variant="primary"
             disabled={isSubmitting}
-            className="flex items-center justify-center text-white bg-black hover:opacity-70 font-medium px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity space-x-2"
+            className="flex items-center justify-center space-x-2"
           >
             {isSubmitting && (
               <CircleNotchIcon className="w-5 h-5 animate-spin" weight="bold" />
             )}
             <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-          </button>
+          </Button>
         </form>
 
         {/* grid */}

@@ -50,13 +50,13 @@ export default function TestimonialSection() {
   useEffect(() => {
     const timer = setInterval(() => {
       setActive((prev) => (prev + 1) % testimonials.length);
-    }, 10000);
+    }, 4000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <>
-      <section className="max-w-7xl mx-auto px-6">
+      <section className="max-w-7xl mx-auto py-24 px-6">
         <div
           className="relative overflow-hidden"
           role="region"

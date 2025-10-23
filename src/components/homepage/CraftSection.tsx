@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { CaretRightIcon } from "@phosphor-icons/react";
+import Button from "../common/Button";
 
 export default function CraftSection() {
   const crafts = [
@@ -42,7 +42,7 @@ export default function CraftSection() {
       buttonText: "Get in Touch",
     },
   ];
-  
+
   return (
     <>
       <Head>
@@ -66,26 +66,13 @@ export default function CraftSection() {
                 </h2>
                 <p className="font-body text-black/70">{item.text}</p>
 
-                <div className="flex items-center gap-4">
-                  <Link
-                    href={item.link}
-                    className="bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
-                  >
-                    {item.buttonText}
-                  </Link>
-
-                  <Link
-                    href={item.link}
-                    className="inline-flex items-center justify-center font-medium gap-2 group"
-                    title="Explore"
-                  >
-                    Explore
-                    <CaretRightIcon
-                      size={16}
-                      weight="bold"
-                      className="transform transition-transform duration-200 ease-in-out group-hover:translate-x-1"
-                    />
-                  </Link>
+                <div className="flex items-center justify-center gap-4">
+                  <Button variant="secondary">
+                    <Link href={item.link}> {item.buttonText}</Link>
+                  </Button>
+                  <Button variant="tertiary">
+                    <Link href={item.link}>Explore</Link>
+                  </Button>
                 </div>
 
                 {/* mobile image block */}

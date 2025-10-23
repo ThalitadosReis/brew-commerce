@@ -18,6 +18,7 @@ import {
   StarIcon,
   StarHalfIcon,
 } from "@phosphor-icons/react";
+import Button from "../common/Button";
 
 const accordionItems = (product: Product | null) => [
   {
@@ -436,21 +437,18 @@ export default function ProductSection({ product }: ProductSectionProps) {
                     </button>
                   </div>
 
-                  <button
+                  <Button
+                    variant="primary"
                     onClick={handleAddToCart}
                     disabled={!selectedSize || isOutOfStock}
-                    className={`w-full py-3 text-sm transition-colors ${
-                      selectedSize && !isOutOfStock
-                        ? "bg-black text-white hover:opacity-80"
-                        : "bg-black/10 opacity-50 cursor-not-allowed"
-                    }`}
+                    className="w-full text-sm"
                   >
                     {!selectedSize
                       ? "Select size"
                       : isOutOfStock
                       ? "Out of stock"
                       : "Add to cart"}
-                  </button>
+                  </Button>
                 </div>
 
                 <span className="block text-xs text-black/70">

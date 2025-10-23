@@ -80,7 +80,6 @@ export default function FlavourSection() {
             ))}
           </div>
 
-          {/* Tab Content */}
           <div className="grid md:grid-cols-2 md:items-center border border-black/20 bg-white overflow-hidden">
             <div className="p-6 lg:p-8 space-y-4">
               <h5 className="mb-1 text-lg font-heading">{activeTab}</h5>

@@ -5,6 +5,7 @@ import { SmileySadIcon } from "@phosphor-icons/react";
 import { Product } from "@/types/product";
 import ImageCard from "@/components/collection/ImageCard";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
+import Button from "../common/Button";
 
 interface CollectionContentProps {
   filteredProducts: Product[];
@@ -49,9 +50,7 @@ export default function CollectionContent({
             weight="light"
             className="mx-auto mb-2 text-black/70"
           />
-          <h3 className="font-heading text-2xl">
-            No products found
-          </h3>
+          <h3 className="font-heading text-2xl">No products found</h3>
           <p className="font-body text-black/70">Try adjusting your filters</p>
         </div>
       ) : (
@@ -76,8 +75,8 @@ export default function CollectionContent({
               <span className="text-xs text-black/70">
                 {displayedProducts.length} of {filteredProducts.length} products
               </span>
-              <button
-                className="text-sm border px-6 py-3 transition duration-200 ease-in-out hover:scale-98 text-black"
+              <Button
+                variant="secondary"
                 onClick={() =>
                   setItemsToShow((prev) =>
                     Math.min(prev + 6, filteredProducts.length)
@@ -85,7 +84,7 @@ export default function CollectionContent({
                 }
               >
                 View more
-              </button>
+              </Button>
             </div>
           )}
 
