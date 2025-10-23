@@ -1,6 +1,6 @@
 import Head from "next/head";
-import Image from "next/image";
 import SectionHeader from "../common/SectionHeader";
+import Card from "@/components/common/Card";
 
 export default function AboutSection() {
   const images = [
@@ -24,54 +24,18 @@ export default function AboutSection() {
         />
 
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex flex-col md:flex-row border border-black/10 overflow-hidden relative">
-            <div className="flex flex-col justify-center flex-1">
-              <div className="p-6 space-y-4">
-                <p className="mb-1 font-heading">Sustainable</p>
-                <h3 className="font-semibold">
-                  Supporting farmers and protecting the environment with every
-                  cup
-                </h3>
-                <p className="text-body text-black/70">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse varius enim in eros elementum tristique.
-                </p>
-              </div>
-            </div>
-            <div className="flex-shrink-0 w-full md:w-1/2 relative aspect-square">
-              <Image
-                src={images[0]}
-                alt="Sustainable coffee"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30" />
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row border border-black/10 overflow-hidden relative">
-            <div className="flex flex-col justify-center flex-1">
-              <div className="p-6 space-y-4">
-                <p className="mb-1 font-heading">Ethical</p>
-                <h3 className="font-semibold">
-                  Fair trade practices that support coffee-growing communities
-                </h3>
-                <p className="text-black/70">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse varius enim in eros elementum tristique.
-                </p>
-              </div>
-            </div>
-            <div className="flex-shrink-0 w-full md:w-1/2 relative aspect-square">
-              <Image
-                src={images[1]}
-                alt="Ethical coffee"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30" />
-            </div>
-          </div>
+          <Card
+            subtitle="Sustainable"
+            title="Supporting farmers and protecting the environment with every cup"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+            image={images[0]}
+          />
+          <Card
+            subtitle="Ethical"
+            title="Fair trade practices that support coffee-growing communities"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+            image={images[1]}
+          />
         </div>
       </section>
     </>

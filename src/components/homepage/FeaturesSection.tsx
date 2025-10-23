@@ -1,8 +1,6 @@
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import { CaretRightIcon } from "@phosphor-icons/react";
 import SectionHeader from "../common/SectionHeader";
+import Card from "@/components/common/Card";
 
 export default function FeaturesSection() {
   const images = [
@@ -26,122 +24,32 @@ export default function FeaturesSection() {
           description="Carefully sourced beans from sustainable farms worldwide"
         />
 
-        {/* content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex flex-col gap-8">
-            {/* card 1 */}
-            <div className="flex flex-col md:flex-row border border-black/10 overflow-hidden">
-              <div className="flex flex-col justify-center flex-1">
-                <div className="p-6 space-y-4">
-                  <p className="mb-1 font-heading">Origin</p>
-                  <h3 className="text-lg font-semibold">
-                    Single origin beans with unique flavor profiles
-                  </h3>
-                  <p className="text-black/70">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Suspendisse varius enim in eros elementum tristique.
-                  </p>
-                  <Link
-                    href="/collection"
-                    className="inline-flex items-center justify-center gap-2 group"
-                  >
-                    Shop collection
-                    <CaretRightIcon
-                      size={12}
-                      weight="light"
-                      className="transform transition-transform duration-200 ease-in-out group-hover:translate-x-1"
-                    />
-                  </Link>
-                </div>
-              </div>
-              <div className="flex-shrink-0 w-full md:w-1/2">
-                <Image
-                  src={images[0]}
-                  alt="Image 1"
-                  width={400}
-                  height={600}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/30" />
-              </div>
-            </div>
-
-            {/* card 2 */}
-            <div className="flex flex-col md:flex-row border border-black/20 overflow-hidden">
-              <div className="flex flex-col justify-center flex-1">
-                <div className="p-6 space-y-4">
-                  <p className="mb-1 font-heading">Craft</p>
-                  <h3 className="font-semibold">
-                    Learn about our meticulous roasting process
-                  </h3>
-                  <p className="text-black/70">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Suspendisse varius enim in eros elementum tristique.
-                  </p>
-                  <Link
-                    href="/about"
-                    className="inline-flex items-center justify-center gap-2 group"
-                  >
-                    Learn more
-                    <CaretRightIcon
-                      size={12}
-                      weight="light"
-                      className="transform transition-transform duration-200 ease-in-out group-hover:translate-x-1"
-                    />
-                  </Link>
-                </div>
-              </div>
-              <div className="flex-shrink-0 w-full md:w-1/2">
-                <Image
-                  src={images[1]}
-                  alt="Image 2"
-                  width={400}
-                  height={600}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/30" />
-              </div>
-            </div>
+            <Card
+              subtitle="Origin"
+              title="Single origin beans with unique flavor profiles"
+              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+              href="/collection"
+              image={images[0]}
+            />
+            <Card
+              subtitle="Craft"
+              title="Learn about our meticulous roasting process"
+              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+              image={images[1]}
+            />
           </div>
 
-          {/* card 3 */}
-          <div className="flex flex-col border border-black/20 overflow-hidden">
-            <div className="flex flex-col justify-center flex-1">
-              <div className="p-6 space-y-4">
-                <p className="font-heading mb-1">brew.</p>
-                <h3 className="text-lg font-semibold mb-4">
-                  Reach out to us for brewing guidance
-                </h3>
-                <p className="text-black/70">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse varius enim in eros elementum tristique. Duis
-                  cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-                  commodo diam libero vitae erat.
-                </p>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center gap-2 group"
-                >
-                  Contact us
-                  <CaretRightIcon
-                    size={12}
-                    weight="light"
-                    className="transform transition-transform duration-200 ease-in-out group-hover:translate-x-1"
-                  />
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative w-full h-[50%] min-h-[300px]">
-              <Image
-                src={images[2]}
-                alt="Image 3"
-                fill
-                className="object-cover object-[25%_42%]"
-              />
-              <div className="absolute inset-0 bg-black/30" />
-            </div>
-          </div>
+          <Card
+            subtitle="brew."
+            title="Reach out to us for brewing guidance"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat."
+            href="/contact"
+            image={images[2]}
+            imagePosition="bottom"
+            className="h-full"
+          />
         </div>
       </section>
     </>
