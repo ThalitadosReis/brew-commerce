@@ -28,7 +28,6 @@ export default function ImageCard({
 }: ImageCardProps) {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const isProductInWishlist = isInWishlist(id);
-  const [isHovered, setIsHovered] = React.useState(false);
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -46,19 +45,14 @@ export default function ImageCard({
       <div className="relative p-4 flex items-center justify-center bg-black/10 w-full overflow-hidden group">
         <button
           onClick={handleWishlistToggle}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full transition-colors"
+          className="absolute top-4 left-4 z-10 p-2 bg-white hover:bg-white/50 rounded-full transition-colors"
           title={
             isProductInWishlist ? "Remove from wishlist" : "Add to wishlist"
           }
         >
           <HeartIcon
             size={20}
-            weight={isProductInWishlist || isHovered ? "fill" : "light"}
-            className={`text-black transition-opacity ${
-              isProductInWishlist && isHovered ? "opacity-50" : "opacity-100"
-            }`}
+            weight={isProductInWishlist ? "fill" : "light"}
           />
         </button>
 
@@ -75,9 +69,10 @@ export default function ImageCard({
       </div>
 
       <div className="text-center space-y-1">
-        <h3 className="text-xl md:text-base font-heading">{name}</h3>
-        <h3 className="text-xs font-light">{country}</h3>
-        <span className="text-sm font-medium">from CHF{price}</span>
+        <h3 className="text-base md:text-lg font-heading font-semibold">
+          {name} <span className="font-thin text-black/70">{country}</span>
+        </h3>
+        <p className="text-sm font-semibold">from CHF{price}</p>
       </div>
     </div>
   );

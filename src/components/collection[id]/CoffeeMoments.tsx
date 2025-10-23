@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import SectionHeader from "../common/SectionHeader";
 
 export default function CoffeeMoments() {
   const images = [
@@ -22,16 +23,10 @@ export default function CoffeeMoments() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <div className="mb-12 lg:mb-24">
-          <div className="max-w-3xl mx-auto text-center space-y-4">
-            <h2 className="text-4xl lg:text-6xl font-heading">
-              Coffee moments
-            </h2>
-            <p className="text-body">
-              Explore the beauty and craft behind our coffee
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          title="Coffee moments"
+          description="Explore the beauty and craft behind our coffee."
+        />
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.slice(0, 8).map((src, index) => (

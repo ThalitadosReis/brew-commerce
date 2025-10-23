@@ -66,7 +66,6 @@ function Breadcrumb({ productName }: { productName: string }) {
 export default function ProductSection({ product }: ProductSectionProps) {
   const { addToCart, items } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-  const [isHovered, setIsHovered] = React.useState(false);
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -257,9 +256,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
               <div className="relative aspect-square bg-black/10 overflow-hidden group">
                 <button
                   onClick={handleWishlistToggle}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  className="absolute top-4 left-4 z-10 p-3 bg-white rounded-full"
+                  className="absolute top-4 left-4 z-10 p-2 bg-white hover:bg-white/50 rounded-full transition-colors"
                   title={
                     isProductInWishlist
                       ? "Remove from wishlist"
@@ -268,12 +265,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 >
                   <HeartIcon
                     size={20}
-                    weight={isProductInWishlist || isHovered ? "fill" : "light"}
-                    className={`text-black transition-opacity ${
-                      isProductInWishlist && isHovered
-                        ? "opacity-50"
-                        : "opacity-100"
-                    }`}
+                    weight={isProductInWishlist ? "fill" : "light"}
                   />
                 </button>
 
