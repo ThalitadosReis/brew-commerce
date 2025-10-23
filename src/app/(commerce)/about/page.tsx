@@ -1,5 +1,6 @@
 "use client";
 
+import PageHeader from "@/components/common/PageHeader";
 import TimelineSection from "@/components/about/TimelineSection";
 import CraftGrid from "@/components/about/CraftGrid";
 import TeamSection from "@/components/about/TeamSection";
@@ -9,13 +10,10 @@ import StorySection from "@/components/about/StorySection";
 export default function AboutPage() {
   return (
     <div className="bg-black/5 py-24 space-y-24">
-      <div className="max-w-2xl mx-auto text-center py-24 px-6 space-y-8">
-        <h1 className="text-5xl md:text-6xl font-heading">Our coffee story</h1>
-        <p className="text-sm font-body">
-          We craft simple, honest coffee that connects people through pure,
-          carefully selected beans from around the world.
-        </p>
-      </div>
+      <PageHeader
+        title="Our coffee story"
+        description="We craft simple, honest coffee that connects people through pure, carefully selected beans from around the world."
+      />
 
       <TimelineSection />
       <CraftGrid />

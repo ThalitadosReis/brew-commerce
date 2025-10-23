@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Product } from "@/types/product";
 import Filter, { SortOption } from "@/components/collection/Filter";
+
+import PageHeader from "@/components/common/PageHeader";
 import CollectionContent from "@/components/collection/CollectionContent";
 import QualitySection from "@/components/collection/QualitySection";
 import ContactSection from "@/components/collection/ContactSection";
@@ -42,10 +44,10 @@ export default function CollectionPage() {
 
   if (loading) {
     return (
-      <div className="bg-black/5 min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-black/5">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4" />
-          <p className="text-black">Loading products...</p>
+          <div className="w-8 h-8 border-2 border-black/20 border-t-black/70 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-black/70 text-sm font-medium">Loading...</p>
         </div>
       </div>
     );
@@ -53,14 +55,10 @@ export default function CollectionPage() {
 
   return (
     <div className="bg-black/5 py-24 space-y-24">
-      <div className="max-w-2xl mx-auto text-center pt-24 px-6 space-y-8">
-        <h1 className="text-5xl md:text-6xl font-heading text-black">
-          Craft coffee selection
-        </h1>
-        <p className="text-sm font-body">
-          {`Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions.`}
-        </p>
-      </div>
+      <PageHeader
+        title="Craft coffee selection"
+        description="Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions."
+      />
 
       <div
         ref={collectionRef}

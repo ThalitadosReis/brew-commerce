@@ -8,6 +8,7 @@ import ImageCard from "@/components/collection/ImageCard";
 import { CaretRightIcon } from "@phosphor-icons/react";
 import Image from "next/image";
 import Head from "next/head";
+import PageHeader from "@/components/common/PageHeader";
 
 const image =
   "https://images.pexels.com/photos/7541876/pexels-photo-7541876.jpeg";
@@ -33,10 +34,10 @@ export default function FavoritesPage() {
 
   if (loading) {
     return (
-      <div className="bg-black/5 min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-black/5">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4" />
-          <p className="text-black">Loading your favorites...</p>
+          <div className="w-8 h-8 border-2 border-black/20 border-t-black/70 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-black/70 text-sm font-medium">Loading...</p>
         </div>
       </div>
     );
@@ -49,15 +50,10 @@ export default function FavoritesPage() {
       </Head>
 
       <div className="bg-black/5 py-24 space-y-24">
-        <div className="max-w-2xl mx-auto text-center pt-24 px-6 space-y-8">
-          <h1 className="text-5xl md:text-6xl font-heading text-black">
-            Favourites
-          </h1>
-          <p className="text-sm font-body">
-            Your carefully selected coffee selection tells a story of taste and
-            passion.
-          </p>
-        </div>
+        <PageHeader
+          title="Favourites"
+          description="Your carefully selected coffee selection tells a story of taste and passion."
+        />
 
         <section className="max-w-7xl mx-auto px-6">
           <div className="flex justify-end mb-4">
@@ -79,15 +75,15 @@ export default function FavoritesPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-24 bg-black/10">
-              <p className="text-body text-black/70 mb-4">
+            <div className="text-center py-24 bg-white space-y-8">
+              <p className="font-light">
                 No favorites yet
                 <br />
                 Start adding products to your wishlist
               </p>
               <Link
                 href="/collection"
-                className="inline-flex items-center gap-2 text-sm font-body relative group mt-8"
+                className="inline-flex items-center gap-2 text-sm font-body relative group"
               >
                 Start shopping
                 <CaretRightIcon className="transition-transform duration-300 ease-out group-hover:translate-x-1" />
