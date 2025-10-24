@@ -57,7 +57,7 @@ const ContentBlock = ({
             )}
 
             <h2 className="text-4xl lg:text-5xl font-heading">{title}</h2>
-            <p className="font-body text-black/70">{text}</p>
+             <div className="font-body text-black/70">{text}</div>
 
             {buttons.length > 0 && (
               <div className="flex flex-wrap gap-4">
@@ -80,6 +80,7 @@ const ContentBlock = ({
                 src={image}
                 alt={title}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover object-center"
                 priority
               />

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import Button from "./Button";
 
 interface CardProps {
@@ -34,10 +33,14 @@ export default function Card({
           {subtitle && <p className="font-heading mb-1">{subtitle}</p>}
           <h3 className="text-xl font-medium">{title}</h3>
           <p className="text-black/70">{description}</p>
-
           {href && (
-            <Button variant="tertiary" className="px-0 py-0">
-              <Link href={href}>Learn more</Link>
+            <Button
+              as="link"
+              href={href}
+              variant="tertiary"
+              className="px-0 py-0"
+            >
+              Learn more
             </Button>
           )}
         </div>

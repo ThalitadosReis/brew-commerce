@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Link from "next/link";
 import Head from "next/head";
-import { CaretRightIcon } from "@phosphor-icons/react";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
 import ImageCard from "@/components/collection/ImageCard";
 import PageHeader from "@/components/common/PageHeader";
 import Favorites from "@/components/common/ContentBlock";
+import Button from "@/components/common/Button";
 
 const image =
   "https://images.pexels.com/photos/7541876/pexels-photo-7541876.jpeg";
@@ -75,19 +74,16 @@ export default function FavoritesPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-24 bg-white space-y-8">
-              <p className="font-light">
+            <div className="text-center py-24 bg-white space-y-8 flex flex-col items-center">
+              <p className="font-light text-center">
                 No favorites yet
                 <br />
                 Start adding products to your wishlist
               </p>
-              <Link
-                href="/collection"
-                className="inline-flex items-center gap-2 text-sm font-body relative group"
-              >
+
+              <Button as="link" href="/collection" variant="tertiary">
                 Start shopping
-                <CaretRightIcon className="transition-transform duration-300 ease-out group-hover:translate-x-1" />
-              </Link>
+              </Button>
             </div>
           )}
         </section>
