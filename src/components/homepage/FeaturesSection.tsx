@@ -1,5 +1,5 @@
 import Head from "next/head";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
 import Card from "@/components/common/Card";
 
 export default function FeaturesSection() {
@@ -18,7 +18,7 @@ export default function FeaturesSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <SectionHeader
+        <Section
           subtitle="Our craft"
           title="Exceptional coffee experiences"
           description="Carefully sourced beans from sustainable farms worldwide"

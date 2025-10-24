@@ -310,7 +310,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                     >
                       <Image
                         src={img}
-                        alt={`${product.name} - ${index + 1}`}
+                        alt={`${product.name}}`}
                         fill
                         sizes="100px"
                         className="object-contain"

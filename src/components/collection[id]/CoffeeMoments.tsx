@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
 
 export default function CoffeeMoments() {
   const images = [
@@ -23,7 +23,7 @@ export default function CoffeeMoments() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <SectionHeader
+        <Section
           title="Coffee moments"
           description="Explore the beauty and craft behind our coffee."
         />

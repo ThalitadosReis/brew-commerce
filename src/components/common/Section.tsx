@@ -2,19 +2,19 @@
 
 import React from "react";
 
-interface SectionHeaderProps {
+interface SectionProps {
   subtitle?: string;
   title: string;
   description?: string;
   className?: string;
 }
 
-export default function SectionHeader({
+export default function Section({
   subtitle,
   title,
   description,
   className = "",
-}: SectionHeaderProps) {
+}: SectionProps) {
   return (
     <div className="mb-12 lg:mb-24">
       <div className={`max-w-3xl mx-auto text-center space-y-4 ${className}`}>

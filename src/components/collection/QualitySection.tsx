@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
 
 export default function QualitySection() {
   const [activeTab, setActiveTab] = useState("farm");
@@ -31,7 +31,7 @@ export default function QualitySection() {
 
   return (
     <section className="max-w-7xl mx-auto px-6">
-      <SectionHeader
+      <Section
         subtitle="Quality"
         title="Beyond the perfect cup"
         description="Our commitment extends from farm to cup. We ensure quality at every step of our coffee's journey."
@@ -65,8 +65,13 @@ export default function QualitySection() {
           <div className="relative aspect-square w-full md:h-full">
             <Image
               src={tabs.find((t) => t.key === activeTab)?.image || ""}
-              alt={tabs.find((t) => t.key === activeTab)?.title || ""}
+              alt={
+                tabs.find((t) => t.key === activeTab)?.title ||
+                "Quality section image"
+              }
+              title={tabs.find((t) => t.key === activeTab)?.title || "Quality"}
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
               priority
             />

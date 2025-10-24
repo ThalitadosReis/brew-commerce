@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
+import Button from "../common/Button";
 
 export default function LocationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -41,37 +42,40 @@ export default function LocationSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <SectionHeader
+        <Section
           subtitle="brew."
           title="Locations"
           description="Find us in the cities where coffee passion runs deep."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-[.5fr_1fr] gap-8">
-          <div className="grid gap-y-12">
+          <div className="grid items-center gap-y-8">
             {locations.map((loc, index) => (
-              <button
+              <div
                 key={loc.name}
-                onClick={() => setActiveIndex(index)}
-                className={`w-full text-left border-l-1 pl-4 ${
+                className={`w-full text-left border-l-1 pl-4 cursor-pointer ${
                   activeIndex === index
                     ? "border-black bg-transparent"
                     : "border-transparent"
-                } focus:outline-none`}
+                }`}
               >
-                <h3 className="text-xl md:text-2xl font-heading font-semibold">
-                  {loc.name}
-                </h3>
-                <p className="whitespace-normal">{loc.description}</p>
-                <a
+                <div onClick={() => setActiveIndex(index)}>
+                  <h3 className="text-xl md:text-2xl font-heading font-semibold">
+                    {loc.name}
+                  </h3>
+                  <p className="whitespace-normal">{loc.description}</p>
+                </div>
+                <Button
+                  as="a"
+                  variant="tertiary"
+                  className="mt-4 text-sm"
                   href={loc.mapLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm hover:underline mt-2 inline-block"
                 >
                   {loc.linkText}
-                </a>
-              </button>
+                </Button>
+              </div>
             ))}
           </div>
 
@@ -81,6 +85,7 @@ export default function LocationSection() {
                 src={locations[activeIndex].image}
                 alt={locations[activeIndex].name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px"
                 className="object-cover"
                 priority
               />

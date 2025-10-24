@@ -80,8 +80,9 @@ export default function CraftSection() {
                   <div className="relative w-full h-[300px] overflow-hidden">
                     <Image
                       src={item.image}
-                      alt={`Craft process step ${i + 1}`}
+                      alt={`Craft process step ${i + 1}: ${item.title}`}
                       fill
+                      sizes="100vw"
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-black/30" />

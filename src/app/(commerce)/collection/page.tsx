@@ -7,7 +7,7 @@ import Filter, { SortOption } from "@/components/collection/Filter";
 import PageHeader from "@/components/common/PageHeader";
 import CollectionContent from "@/components/collection/CollectionContent";
 import QualitySection from "@/components/collection/QualitySection";
-import ContactSection from "@/components/common/ContactSection";
+import Contact from "@/components/common/ContentBlock";
 
 export default function CollectionPage() {
   const collectionRef = useRef<HTMLDivElement>(null);
@@ -91,7 +91,7 @@ export default function CollectionPage() {
 
       <QualitySection />
 
-      <ContactSection
+      <Contact
         className="bg-white"
         title="Brew your perfect moment"
         text="Discover a world of flavor with fresh coffee delivered directly to your doorstep."

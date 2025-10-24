@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Head from "next/head";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
 
 export default function StorySection() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export default function StorySection() {
       </Head>
 
       <section className="max-w-7xl mx-auto">
-        <SectionHeader
+        <Section
           className="px-6"
           subtitle="Roots"
           title="A journey of passion and precision in coffee"
@@ -65,7 +65,7 @@ export default function StorySection() {
               >
                 <Image
                   src={src}
-                  alt={`Coffee ${idx + 1}`}
+                  alt={`Coffee story image ${idx + 1}`}
                   width={500}
                   height={400}
                   className="aspect-[4/3] w-full object-cover"

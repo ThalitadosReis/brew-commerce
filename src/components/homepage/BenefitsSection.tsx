@@ -8,7 +8,7 @@ import {
   GearIcon,
 } from "@phosphor-icons/react";
 import Button from "../common/Button";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
 
 export default function BenefitsSection() {
   const image =
@@ -44,7 +44,7 @@ export default function BenefitsSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <SectionHeader
+        <Section
           subtitle="Benefits"
           title="Highest grade arabica beans"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -75,6 +75,7 @@ export default function BenefitsSection() {
                 src={image}
                 alt="Coffee beans in a cup, illustrating benefits section"
                 fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 33vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-black/30" />

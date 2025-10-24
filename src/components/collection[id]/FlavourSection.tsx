@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Head from "next/head";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
+import ContentBlock from "../common/ContentBlock";
+
+type TabKeys = "flavor" | "roast" | "brew";
 
 interface TabContentItem {
   title: string;
   text: string;
   image: string;
 }
-
-type TabKeys = "flavor" | "roast" | "brew";
 
 export default function FlavourSection() {
   const [activeTab, setActiveTab] = useState<TabKeys>("flavor");
@@ -49,53 +49,37 @@ export default function FlavourSection() {
         <link rel="preload" as="image" href={tabContent[activeTab].image} />
       </Head>
 
-      <section className="max-w-7xl mx-auto px-6">
-        <SectionHeader
+      <section className="max-w-7xl mx-auto">
+        <Section
+          className="px-6"
           subtitle="Origin"
           title="Taste the difference"
           description="Our coffee represents more than a drink. It's a journey through Ethiopian landscapes and traditions."
         />
 
-        <div className="flex flex-col items-center">
-          <div className="relative mb-8 flex items-center gap-x-6">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                className={`text-body border-b-1 ${
-                  activeTab === tab.key
-                    ? "border-black"
-                    : "border-transparent text-black/70"
-                }`}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid md:grid-cols-2 md:items-center border border-black/20 bg-white overflow-hidden">
-            <div className="p-6 lg:p-8 space-y-4">
-              <h5 className="mb-1 text-lg font-heading">{activeTab}</h5>
-              <h2 className="text-4xl lg:text-5xl font-heading">
-                {tabContent[activeTab].title}
-              </h2>
-              <p className="font-body text-black/70">
-                {tabContent[activeTab].text}
-              </p>
-            </div>
-
-            <div className="relative aspect-square">
-              <Image
-                src={tabContent[activeTab].image}
-                alt={tabContent[activeTab].title}
-                fill
-                className="object-cover w-full"
-                priority
-              />
-              <div className="absolute inset-0 bg-black/30" />
-            </div>
-          </div>
+        <div className="flex justify-center mb-8 gap-x-6 px-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              className={`text-sm md:text-base border-b-2 pb-1 ${
+                activeTab === tab.key
+                  ? "border-black font-semibold"
+                  : "border-transparent text-black/70"
+              }`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
+
+        <ContentBlock
+          className="bg-white border border-black/20"
+          title={tabContent[activeTab].title}
+          text={tabContent[activeTab].text}
+          image={tabContent[activeTab].image}
+          imagePosition="right"
+        />
       </section>
     </>
   );

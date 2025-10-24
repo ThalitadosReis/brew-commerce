@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState } from "react";
 import {
   CircleNotchIcon,
   ClockIcon,
@@ -9,7 +9,8 @@ import {
   PhoneIcon,
 } from "@phosphor-icons/react";
 import Button from "../common/Button";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
+import { useToast } from "@/contexts/ToastContext";
 
 type ContactItemType = {
   heading: string;
@@ -46,6 +47,7 @@ const contactItems: ContactItemType[] = [
 ];
 
 export default function FormSection() {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -53,15 +55,10 @@ export default function FormSection() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: "success" | "error" | null;
-    message: string;
-  }>({ type: null, message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus({ type: null, message: "" });
 
     try {
       const response = await fetch("/api/contact", {
@@ -75,22 +72,13 @@ export default function FormSection() {
       const data = await response.json();
 
       if (response.ok) {
-        setSubmitStatus({
-          type: "success",
-          message: "Thank you! Your message has been sent successfully.",
-        });
+        showToast("Thank you! Your message has been sent successfully.", "success");
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        setSubmitStatus({
-          type: "error",
-          message: data.error || "Failed to send message. Please try again.",
-        });
+        showToast(data.error || "Failed to send message. Please try again.", "error");
       }
     } catch (error) {
-      setSubmitStatus({
-        type: "error",
-        message: "An error occurred. Please try again later.",
-      });
+      showToast("An error occurred. Please try again later.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -102,20 +90,9 @@ export default function FormSection() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // clear status message
-  useEffect(() => {
-    if (submitStatus.type) {
-      const timer = setTimeout(() => {
-        setSubmitStatus({ type: null, message: "" });
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [submitStatus.type]);
-
   return (
     <section className="max-w-7xl mx-auto px-6">
-      <SectionHeader
+      <Section
         className="ml-0 text-left"
         subtitle="Reach"
         title="Get in Touch"
@@ -125,17 +102,6 @@ export default function FormSection() {
       <div className="grid lg:grid-cols-2 gap-16">
         {/* form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {submitStatus.type && (
-            <div
-              className={`p-4 border ${
-                submitStatus.type === "success"
-                  ? "bg-green-50 border-green-200 text-green-800"
-                  : "bg-red-50 border-red-200 text-red-800"
-              }`}
-            >
-              {submitStatus.message}
-            </div>
-          )}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block font-heading text-sm mb-2">Name</label>

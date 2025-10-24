@@ -2,13 +2,13 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import Head from "next/head";
+import { CaretRightIcon } from "@phosphor-icons/react";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
 import ImageCard from "@/components/collection/ImageCard";
-import { CaretRightIcon } from "@phosphor-icons/react";
-import Image from "next/image";
-import Head from "next/head";
 import PageHeader from "@/components/common/PageHeader";
+import Favorites from "@/components/common/ContentBlock";
 
 const image =
   "https://images.pexels.com/photos/7541876/pexels-photo-7541876.jpeg";
@@ -92,37 +92,19 @@ export default function FavoritesPage() {
           )}
         </section>
 
-        <section className="max-w-7xl mx-auto px-6">
-          <div className="grid auto-cols-fr grid-cols-1 overflow-hidden md:grid-cols-2 gap-8">
-            <div className="max-w-lg m-auto space-y-4">
-              <h2 className="text-4xl lg:text-5xl font-heading">
-                Ready to brew your favorites?
-              </h2>
-              <p className="font-body text-black/70">
-                Transform your saved selections into a delicious reality. Each
-                coffee tells a story waiting to be savored.
-              </p>
-              <Link
-                href="/collection"
-                className="block w-fit bg-black/5 hover:bg-black/10 font-medium px-6 py-3"
-              >
-                Explore more
-              </Link>
-            </div>
-
-            <div className="relative aspect-square">
-              <Image
-                src={image}
-                alt="Packing coffee beans"
-                width={600}
-                height={400}
-                className="w-full h-full object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-black/30" />
-            </div>
-          </div>
-        </section>
+        <Favorites
+          contentClassName="!p-0"
+          title="Ready to brew your favorites?"
+          text="Transform your saved selections into a delicious reality. Each coffee tells a story waiting to be savored."
+          image={image}
+          buttons={[
+            {
+              label: "Explore more",
+              href: "/collection",
+              variant: "secondary",
+            },
+          ]}
+        />
       </div>
     </>
   );

@@ -49,7 +49,13 @@ export default function Card({
         }`}
         style={imagePosition === "bottom" ? { minHeight: "100%" } : {}}
       >
-        <Image src={image} alt={title} fill className="object-cover" />
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+        />
         <div className="absolute inset-0 bg-black/30" />
       </div>
     </div>

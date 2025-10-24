@@ -29,8 +29,9 @@ export default function HeroSection() {
         >
           <Image
             src={image}
-            alt="Coffee background"
+            alt="Craft coffee roasting machine background"
             fill
+            sizes="100vw"
             className="object-cover w-full h-full"
             priority
           />

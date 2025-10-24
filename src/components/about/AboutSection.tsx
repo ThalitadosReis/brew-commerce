@@ -1,5 +1,5 @@
 import Head from "next/head";
-import SectionHeader from "../common/SectionHeader";
+import Section from "../common/Section";
 import Card from "@/components/common/Card";
 
 export default function AboutSection() {
@@ -17,7 +17,7 @@ export default function AboutSection() {
       </Head>
 
       <section className="max-w-7xl mx-auto px-6">
-        <SectionHeader
+        <Section
           subtitle="Pure"
           title="Why our coffee is different"
           description="Sustainable, ethical, and delicious coffee that makes a difference"
