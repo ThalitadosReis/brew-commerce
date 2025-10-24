@@ -10,7 +10,7 @@ export default function AdminLayout({
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <AuthProvider>
+    <AuthProvider verifyOnMount={true}>
       <div>
         <AdminNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
         <main>{children}</main>

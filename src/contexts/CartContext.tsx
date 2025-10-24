@@ -1,7 +1,21 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, useEffect } from "react";
-import { CartItem, Product, CartContextType } from "@/types/product";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useRef,
+  ReactNode,
+} from "react";
+import { useUser } from "@clerk/nextjs";
+import {
+  CartItem,
+  Product,
+  CartContextType,
+  ProductSize,
+} from "@/types/product";
+import { ICartItem } from "@/models/Cart";
 
 type CartAction =
   | { type: "ADD_TO_CART"; payload: CartItem }
@@ -17,7 +31,8 @@ type CartAction =
         selectedSizes?: string[];
       };
     }
-  | { type: "LOAD_CART"; payload: CartItem[] };
+  | { type: "LOAD_CART"; payload: CartItem[] }
+  | { type: "CLEAR_CART" };
 
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
@@ -66,13 +81,11 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
         .filter((item) => item.quantity > 0);
     }
 
-    case "LOAD_CART": {
-      return action.payload.map((item) => ({
-        ...item,
-        selectedSizes: item.selectedSizes || [],
-        images: item.images || [],
-      }));
-    }
+    case "LOAD_CART":
+      return action.payload;
+
+    case "CLEAR_CART":
+      return [];
 
     default:
       return state;
@@ -81,118 +94,143 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// helper function to validate stock for selected sizes
 function validateStock(
   selectedSizes: string[],
-  sizes: { size: string; stock: number; price: number }[],
+  sizes: ProductSize[] = [],
   quantity: number
-): { isValid: boolean; errorMessage?: string } {
-  for (const sizeStr of selectedSizes) {
-    const sizeData = sizes.find((s) => s.size === sizeStr);
-    if (!sizeData) {
-      console.warn(`Size ${sizeStr} not found in product`);
-      continue;
-    }
-
+) {
+  if (!sizes.length) return { isValid: true };
+  for (const size of selectedSizes) {
+    const sizeData = sizes.find((s) => s.size === size);
+    if (!sizeData) continue;
     if (quantity > sizeData.stock) {
       return {
         isValid: false,
-        errorMessage: `Only ${sizeData.stock} available in stock for size ${sizeStr}.`,
+        errorMessage: `Only ${sizeData.stock} in stock for ${size}`,
       };
     }
   }
   return { isValid: true };
 }
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({ children }: { children: ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
-  const [isClient, setIsClient] = React.useState(false);
+  const { user, isSignedIn } = useUser();
+  const isClientRef = useRef(false);
 
-  // load cart from localStorage
   useEffect(() => {
-    setIsClient(true);
-    const savedCart = localStorage.getItem("brew-cart");
-    if (savedCart) {
-      try {
-        const parsedCart = (JSON.parse(savedCart) as CartItem[]).map(
-          (item) => ({
-            ...item,
-            selectedSizes: item.selectedSizes || [],
-            images: item.images || [],
-          })
-        );
-        dispatch({ type: "LOAD_CART", payload: parsedCart });
-      } catch (error) {
-        console.error("Failed to load cart from localStorage:", error);
-      }
-    }
-
-    // listen for cart cleared event from success page
-    const handleCartCleared = () => {
-      console.log("cartCleared event received in CartContext");
-      dispatch({ type: "LOAD_CART", payload: [] });
-      console.log("Cart state cleared");
-    };
-
-    window.addEventListener("cartCleared", handleCartCleared);
-    console.log("CartContext: cartCleared event listener added");
-
-    return () => {
-      window.removeEventListener("cartCleared", handleCartCleared);
-    };
+    isClientRef.current = true;
   }, []);
 
-  // save cart to localStorage
+  // load cart from localStorage and/or DB
   useEffect(() => {
-    if (!isClient) return;
-    localStorage.setItem("brew-cart", JSON.stringify(items));
-    window.dispatchEvent(new Event("cartUpdated"));
-  }, [items, isClient]);
+    if (!isClientRef.current) return;
 
-  // add to cart with stock validation
+    const loadCart = async () => {
+      // LocalStorage first
+      const saved = localStorage.getItem("brew-cart");
+      if (saved) {
+        try {
+          const parsed: CartItem[] = JSON.parse(saved);
+          dispatch({ type: "LOAD_CART", payload: parsed });
+        } catch (e) {
+          console.warn("Failed to parse cart from localStorage", e);
+        }
+      }
+
+      // then DB if user signed in
+      if (isSignedIn && user) {
+        try {
+          const res = await fetch("/api/cart");
+          if (res.ok) {
+            const data: { items: ICartItem[] } = await res.json();
+
+            const transformed: CartItem[] = (data.items ?? []).map((i) => ({
+              id: i.productId,
+              _id: i.productId,
+              name: i.name,
+              description: i.description,
+              price: i.price,
+              quantity: i.quantity,
+              selectedSizes: i.selectedSizes || [],
+              images: i.images || [],
+              category: i.category || "",
+              country: i.country || "",
+              sizes: i.sizes || [],
+            }));
+
+            dispatch({ type: "LOAD_CART", payload: transformed });
+            localStorage.setItem("brew-cart", JSON.stringify(transformed));
+          }
+        } catch (e) {
+          console.error("Failed to load cart from DB", e);
+        }
+      }
+    };
+
+    loadCart();
+  }, [isSignedIn, user]);
+
+  // persist cart to localStorage and DB
+  useEffect(() => {
+    if (!isClientRef.current) return;
+    localStorage.setItem("brew-cart", JSON.stringify(items));
+
+    if (isSignedIn && user) {
+      const saveToDB = async () => {
+        try {
+          await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              items: items.map((i) => ({
+                id: i.id,
+                name: i.name,
+                description: i.description,
+                price: i.price,
+                quantity: i.quantity,
+                selectedSizes: i.selectedSizes || [],
+                images: i.images || [],
+                category: i.category,
+                country: i.country,
+                sizes: i.sizes,
+              })),
+            }),
+          });
+        } catch (e) {
+          console.error("Failed to save cart to DB", e);
+        }
+      };
+      const timeout = setTimeout(saveToDB, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [items, isSignedIn, user]);
+
   const addToCart = (
     product: Product,
     selectedSizes: string[],
     quantity: number
   ) => {
-    // check existing quantity in cart for this product and size combination
-    const existingItem = items.find(
-      (item) =>
-        item.id === product._id &&
-        JSON.stringify(item.selectedSizes) === JSON.stringify(selectedSizes)
+    const existing = items.find(
+      (i) =>
+        i.id === product._id &&
+        JSON.stringify(i.selectedSizes) === JSON.stringify(selectedSizes)
     );
+    const currentQty = existing ? existing.quantity : 0;
 
-    const currentQuantity = existingItem ? existingItem.quantity : 0;
-    const newTotalQuantity = currentQuantity + quantity;
-
-    // validate stock for each selected size
-    const stockValidation = validateStock(
+    const stockCheck = validateStock(
       selectedSizes,
       product.sizes,
-      newTotalQuantity
+      currentQty + quantity
     );
-
-    if (!stockValidation.isValid) {
-      alert(`Cannot add ${quantity} item(s). ${stockValidation.errorMessage}`);
+    if (!stockCheck.isValid) {
+      alert(stockCheck.errorMessage);
       return;
     }
 
-    // get the correct price for the selected size
-    const selectedSizeData = product.sizes.find(
-      (s) => s.size === selectedSizes[0]
-    );
-    const correctPrice = selectedSizeData
-      ? selectedSizeData.price
-      : product.price;
-
-    console.log("CartContext - Dispatching ADD_TO_CART:", {
-      productId: product._id,
-      selectedSizes,
-      quantity,
-      currentQuantity,
-      newTotalQuantity,
-      price: correctPrice,
-    });
+    const price =
+      product.sizes.find((s) => s.size === selectedSizes[0])?.price ||
+      product.price;
 
     dispatch({
       type: "ADD_TO_CART",
@@ -201,7 +239,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         _id: product._id,
         name: product.name,
         description: product.description,
-        price: correctPrice,
+        price,
         images: product.images,
         category: product.category,
         country: product.country,
@@ -212,35 +250,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // update quantity
   const updateQuantity = (
     productId: string | number,
     quantity: number,
     selectedSizes?: string[]
   ) => {
-    // find the item in cart
     const item = items.find(
       (i) =>
         i.id === productId &&
         JSON.stringify(i.selectedSizes) === JSON.stringify(selectedSizes)
     );
+    if (!item) return;
 
-    if (!item) {
-      console.warn("Item not found in cart");
-      return;
-    }
-
-    // validate stock for each selected size
-    const stockValidation = validateStock(
-      item.selectedSizes,
-      item.sizes,
-      quantity
-    );
-
-    if (!stockValidation.isValid) {
-      alert(
-        `Cannot set quantity to ${quantity}. ${stockValidation.errorMessage}`
-      );
+    const stockCheck = validateStock(item.selectedSizes, item.sizes, quantity);
+    if (!stockCheck.isValid) {
+      alert(stockCheck.errorMessage);
       return;
     }
 
@@ -250,7 +274,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // remove from cart
   const removeFromCart = (
     productId: string | number,
     selectedSizes?: string[]
@@ -261,22 +284,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const getTotalItems = () =>
-    items.reduce((total, item) => total + item.quantity, 0);
-
-  const getTotalPrice = () =>
-    items.reduce((total, item) => total + item.price * item.quantity, 0);
-
-  const value: CartContextType = {
-    items,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    getTotalItems,
-    getTotalPrice,
+  const clearCart = () => {
+    dispatch({ type: "CLEAR_CART" });
+    localStorage.removeItem("brew-cart");
   };
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  const getTotalItems = () => items.reduce((sum, i) => sum + i.quantity, 0);
+  const getTotalPrice = () =>
+    items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+  return (
+    <CartContext.Provider
+      value={{
+        items,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getTotalItems,
+        getTotalPrice,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
 
 export function useCart() {

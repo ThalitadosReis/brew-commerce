@@ -16,15 +16,13 @@ export function signToken(payload: JWTPayload): string {
   });
 }
 
-export function verifyToken(token: string): JWTPayload {
+export function verifyToken(token: string): JWTPayload | null {
   try {
-    console.log("[JWT] Verifying token with secret length:", JWT_SECRET.length);
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
-    console.log("[JWT] Token verified successfully:", decoded);
     return decoded;
   } catch (error) {
     console.error("[JWT] Token verification failed:", error);
-    throw new Error("Invalid or expired token");
+    return null;
   }
 }
 

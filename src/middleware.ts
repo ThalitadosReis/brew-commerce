@@ -14,22 +14,21 @@ const isPublicRoute = createRouteMatcher([
   "/favorites(.*)",
   "/success(.*)",
   "/api/products(.*)",
+  "/api/orders(.*)",
+  "/api/checkout(.*)",
+  "/api/cart(.*)",
   "/admin-login(.*)",
   "/api/admin/login(.*)",
 ]);
 
 // Admin routes requiring MongoDB-based authentication
-const isAdminRoute = createRouteMatcher([
-  "/admin",
-  "/admin/((?!login).*)",
-  "/api/admin/verify(.*)",
-]);
+const isAdminRoute = createRouteMatcher(["/admin", "/admin/((?!login).*)"]);
 
 // Admin API routes (auth handled in route handlers)
 const isAdminApiRoute = createRouteMatcher([
   "/api/admin(.*)",
-  "/api/orders(.*)",    // Orders API handles its own auth
-  "/api/checkout(.*)",  // Stripe checkout is public
+  "/api/orders(.*)",
+  "/api/checkout(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, request: NextRequest) => {

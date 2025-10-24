@@ -7,7 +7,6 @@ import { CaretUpIcon } from "@phosphor-icons/react";
 
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 
 import Navbar from "@/components/Navbar";
@@ -67,30 +66,28 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <ToastProvider>
-      <AuthProvider>
-        <WishlistProvider>
-          <CartProvider>
-            <Navbar />
-            {pathname === "/" ? <div ref={heroRef}>{children}</div> : children}
-            <Footer />
+      <WishlistProvider>
+        <CartProvider>
+          <Navbar />
+          {pathname === "/" ? <div ref={heroRef}>{children}</div> : children}
+          <Footer />
 
-            <button
-              onClick={scrollToTop}
-              aria-label="Scroll to top"
-              className={`fixed right-6 lg:right-8 p-3 bg-black text-white overflow-hidden group z-50 transition-all duration-500 ease-out
+          <button
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+            className={`fixed right-6 lg:right-8 p-3 bg-black text-white overflow-hidden group z-50 transition-all duration-500 ease-out
                 ${
                   showScroll && isScrolling
                     ? "bottom-6 opacity-100 translate-y-0"
                     : "bottom-0 opacity-0 translate-y-6 pointer-events-none"
                 }`}
-            >
-              <CaretUpIcon size={20} />
+          >
+            <CaretUpIcon size={20} />
 
-              <span className="pointer-events-none absolute top-[-50px] left-[-75px] w-[50px] h-[155px] bg-white opacity-20 rotate-[35deg] transition-all duration-[550ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:left-[120%]" />
-            </button>
-          </CartProvider>
-        </WishlistProvider>
-      </AuthProvider>
+            <span className="pointer-events-none absolute top-[-50px] left-[-75px] w-[50px] h-[155px] bg-white opacity-20 rotate-[35deg] transition-all duration-[550ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:left-[120%]" />
+          </button>
+        </CartProvider>
+      </WishlistProvider>
     </ToastProvider>
   );
 }

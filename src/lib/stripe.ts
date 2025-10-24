@@ -7,11 +7,15 @@ export const getStripe = () => {
 
   if (!publishableKey) {
     console.error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined");
-    throw new Error("Stripe publishable key is missing. Please check your environment variables.");
+    throw new Error(
+      "Stripe publishable key is missing. Please check your environment variables."
+    );
   }
 
   if (publishableKey === "pk_test_your_publishable_key_here") {
-    throw new Error("Please replace the placeholder Stripe publishable key with your actual key from the Stripe Dashboard.");
+    throw new Error(
+      "Please replace the placeholder Stripe publishable key with your actual key from the Stripe Dashboard."
+    );
   }
 
   return loadStripe(publishableKey);
@@ -28,11 +32,15 @@ export const getServerStripe = (): Stripe => {
   const secretKey = process.env.STRIPE_SECRET_KEY;
 
   if (!secretKey) {
-    throw new Error("STRIPE_SECRET_KEY is not defined in environment variables");
+    throw new Error(
+      "STRIPE_SECRET_KEY is not defined in environment variables"
+    );
   }
 
   if (secretKey === "sk_test_your_secret_key_here") {
-    throw new Error("Please replace the placeholder Stripe secret key with your actual key from the Stripe Dashboard.");
+    throw new Error(
+      "Please replace the placeholder Stripe secret key with your actual key from the Stripe Dashboard."
+    );
   }
 
   _stripe = new Stripe(secretKey, {
@@ -53,8 +61,10 @@ export const stripe = (() => {
   // Return a proxy that throws an error if used on client side
   return new Proxy({} as Stripe, {
     get() {
-      throw new Error("Stripe server instance cannot be used on the client side. Use getStripe() instead.");
-    }
+      throw new Error(
+        "Stripe server instance cannot be used on the client side. Use getStripe() instead."
+      );
+    },
   });
 })();
 

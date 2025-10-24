@@ -20,7 +20,7 @@ export interface Product {
 
 export interface CartItem {
   id: string | number;
-  _id?: string;
+  _id?: string | number;
   name: string;
   description: string;
   price: number;
@@ -50,4 +50,5 @@ export interface CartContextType {
   ) => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  clearCart: () => void;
 }
