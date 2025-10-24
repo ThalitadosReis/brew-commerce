@@ -6,7 +6,14 @@ import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/contexts/ToastContext";
 import type { CartItem } from "@/types/product";
-import { XIcon, MinusIcon, PlusIcon, CoffeeIcon } from "@phosphor-icons/react";
+import {
+  MinusIcon,
+  PlusIcon,
+  TrashSimpleIcon,
+  PackageIcon,
+} from "@phosphor-icons/react";
+import Drawer from "./common/Drawer";
+import Button from "./common/Button";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -33,7 +40,13 @@ function CartItemComponent({
 }: CartItemComponentProps) {
   const selectedSizes = item.selectedSizes ?? [];
   const quantity = item.quantity;
-  const itemId = item.id || item._id || "";
+
+  const getItemId = () => {
+    if (item._id) return item._id;
+    return `${item.name}-${selectedSizes.join("-")}`;
+  };
+
+  const itemId = getItemId();
 
   // calculate if user can increase quantity based on stock
   const canIncrease = selectedSizes.every((sizeStr) => {
@@ -43,12 +56,19 @@ function CartItemComponent({
   });
 
   const handleIncreaseQuantity = () => {
-    if (!canIncrease) return;
+    if (!canIncrease || !itemId) return;
     updateQuantity(itemId, quantity + 1, selectedSizes);
   };
 
   const handleDecreaseQuantity = () => {
-    updateQuantity(itemId, Math.max(1, quantity - 1), selectedSizes);
+    if (!itemId) return;
+    if (quantity <= 1) return;
+    updateQuantity(itemId, quantity - 1, selectedSizes);
+  };
+
+  const handleRemove = () => {
+    if (!itemId) return;
+    removeFromCart(itemId, selectedSizes);
   };
 
   const itemTotal = item.price * quantity;
@@ -56,69 +76,67 @@ function CartItemComponent({
   return (
     <div className="flex justify-between pb-4 border-b border-black/10">
       <div className="flex items-start gap-4">
-        <div className="relative w-24 h-24 bg-black/10 overflow-hidden shrink-0">
-          <button
-            onClick={() => removeFromCart(itemId, selectedSizes)}
-            className="absolute p-1 bg-white hover:bg-black/20 z-10"
-            title="Remove item"
-            aria-label="Remove item from cart"
-          >
-            <XIcon size={12} />
-          </button>
-          {item.images?.[0] ? (
+        <div className="w-24 h-24 bg-black/10 overflow-hidden shrink-0">
+          {item?.images ? (
             <Image
               src={item.images[0]}
               alt={item.name}
-              fill
-              sizes="80px"
+              title={item.name}
+              width={100}
+              height={100}
               className="object-contain"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-black/50">
-              <CoffeeIcon size={32} weight="light" />
+              <PackageIcon size={32} weight="light" />
             </div>
           )}
         </div>
 
-        <div className="flex flex-col justify-between h-full">
-          <div>
-            <h3 className="text-lg font-heading">{item.name}</h3>
-            <p className="text-xs text-black/70">
-              Size: {selectedSizes.join(", ")}
-            </p>
-          </div>
-
-          <div className="inline-flex items-center gap-2 mt-1">
-            <button
-              onClick={handleDecreaseQuantity}
-              disabled={quantity <= 1}
-              className={quantity <= 1 ? "opacity-30 cursor-not-allowed" : ""}
-              aria-label="Decrease quantity"
-            >
-              <MinusIcon
-                size={12}
-                className={quantity > 1 ? "hover:opacity-50" : ""}
-              />
-            </button>
-
-            <span className="text-sm w-8 text-center">{quantity}</span>
-
-            <button
-              onClick={handleIncreaseQuantity}
-              disabled={!canIncrease}
-              className={!canIncrease ? "opacity-30 cursor-not-allowed" : ""}
-              aria-label="Increase quantity"
-            >
-              <PlusIcon
-                size={12}
-                className={canIncrease ? "hover:opacity-50" : ""}
-              />
-            </button>
-          </div>
+        <div className="flex flex-col">
+          <h3 className="text-lg font-heading">{item.name}</h3>
+          <p className="text-sm text-black/70">Size: {selectedSizes}</p>
         </div>
       </div>
+      <div className="flex flex-col justify-between">
+        <p className="font-semibold">CHF {itemTotal.toFixed(2)}</p>
+        <div className="w-fit inline-flex items-center border border-black/10">
+          {quantity > 1 ? (
+            <button
+              onClick={handleDecreaseQuantity}
+              className="p-2 bg-black/10 hover:bg-black/15"
+              aria-label="Decrease quantity"
+            >
+              <MinusIcon size={16} weight="light" />
+            </button>
+          ) : (
+            <button
+              onClick={handleRemove}
+              className="p-2 bg-black/10 hover:bg-black/15"
+              aria-label="Remove item from cart"
+            >
+              <TrashSimpleIcon size={16} weight="light" />
+            </button>
+          )}
 
-      <p className="font-semibold">CHF {itemTotal.toFixed(2)}</p>
+          <span className="text-sm font-body px-3 text-center bg-white">
+            {quantity}
+          </span>
+
+          <button
+            onClick={handleIncreaseQuantity}
+            disabled={!canIncrease}
+            className={`p-2 bg-black/10 ${
+              !canIncrease
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-black/15"
+            }`}
+            aria-label="Increase quantity"
+          >
+            <PlusIcon size={16} weight="light" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -199,75 +217,49 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     }
   };
 
-  return (
+  const footerContent = items.length > 0 && (
     <>
-      {isOpen && (
-        <div
-          className="h-screen fixed inset-0 z-40 bg-black/30"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
-
-      <div
-        className={`fixed top-0 right-0 h-screen w-full md:w-[400px] bg-white z-50 transform transition-transform duration-300 flex flex-col ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Shopping cart"
+      <div className="flex justify-between items-center mb-8">
+        <p className="font-body">Subtotal</p>
+        <span className="text-lg font-semibold">CHF {subtotal.toFixed(2)}</span>
+      </div>
+      <Button
+        variant="primary"
+        onClick={handleCheckout}
+        disabled={isCheckingOut}
+        className="w-full"
       >
-        {/* header */}
-        <div className="flex items-center justify-between p-6 border-b border-black/10 flex-shrink-0">
-          <h2 className="text-2xl font-heading">Cart ({totalQuantity})</h2>
-          <button
-            onClick={onClose}
-            className="hover:opacity-50"
-            aria-label="Close cart"
-          >
-            <XIcon size={18} />
-          </button>
-        </div>
+        {isCheckingOut
+          ? "Processing..."
+          : user
+          ? "Checkout"
+          : "Sign in to checkout"}
+      </Button>
+    </>
+  );
 
-        {/* items */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {items.length === 0 ? (
-            <p className="text-center text-black/70">Your cart is empty.</p>
-          ) : (
-            items.map((item) => (
-              <CartItemComponent
-                key={`${item.id || item._id}-${item.selectedSizes?.join("-")}`}
-                item={item}
-                updateQuantity={updateQuantity}
-                removeFromCart={removeFromCart}
-              />
-            ))
-          )}
-        </div>
-
-        {/* footer */}
-        {items.length > 0 && (
-          <div className="p-6 border-t border-black/10 flex-shrink-0 sticky bottom-0 bg-white">
-            <div className="flex justify-between items-center mb-6">
-              <p className="font-body">Subtotal</p>
-              <span className="text-lg font-semibold">
-                CHF {subtotal.toFixed(2)}
-              </span>
-            </div>
-            <button
-              onClick={handleCheckout}
-              disabled={isCheckingOut}
-              className="w-full py-3 text-sm font-semibold text-white bg-black hover:opacity-70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isCheckingOut
-                ? "Processing..."
-                : user
-                ? "Checkout"
-                : "Sign in to checkout"}
-            </button>
-          </div>
+  return (
+    <Drawer
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${totalQuantity} ${totalQuantity === 1 ? "item" : "items"}`}
+      footer={footerContent}
+      ariaLabel="Shopping cart"
+    >
+      <div className="space-y-4">
+        {items.length === 0 ? (
+          <p className="text-center text-black/70">Your cart is empty.</p>
+        ) : (
+          items.map((item) => (
+            <CartItemComponent
+              key={`${item.id || item._id}-${item.selectedSizes}`}
+              item={item}
+              updateQuantity={updateQuantity}
+              removeFromCart={removeFromCart}
+            />
+          ))
         )}
       </div>
-    </>
+    </Drawer>
   );
 }
