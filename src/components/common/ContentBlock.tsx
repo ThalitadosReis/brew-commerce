@@ -43,13 +43,13 @@ const ContentBlock = ({
 
       <section className="max-w-7xl mx-auto px-6">
         <div
-          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${className} ${
-            imagePosition === "left" ? "lg:grid-flow-col-dense" : ""
+          className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center ${className} ${
+            imagePosition === "left" ? "md:grid-flow-col-dense" : ""
           }`}
         >
           <div
             className={`max-w-lg flex flex-col justify-center space-y-4 p-8 ${
-              imagePosition === "left" ? "lg:order-2" : "lg:order-1"
+              imagePosition === "left" ? "md:order-2" : "md:order-1"
             } ${contentClassName}`}
           >
             {subtitle && (
@@ -72,8 +72,8 @@ const ContentBlock = ({
 
           {image && (
             <div
-              className={`relative w-full h-[300px] md:h-[400px] ${
-                imagePosition === "left" ? "lg:order-1" : "lg:order-2"
+              className={`relative w-full h-[300px] lg:h-[400px] ${
+                imagePosition === "left" ? "md:order-1" : "md:order-2"
               }`}
             >
               <Image
@@ -81,7 +81,7 @@ const ContentBlock = ({
                 alt={title}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover object-center"
+                className="object-cover"
                 priority
               />
               <div className="absolute inset-0 bg-black/30" />

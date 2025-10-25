@@ -52,15 +52,15 @@ const timelineCards: TimelineCardType[] = [
 
 function TimelineCard({ card }: { card: TimelineCardType }) {
   return (
-    <div className="w-full overflow-hidden border border-black/10 bg-white">
-      <div className="p-8 space-y-4">
-        <h3 className="text-lg md:text-xl font-heading">{card.date}</h3>
-        <h4 className="text-xl md:text-2xl font-heading font-bold">
+    <div className="w-full overflow-hidden bg-white">
+      <div className="p-6 md:p-8 space-y-2">
+        <span className="inline-block text-xs md:text-sm tracking-wider">
+          {card.date}
+        </span>
+        <h4 className="text-xl md:text-2xl font-heading font-semibold">
           {card.heading}
         </h4>
-        <p className="text-sm md:text-base font-body text-black/70">
-          {card.text}
-        </p>
+        <p className="text-sm md:text-base font-body font-light">{card.text}</p>
       </div>
     </div>
   );
@@ -68,56 +68,56 @@ function TimelineCard({ card }: { card: TimelineCardType }) {
 
 export default function TimelineSection() {
   return (
-    <>
-      <section className="max-w-7xl mx-auto px-6">
-        <Section
-          subtitle="Our Coffee Journey"
-          title="From Local Passion to Global Coffee Culture"
-          description="Discover how we built meaningful relationships with coffee farmers across continents and delivered their craft to mugs worldwide."
-        />
+    <section className="max-w-7xl mx-auto px-6">
+      <Section
+        subtitle="Our Coffee Journey"
+        title="From Local Passion to Global Coffee Culture"
+        description="Discover how we built meaningful relationships with coffee farmers across continents and delivered their craft to mugs worldwide."
+      />
 
-        <div className="relative">
-          <div className="absolute top-0 bottom-0 left-4 lg:left-1/2 lg:-translate-x-1/2 w-1 bg-black/10 z-0" />
+      <div className="relative">
+        <div className="pointer-events-none absolute top-0 bottom-0 left-4 lg:left-1/2 lg:-translate-x-1/2 w-px bg-black/10" />
 
-          <div className="space-y-8 relative z-10">
-            {timelineCards.map((card, index) => {
-              const isLeft = index % 2 === 0;
-              return (
-                <div key={index} className="relative">
-                  {/* mobile layout */}
-                  <div className="lg:hidden flex">
-                    <div className="w-8 flex justify-center relative z-30">
-                      <div className="mt-8 w-4 h-4 rounded-full bg-black ring-8 ring-[#F3F3F3]" />
-                    </div>
-                    <div className="flex-1 ml-4">
-                      <TimelineCard card={card} />
-                    </div>
+        <div className="space-y-8 relative z-10">
+          {timelineCards.map((card, index) => {
+            const isLeft = index % 2 === 0;
+            return (
+              <div key={index} className="relative">
+                {/* mobile layout */}
+                <div className="lg:hidden flex">
+                  <div className="w-8 flex justify-center relative z-30">
+                    <span className="mt-8 w-3 h-3 rounded-full bg-black ring-4 ring-[#F3F3F3]" />
                   </div>
-
-                  {/* desktop layout */}
-                  <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-start w-full">
-                    <div className="flex">
-                      {isLeft && (
-                        <div className="mr-8 w-full">
-                          <TimelineCard card={card} />
-                        </div>
-                      )}
-                    </div>
-                    <div className="mt-8 w-4 h-4 rounded-full bg-black ring-8 ring-[#F3F3F3]" />
-                    <div className="flex">
-                      {!isLeft && (
-                        <div className="ml-8 w-full">
-                          <TimelineCard card={card} />
-                        </div>
-                      )}
-                    </div>
+                  <div className="flex-1 ml-4">
+                    <TimelineCard card={card} />
                   </div>
                 </div>
-              );
-            })}
-          </div>
+
+                {/* desktop layout */}
+                <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-start w-full">
+                  <div className="flex">
+                    {isLeft && (
+                      <div className="mr-8 w-full">
+                        <TimelineCard card={card} />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-8 w-3 h-3 rounded-full bg-black ring-8 ring-[#F3F3F3]" />
+
+                  <div className="flex">
+                    {!isLeft && (
+                      <div className="ml-8 w-full">
+                        <TimelineCard card={card} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

@@ -69,7 +69,6 @@ export default function QualitySection() {
                 tabs.find((t) => t.key === activeTab)?.title ||
                 "Quality section image"
               }
-              title={tabs.find((t) => t.key === activeTab)?.title || "Quality"}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"

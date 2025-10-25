@@ -81,7 +81,6 @@ function CartItemComponent({
             <Image
               src={item.images[0]}
               alt={item.name}
-              title={item.name}
               width={100}
               height={100}
               className="object-contain"

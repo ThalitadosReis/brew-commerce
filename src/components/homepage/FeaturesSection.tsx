@@ -37,6 +37,7 @@ export default function FeaturesSection() {
               subtitle="Craft"
               title="Learn about our meticulous roasting process"
               description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+              href="/about"
               image={images[1]}
             />
           </div>

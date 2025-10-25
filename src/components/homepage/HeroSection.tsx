@@ -31,8 +31,8 @@ export default function HeroSection() {
             src={image}
             alt="Craft coffee roasting machine background"
             fill
-            sizes="100vw"
-            className="object-cover w-full h-full"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px"
+            className="object-cover"
             priority
           />
           <div className="absolute inset-0 bg-black/30" />

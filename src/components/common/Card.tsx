@@ -48,9 +48,10 @@ export default function Card({
 
       <div
         className={`relative flex-shrink-0 w-full ${
-          imagePosition === "right" ? "md:w-1/2" : "h-[300px] md:h-auto"
+          imagePosition === "right"
+            ? "md:w-1/2 min-h-[300px]"
+            : "h-[300px] lg:h-full"
         }`}
-        style={imagePosition === "bottom" ? { minHeight: "100%" } : {}}
       >
         <Image
           src={image}

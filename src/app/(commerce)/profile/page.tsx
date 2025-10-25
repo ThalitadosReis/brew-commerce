@@ -225,7 +225,6 @@ export default function ProfilePage() {
                                   <Image
                                     src={item.images[0]}
                                     alt={item.name}
-                                    title={item.name}
                                     width={80}
                                     height={80}
                                     className="h-full w-full object-contain"

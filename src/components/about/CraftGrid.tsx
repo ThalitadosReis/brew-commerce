@@ -31,7 +31,7 @@ export default function CraftGrid() {
         description="We select beans with precision, roast with care, and deliver pure flavor in every package."
       />
 
-      <div className="grid gap-8 md:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-3 space-y-12">
         {craftItems.map((item, idx) => (
           <div key={idx} className="text-center space-y-2">
             <div className="flex justify-center">{item.icon}</div>
@@ -42,7 +42,7 @@ export default function CraftGrid() {
           </div>
         ))}
       </div>
-      <div className="mt-8 flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <Button variant="secondary">
           <Link href="/collection"> Shop now</Link>
         </Button>

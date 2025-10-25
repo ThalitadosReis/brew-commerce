@@ -56,7 +56,7 @@ export default function TestimonialSection() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto py-24 px-6">
+    <section className="max-w-7xl mx-auto px-6">
       <div
         className="relative overflow-hidden group"
         role="region"
