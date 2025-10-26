@@ -21,6 +21,16 @@ export default function ProductPage() {
         if (response.ok) {
           const data = await response.json();
           setProduct(data.product);
+
+          // dynamically preload the product’s main image
+          const heroImage = data?.product?.images?.[0];
+          if (heroImage) {
+            const link = document.createElement("link");
+            link.rel = "preload";
+            link.as = "image";
+            link.href = heroImage;
+            document.head.appendChild(link);
+          }
         }
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -29,9 +39,7 @@ export default function ProductPage() {
       }
     };
 
-    if (params.id) {
-      fetchProduct();
-    }
+    if (params.id) fetchProduct();
   }, [params.id]);
 
   if (loading) {
