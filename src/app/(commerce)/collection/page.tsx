@@ -33,6 +33,7 @@ export default function CollectionPage() {
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
+          setFilteredProducts(data);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -79,6 +80,7 @@ export default function CollectionPage() {
           filteredProducts={filteredProducts}
           sortBy={sortBy}
           setSortBy={setSortBy}
+          loading={loading}
         />
       </div>
 

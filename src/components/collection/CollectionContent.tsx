@@ -6,26 +6,27 @@ import { Product } from "@/types/product";
 import ImageCard from "@/components/collection/ImageCard";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
 import Button from "../common/Button";
+import Loading from "../common/Loading";
 
 interface CollectionContentProps {
   filteredProducts: Product[];
   sortBy: SortOption;
   setSortBy: (option: SortOption) => void;
+  loading?: boolean;
 }
 
 export default function CollectionContent({
   filteredProducts,
   sortBy,
   setSortBy,
+  loading = false,
 }: CollectionContentProps) {
   const [itemsToShow, setItemsToShow] = useState(6);
 
-  // display only the sliced products
   const displayedProducts = useMemo(() => {
     return filteredProducts.slice(0, itemsToShow);
   }, [filteredProducts, itemsToShow]);
 
-  // adjust items per screen size
   useEffect(() => {
     const updateItemsToShow = () => {
       if (typeof window === "undefined") return;
@@ -36,6 +37,14 @@ export default function CollectionContent({
     window.addEventListener("resize", updateItemsToShow);
     return () => window.removeEventListener("resize", updateItemsToShow);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="py-24">
+        <Loading message="Loading products..." />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1">
@@ -55,7 +64,6 @@ export default function CollectionContent({
         </div>
       ) : (
         <>
-          {/* collection grid */}
           <div className="grid md:grid-cols-3 gap-4">
             {displayedProducts.map((product) => (
               <ImageCard
