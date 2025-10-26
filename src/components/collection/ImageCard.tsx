@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -62,7 +60,6 @@ export default function ImageCard({
             alt={name}
             width={300}
             height={300}
-            priority
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </Link>

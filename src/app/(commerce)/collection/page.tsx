@@ -7,7 +7,8 @@ import Filter, { SortOption } from "@/components/collection/Filter";
 import PageHeader from "@/components/common/PageHeader";
 import CollectionContent from "@/components/collection/CollectionContent";
 import QualitySection from "@/components/collection/QualitySection";
-import Contact from "@/components/common/ContentBlock";
+import ContentBlock from "@/components/common/ContentBlock";
+import { COLLECTION_CONTACT_IMAGE } from "@/lib/images.collection";
 
 export default function CollectionPage() {
   const collectionRef = useRef<HTMLDivElement>(null);
@@ -90,12 +91,11 @@ export default function CollectionPage() {
       </div>
 
       <QualitySection />
-
-      <Contact
+      <ContentBlock
         className="bg-white"
         title="Brew your perfect moment"
         text="Discover a world of flavor with fresh coffee delivered directly to your doorstep."
-        image="https://images.pexels.com/photos/4820846/pexels-photo-4820846.jpeg"
+        image={COLLECTION_CONTACT_IMAGE}
         buttons={[
           { label: "Contact us", href: "/contact", variant: "primary" },
           { label: "Learn more", href: "/about", variant: "secondary" },
