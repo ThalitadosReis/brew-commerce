@@ -1,47 +1,50 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Button from "@/components/common/Button";
+import { TESTIMONIALS_AVATARS } from "@/lib/images.home";
 
 const testimonials = [
   {
     name: "Samantha Lee",
     quote:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    image: TESTIMONIALS_AVATARS[0],
     role: "Coffee lover, California",
   },
   {
     name: "Jordan Smith",
     quote:
       "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    image: "https://randomuser.me/api/portraits/men/75.jpg",
+    image: TESTIMONIALS_AVATARS[1],
     role: "Barista, London",
   },
   {
     name: "Emily Carter",
     quote:
       "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    image: "https://randomuser.me/api/portraits/women/32.jpg",
+    image: TESTIMONIALS_AVATARS[2],
     role: "Coffee enthusiast, Berlin",
   },
   {
     name: "Liam Thompson",
     quote:
       "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    image: "https://randomuser.me/api/portraits/men/40.jpg",
+    image: TESTIMONIALS_AVATARS[3],
     role: "Roaster, Toronto",
   },
   {
     name: "Olivia Martinez",
     quote:
       "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Proin eget tortor risus.",
-    image: "https://randomuser.me/api/portraits/women/49.jpg",
+    image: TESTIMONIALS_AVATARS[4],
     role: "Coffee Blogger, Madrid",
   },
 ];
 
-export default function TestimonialSection() {
+export default function TestimonialsSection() {
   const [active, setActive] = useState(0);
 
   const nextSlide = () => setActive((prev) => (prev + 1) % testimonials.length);
@@ -130,3 +133,5 @@ export default function TestimonialSection() {
     </section>
   );
 }
+
+export { TestimonialsSection };

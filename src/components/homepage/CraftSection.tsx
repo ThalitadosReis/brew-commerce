@@ -1,14 +1,13 @@
-import Head from "next/head";
-import ContentBlock from "../common/ContentBlock";
+import ContentBlock from "@/components/common/ContentBlock";
+import { CRAFT_IMAGES } from "@/lib/images.home";
 
-export default function CraftSection() {
+export function CraftSection() {
   const crafts = [
     {
       subtitle: "Craft",
       title: "Roasted with intention, brewed with care",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      image:
-        "https://images.pexels.com/photos/7175974/pexels-photo-7175974.jpeg",
+      text: "Every bean roasted to highlight its unique flavor profile.",
+      image: CRAFT_IMAGES[0],
       buttons: [
         { label: "Our Story", href: "/about", variant: "secondary" as const },
         { label: "Explore", href: "/about", variant: "tertiary" as const },
@@ -17,9 +16,8 @@ export default function CraftSection() {
     {
       subtitle: "Passion",
       title: "Connecting coffee lovers with global traditions",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      image:
-        "https://images.pexels.com/photos/6205781/pexels-photo-6205781.jpeg",
+      text: "Bringing communities together through shared experiences.",
+      image: CRAFT_IMAGES[1],
       buttons: [
         {
           label: "Our Collection",
@@ -31,10 +29,9 @@ export default function CraftSection() {
     },
     {
       subtitle: "Heritage",
-      title: "Sustainable practices that support global communities",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      image:
-        "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
+      title: "Sustainable practices that support communities",
+      text: "Ethical sourcing that ensures fairness and sustainability.",
+      image: CRAFT_IMAGES[2],
       buttons: [
         { label: "Learn More", href: "/about", variant: "secondary" as const },
         { label: "Explore", href: "/about", variant: "tertiary" as const },
@@ -43,9 +40,8 @@ export default function CraftSection() {
     {
       subtitle: "Innovation",
       title: "Reimagining coffee through modern techniques",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
-      image:
-        "https://images.pexels.com/photos/6280321/pexels-photo-6280321.jpeg",
+      text: "Combining craftsmanship with technology for consistency.",
+      image: CRAFT_IMAGES[3],
       buttons: [
         {
           label: "Get in Touch",
@@ -58,28 +54,22 @@ export default function CraftSection() {
   ];
 
   return (
-    <>
-      <Head>
-        {crafts.map(({ image }) => (
-          <link key={image} rel="preload" as="image" href={image} />
-        ))}
-      </Head>
-
-      <div>
-        {crafts.map((item, index) => (
-          <ContentBlock
-            contentClassName="!p-0"
-            key={index}
-            subtitle={item.subtitle}
-            title={item.title}
-            text={item.text}
-            image={item.image}
-            buttons={item.buttons}
-            imagePosition={index % 2 === 0 ? "right" : "left"}
-            className="py-16"
-          />
-        ))}
-      </div>
-    </>
+    <div>
+      {crafts.map((item, index) => (
+        <ContentBlock
+          key={index}
+          contentClassName="!p-0"
+          subtitle={item.subtitle}
+          title={item.title}
+          text={item.text}
+          image={item.image}
+          buttons={item.buttons}
+          imagePosition={index % 2 === 0 ? "right" : "left"}
+          className="py-16"
+          priority={false}
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
+      ))}
+    </div>
   );
 }

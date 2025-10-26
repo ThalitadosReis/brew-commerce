@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -7,108 +6,90 @@ import {
   PlantIcon,
   GearIcon,
 } from "@phosphor-icons/react";
-import Button from "../common/Button";
-import Section from "../common/Section";
+import Section from "@/components/common/Section";
+import Button from "@/components/common/Button";
+import { BENEFIT_IMAGE } from "@/lib/images.home";
 
-export default function BenefitsSection() {
-  const image =
-    "https://images.pexels.com/photos/10433516/pexels-photo-10433516.jpeg";
-
+export function BenefitsSection() {
   const benefits = [
     {
       title: "Why choose our coffee",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      text: "Premium beans, perfectly roasted, ethically sourced.",
       icon: <CoffeeIcon size={40} weight="thin" />,
     },
     {
       title: "Expert roasting",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      text: "Every batch roasted with precision and care.",
       icon: <TimerIcon size={40} weight="thin" />,
     },
     {
       title: "Sustainable practices",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      text: "Supporting farmers and protecting the environment.",
       icon: <PlantIcon size={40} weight="thin" />,
     },
     {
-      title: "Crafted for your experience",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      title: "Crafted for you",
+      text: "Coffee designed to enhance your experience.",
       icon: <GearIcon size={40} weight="thin" />,
     },
   ];
 
   return (
-    <>
-      <Head>
-        <link rel="preload" as="image" href={image} />
-      </Head>
+    <section className="max-w-7xl mx-auto px-6">
+      <Section
+        subtitle="Benefits"
+        title="Highest grade Arabica beans"
+        description="Quality, sustainability, and taste in every cup."
+      />
 
-      <section className="max-w-7xl mx-auto px-6">
-        <Section
-          subtitle="Benefits"
-          title="Highest grade arabica beans"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        />
-
-        {/* content grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] items-center gap-y-8 md:gap-y-16 lg:gap-x-8">
-          {/* left */}
-          <div className="grid gap-y-12">
-            {benefits.slice(0, 2).map((benefit, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center text-center space-y-4"
-              >
-                <div className="mb-1">{benefit.icon}</div>
-                <h3 className="text-lg font-heading font-semibold">
-                  {benefit.title}
-                </h3>
-                <p className="text-black/70">{benefit.text}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* image */}
-          <div className="relative order-last w-full sm:col-span-2 lg:order-none lg:col-span-1">
-            <div className="relative h-[500px] w-full overflow-hidden">
-              <Image
-                src={image}
-                alt="Coffee beans in a cup, illustrating benefits section"
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 33vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30" />
+      <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] items-center gap-y-8 md:gap-y-16 lg:gap-x-8">
+        <div className="grid gap-y-12">
+          {benefits.slice(0, 2).map((b, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center text-center space-y-4"
+            >
+              <div>{b.icon}</div>
+              <h3 className="text-lg font-heading font-semibold">{b.title}</h3>
+              <p className="text-black/70">{b.text}</p>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* right */}
-          <div className="grid gap-y-12">
-            {benefits.slice(2).map((benefit, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center text-center space-y-4"
-              >
-                <div className="mb-1">{benefit.icon}</div>
-                <h3 className="text-lg font-heading font-semibold">
-                  {benefit.title}
-                </h3>
-
-                <p className="text-black/70">{benefit.text}</p>
-              </div>
-            ))}
+        <div className="relative w-full sm:col-span-2 lg:col-span-1">
+          <div className="relative h-[500px] w-full overflow-hidden">
+            <Image
+              src={BENEFIT_IMAGE}
+              alt="Coffee beans in a cup"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/30" />
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-4">
-          <Button variant="secondary">
-            <Link href="/collection">Learn more</Link>
-          </Button>
-          <Button variant="tertiary">
-            <Link href="/collection">Shop</Link>
-          </Button>
+        <div className="grid gap-y-12">
+          {benefits.slice(2).map((b, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center text-center space-y-4"
+            >
+              <div>{b.icon}</div>
+              <h3 className="text-lg font-heading font-semibold">{b.title}</h3>
+              <p className="text-black/70">{b.text}</p>
+            </div>
+          ))}
         </div>
-      </section>
-    </>
+      </div>
+
+      <div className="mt-8 flex items-center justify-center gap-4">
+        <Button variant="secondary">
+          <Link href="/collection">Learn more</Link>
+        </Button>
+        <Button variant="tertiary">
+          <Link href="/collection">Shop</Link>
+        </Button>
+      </div>
+    </section>
   );
 }
