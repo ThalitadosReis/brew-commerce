@@ -1,19 +1,10 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Head from "next/head";
 import Section from "../common/Section";
+import { STORY_IMAGES } from "@/lib/images.about";
 
 export default function StorySection() {
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const images = [
-    "https://images.pexels.com/photos/13819623/pexels-photo-13819623.jpeg",
-    "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
-    "https://images.pexels.com/photos/7125433/pexels-photo-7125433.jpeg",
-    "https://images.pexels.com/photos/7125565/pexels-photo-7125565.jpeg",
-    "https://images.pexels.com/photos/7125756/pexels-photo-7125756.jpeg",
-    "https://images.pexels.com/photos/6439132/pexels-photo-6439132.jpeg",
-  ];
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -38,44 +29,36 @@ export default function StorySection() {
   }, []);
 
   return (
-    <>
-      <Head>
-        {images.map((src, idx) => (
-          <link key={idx} rel="preload" as="image" href={src} />
-        ))}
-      </Head>
+    <section className="max-w-7xl mx-auto">
+      <Section
+        className="px-6"
+        subtitle="Roots"
+        title="A journey of passion and precision in coffee"
+        description="Born from a deep love of coffee and commitment to craft, our small business began in a tiny kitchen with a single mission."
+      />
 
-      <section className="max-w-7xl mx-auto">
-        <Section
-          className="px-6"
-          subtitle="Roots"
-          title="A journey of passion and precision in coffee"
-          description="Born from a deep love of coffee and commitment to craft, our small business began in a tiny kitchen with a single mission."
-        />
-
-        <div
-          ref={scrollRef}
-          className="w-full overflow-x-auto hide-scrollbar scroll-container"
-        >
-          <div className="flex gap-4">
-            {[...images, ...images].map((src, idx) => (
-              <div
-                key={idx}
-                className="relative w-[70vw] sm:w-[40vw] lg:w-[30vw] flex-none"
-              >
-                <Image
-                  src={src}
-                  alt={`Coffee story image ${idx + 1}`}
-                  width={500}
-                  height={400}
-                  className="aspect-[4/3] w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-              </div>
-            ))}
-          </div>
+      <div
+        ref={scrollRef}
+        className="w-full overflow-x-auto hide-scrollbar scroll-container"
+      >
+        <div className="flex gap-4">
+          {[...STORY_IMAGES, ...STORY_IMAGES].map((src, idx) => (
+            <div
+              key={idx}
+              className="relative w-[70vw] sm:w-[40vw] lg:w-[30vw] flex-none"
+            >
+              <Image
+                src={src}
+                alt={`Coffee story image ${idx + 1}`}
+                width={500}
+                height={400}
+                className="aspect-[4/3] w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+            </div>
+          ))}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

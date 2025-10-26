@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { HERO_IMAGE } from "@/lib/images.home";

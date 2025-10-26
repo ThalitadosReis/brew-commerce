@@ -14,7 +14,6 @@ export default function AboutPage() {
         title="Our coffee story"
         description="We craft simple, honest coffee that connects people through pure, carefully selected beans from around the world."
       />
-
       <TimelineSection />
       <CraftGrid />
       <AboutSection />

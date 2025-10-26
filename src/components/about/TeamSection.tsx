@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Section from "../common/Section";
+import { TEAM_AVATARS } from "@/lib/images.about";
 
 export default function TeamSection() {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -13,51 +14,48 @@ export default function TeamSection() {
       title: "Founder and CEO",
       description:
         "A coffee lover who turned her passion into a mission to bring pure, exceptional coffee to everyone.",
-      image: "https://randomuser.me/api/portraits/women/45.jpg",
+      image: TEAM_AVATARS[0],
     },
     {
       name: "Jack Thompson",
       title: "Head Roaster",
       description:
         "A master of flavor who understands the art of transforming raw beans into perfect roasts.",
-      image: "https://randomuser.me/api/portraits/men/31.jpg",
+      image: TEAM_AVATARS[1],
     },
     {
       name: "Sarah Kim",
       title: "Sustainability Director",
       description:
         "Ensuring our coffee supports farmers and protects the environment with every batch.",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
+      image: TEAM_AVATARS[2],
     },
     {
       name: "Michael Chen",
       title: "Head of Sourcing",
       description:
         "Traveling the world to find the most exceptional coffee beans and support local communities.",
-      image: "https://randomuser.me/api/portraits/men/67.jpg",
+      image: TEAM_AVATARS[3],
     },
     {
       name: "David Martinez",
       title: "Quality Control",
       description:
         "Tasting and testing every batch to guarantee the highest standards of flavor and quality.",
-      image: "https://randomuser.me/api/portraits/men/12.jpg",
+      image: TEAM_AVATARS[4],
     },
     {
       name: "Olivia Parker",
       title: "Customer Experience",
       description:
         "Passionate about connecting coffee lovers with their perfect brew and exceptional service.",
-      image: "https://randomuser.me/api/portraits/women/51.jpg",
+      image: TEAM_AVATARS[5],
     },
   ];
 
   const updatePrev = () => {
     if (!carouselRef.current || !prevButtonRef.current) return;
-
     const isAtStart = carouselRef.current.scrollLeft <= 0;
-
-    // update prev button
     prevButtonRef.current.disabled = isAtStart;
     prevButtonRef.current.classList.toggle("opacity-40", isAtStart);
     prevButtonRef.current.classList.toggle("cursor-not-allowed", isAtStart);
@@ -107,13 +105,9 @@ export default function TeamSection() {
   useEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
-
     updatePrev();
     carousel.addEventListener("scroll", updatePrev);
-
-    return () => {
-      carousel.removeEventListener("scroll", updatePrev);
-    };
+    return () => carousel.removeEventListener("scroll", updatePrev);
   }, []);
 
   return (
@@ -163,7 +157,6 @@ export default function TeamSection() {
           ))}
         </div>
 
-        {/* arrows */}
         <div className="flex items-end justify-end gap-2 md:gap-4 mt-6">
           <button
             ref={prevButtonRef}

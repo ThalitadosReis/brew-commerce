@@ -1,8 +1,7 @@
 import Link from "next/link";
-
 import { FireIcon, PlantIcon, SealCheckIcon } from "@phosphor-icons/react";
-import Button from "../common/Button";
 import Section from "../common/Section";
+import Button from "../common/Button";
 
 export default function CraftGrid() {
   const craftItems = [
