@@ -1,9 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useUser } from "@clerk/nextjs";
-import { Product } from "@/types/product";
-import { useToast } from "./ToastContext";
+import type { Product } from "@/types/product";
+import { useToast } from "@/contexts/ToastContext";
+import { readJSON } from "@/hooks/useLocalStorage";
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -26,142 +34,125 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   // fetch wishlist from DB or localStorage
   useEffect(() => {
-    const fetchWishlist = async () => {
-      setLoading(true);
+    setLoading(true);
+    const local = readJSON<Product[]>("wishlist", []);
+    if (!isSignedIn) {
+      setWishlist(local);
+      setLoading(false);
+      return;
+    }
 
-      if (isSignedIn && user) {
-        try {
-          const localWishlist = localStorage.getItem("wishlist");
-          let localItems: Product[] = [];
-
-          if (localWishlist) {
-            try {
-              localItems = JSON.parse(localWishlist);
-            } catch {
-              console.warn("Failed to parse localStorage wishlist");
-            }
-          }
-
-          const response = await fetch("/api/wishlist");
-          const dbItems = response.ok
-            ? (await response.json()).items || []
-            : [];
-
-          // migrate localStorage items to DB
-          if (localItems.length > 0) {
-            await Promise.all(
-              localItems.map((item) =>
-                fetch("/api/wishlist", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ productId: item._id }),
-                }).catch(console.error)
-              )
-            );
-
-            localStorage.removeItem("wishlist");
-
-            // refetch updated DB wishlist
-            const updated = await fetch("/api/wishlist");
-            setWishlist(
-              updated.ok ? (await updated.json()).items || [] : dbItems
-            );
-          } else {
-            setWishlist(dbItems);
-          }
-        } catch (error) {
-          console.error("Error fetching wishlist:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        // load wishlist from localStorage for guests
-        const saved = localStorage.getItem("wishlist");
-        if (saved) {
+    (async () => {
+      try {
+        const res = await fetch("/api/wishlist");
+        const dbItems: Product[] = res.ok ? (await res.json()).items || [] : [];
+        if (local.length) {
+          await Promise.all(
+            local.map((item) =>
+              fetch("/api/wishlist", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId: item._id }),
+              }).catch(() => undefined)
+            )
+          );
           try {
-            setWishlist(JSON.parse(saved));
-          } catch {
-            console.warn("Failed to load wishlist from localStorage");
-          }
+            window.localStorage.removeItem("wishlist");
+          } catch {}
+          const updated = await fetch("/api/wishlist");
+          setWishlist(
+            updated.ok ? (await updated.json()).items || [] : dbItems
+          );
+        } else {
+          setWishlist(dbItems);
         }
+      } catch (e) {
+        console.error("Error fetching wishlist", e);
+        setWishlist(local);
+      } finally {
         setLoading(false);
       }
-    };
-
-    fetchWishlist();
+    })();
   }, [isSignedIn, user]);
 
   // save wishlist to localStorage for guests
   useEffect(() => {
     if (!isSignedIn) {
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      try {
+        window.localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      } catch {}
     }
   }, [wishlist, isSignedIn]);
 
-  const addToWishlist = async (product: Product) => {
-    if (wishlist.find((item) => item._id === product._id)) return;
+  const isInWishlist = useCallback(
+    (id: string | number) => wishlist.some((p) => p._id === id),
+    [wishlist]
+  );
 
-    if (isSignedIn && user) {
-      try {
-        const response = await fetch("/api/wishlist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: product._id }),
-        });
-
-        if (response.ok) {
+  const addToWishlist = useCallback(
+    async (product: Product) => {
+      if (isInWishlist(product._id)) {
+        showToast(`${product.name} is already in favorites`, "info");
+        return;
+      }
+      if (isSignedIn && user) {
+        try {
+          const res = await fetch("/api/wishlist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: product._id }),
+          });
+          if (!res.ok) throw new Error("Failed");
           setWishlist((prev) => [...prev, product]);
           showToast(`${product.name} added to favorites`, "success");
-        } else {
+        } catch {
           showToast("Failed to add to favorites", "error");
         }
-      } catch {
-        showToast("Failed to add to favorites", "error");
+      } else {
+        setWishlist((prev) => [...prev, product]);
+        showToast(`${product.name} added to favorites`, "success");
       }
-    } else {
-      setWishlist((prev) => [...prev, product]);
-      showToast(`${product.name} added to favorites`, "success");
-    }
-  };
+    },
+    [isInWishlist, isSignedIn, user, showToast]
+  );
 
-  const removeFromWishlist = async (productId: string | number) => {
-    if (isSignedIn && user) {
-      try {
-        const response = await fetch(`/api/wishlist?productId=${productId}`, {
-          method: "DELETE",
-        });
-
-        if (response.ok) {
-          setWishlist((prev) => prev.filter((item) => item._id !== productId));
+  const removeFromWishlist = useCallback(
+    async (id: string | number) => {
+      if (isSignedIn && user) {
+        try {
+          const res = await fetch(`/api/wishlist?productId=${id}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) throw new Error("Failed");
+          setWishlist((prev) => prev.filter((p) => p._id !== id));
           showToast("Removed from favorites", "info");
-        } else {
+        } catch {
           showToast("Failed to remove from favorites", "error");
         }
-      } catch {
-        showToast("Failed to remove from favorites", "error");
+      } else {
+        setWishlist((prev) => prev.filter((p) => p._id !== id));
+        showToast("Removed from favorites", "info");
       }
-    } else {
-      setWishlist((prev) => prev.filter((item) => item._id !== productId));
-      showToast("Removed from favorites", "info");
-    }
-  };
+    },
+    [isSignedIn, user, showToast]
+  );
 
-  const isInWishlist = (productId: string | number) =>
-    wishlist.some((item) => item._id === productId);
+  const total = useMemo(() => wishlist.length, [wishlist]);
 
-  const getTotalWishlistItems = () => wishlist.length;
+  const value = useMemo<WishlistContextType>(
+    () => ({
+      wishlist,
+      addToWishlist,
+      removeFromWishlist,
+      isInWishlist,
+      getTotalWishlistItems: () => total,
+      loading,
+    }),
+    [wishlist, addToWishlist, removeFromWishlist, isInWishlist, total, loading]
+  );
 
   return (
-    <WishlistContext.Provider
-      value={{
-        wishlist,
-        addToWishlist,
-        removeFromWishlist,
-        isInWishlist,
-        getTotalWishlistItems,
-        loading,
-      }}
-    >
+    <WishlistContext.Provider value={value}>
       {children}
     </WishlistContext.Provider>
   );

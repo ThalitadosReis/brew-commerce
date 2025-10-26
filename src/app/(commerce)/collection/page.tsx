@@ -4,12 +4,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Product } from "@/types/product";
 import Filter, { SortOption } from "@/components/collection/Filter";
 
+import Loading from "@/components/common/Loading";
 import PageHeader from "@/components/common/PageHeader";
 import CollectionContent from "@/components/collection/CollectionContent";
 import QualitySection from "@/components/collection/QualitySection";
 import ContentBlock from "@/components/common/ContentBlock";
 import { COLLECTION_CONTACT_IMAGE } from "@/lib/images.collection";
-import Loading from "@/components/common/Loading";
 
 export default function CollectionPage() {
   const collectionRef = useRef<HTMLDivElement>(null);

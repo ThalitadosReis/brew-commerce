@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Product } from "@/types/product";
 import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
+import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
 
 const sizes = ["250g", "500g", "1kg"] as const;
 export type SortOption = "a-z" | "z-a" | "price-low" | "price-high";
@@ -22,6 +23,14 @@ interface FilterProps {
   onFilter: (filtered: Product[]) => void;
 }
 
+// localStorage keys for filter persistence
+const LS_KEYS = {
+  sortBy: "filters.sortBy",
+  roasts: "filters.roasts",
+  countries: "filters.countries",
+  sizes: "filters.sizes",
+} as const;
+
 // sort by dropdown
 export function SortDropdown({
   sortBy,
@@ -35,7 +44,7 @@ export function SortDropdown({
     { value: "z-a", label: "Z-A" },
     { value: "price-low", label: "Price (Low to High)" },
     { value: "price-high", label: "Price (High to Low)" },
-  ];
+  ] as const;
 
   return (
     <div className="relative inline-flex items-center">
@@ -55,6 +64,7 @@ export function SortDropdown({
         value={sortBy}
         onChange={(e) => setSortBy(e.target.value as SortOption)}
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        aria-label="Sort products"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -68,6 +78,7 @@ export function SortDropdown({
 
 export default function Filter({
   sortBy,
+  setSortBy,
   selectedRoasts,
   setSelectedRoasts,
   selectedCountries,
@@ -92,58 +103,128 @@ export default function Filter({
     return Array.from(countries).sort();
   }, [products]);
 
-  const hasActiveFilters =
-    selectedRoasts.length > 0 ||
-    selectedCountries.length > 0 ||
-    selectedSizes.length > 0;
+  const hasActiveFilters = useMemo(
+    () =>
+      selectedRoasts.length > 0 ||
+      selectedCountries.length > 0 ||
+      selectedSizes.length > 0,
+    [selectedRoasts, selectedCountries, selectedSizes]
+  );
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // from localStorage on first mount
+  useEffect(() => {
+    try {
+      // sortBy
+      const savedSort = window.localStorage.getItem(LS_KEYS.sortBy);
+      if (
+        savedSort === "a-z" ||
+        savedSort === "z-a" ||
+        savedSort === "price-low" ||
+        savedSort === "price-high"
+      ) {
+        if (savedSort !== sortBy) setSortBy(savedSort as SortOption);
+      }
+
+      // roasts
+      const savedRoasts = window.localStorage.getItem(LS_KEYS.roasts);
+      if (savedRoasts) {
+        const parsed = JSON.parse(savedRoasts);
+        if (Array.isArray(parsed)) setSelectedRoasts(parsed);
+      }
+
+      // countries
+      const savedCountries = window.localStorage.getItem(LS_KEYS.countries);
+      if (savedCountries) {
+        const parsed = JSON.parse(savedCountries);
+        if (Array.isArray(parsed)) setSelectedCountries(parsed);
+      }
+
+      // sizes
+      const savedSizes = window.localStorage.getItem(LS_KEYS.sizes);
+      if (savedSizes) {
+        const parsed = JSON.parse(savedSizes);
+        if (Array.isArray(parsed)) setSelectedSizes(parsed);
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // persist to localStorage when filters change (debounced)
+  useDebouncedEffect(
+    () => {
+      try {
+        window.localStorage.setItem(LS_KEYS.sortBy, sortBy);
+        window.localStorage.setItem(
+          LS_KEYS.roasts,
+          JSON.stringify(selectedRoasts)
+        );
+        window.localStorage.setItem(
+          LS_KEYS.countries,
+          JSON.stringify(selectedCountries)
+        );
+        window.localStorage.setItem(
+          LS_KEYS.sizes,
+          JSON.stringify(selectedSizes)
+        );
+      } catch {}
+    },
+    [sortBy, selectedRoasts, selectedCountries, selectedSizes],
+    { delay: 200 }
+  );
+
+  // reset (also clears localStorage)
   const resetFilters = () => {
     setSelectedRoasts([]);
     setSelectedCountries([]);
     setSelectedSizes([]);
+    setSortBy("a-z");
+    try {
+      window.localStorage.removeItem(LS_KEYS.sortBy);
+      window.localStorage.removeItem(LS_KEYS.roasts);
+      window.localStorage.removeItem(LS_KEYS.countries);
+      window.localStorage.removeItem(LS_KEYS.sizes);
+    } catch {}
   };
 
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  // debounced filtering + sorting
+  useDebouncedEffect(
+    () => {
+      if (!products) return;
 
-  // filtering + sorting logic
-  useEffect(() => {
-    if (!products) return;
+      const filtered = products.filter((product) => {
+        const matchesRoast =
+          selectedRoasts.length === 0 ||
+          selectedRoasts.includes(product.category);
+        const matchesCountry =
+          selectedCountries.length === 0 ||
+          selectedCountries.includes(product.country);
+        const matchesSize =
+          selectedSizes.length === 0 ||
+          product.sizes.some((s) => selectedSizes.includes(s.size));
 
-    const filtered = products.filter((product) => {
-      const matchesRoast =
-        selectedRoasts.length === 0 ||
-        selectedRoasts.includes(product.category);
-      const matchesCountry =
-        selectedCountries.length === 0 ||
-        selectedCountries.includes(product.country);
-      const matchesSize =
-        selectedSizes.length === 0 ||
-        product.sizes.some((s) => selectedSizes.includes(s.size));
-      return matchesRoast && matchesCountry && matchesSize;
-    });
+        return matchesRoast && matchesCountry && matchesSize;
+      });
 
-    const sorted = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return (a.price ?? 0) - (b.price ?? 0);
-        case "price-high":
-          return (b.price ?? 0) - (a.price ?? 0);
-        case "z-a":
-          return b.name.localeCompare(a.name);
-        default:
-          return a.name.localeCompare(b.name);
-      }
-    });
+      const sorted = [...filtered].sort((a, b) => {
+        switch (sortBy) {
+          case "price-low":
+            return (a.price ?? 0) - (b.price ?? 0);
+          case "price-high":
+            return (b.price ?? 0) - (a.price ?? 0);
+          case "z-a":
+            return b.name.localeCompare(a.name);
+          default:
+            return a.name.localeCompare(b.name);
+        }
+      });
 
-    onFilter(sorted);
-  }, [
-    products,
-    sortBy,
-    selectedRoasts,
-    selectedCountries,
-    selectedSizes,
-    onFilter,
-  ]);
+      onFilter(sorted);
+    },
+    [products, sortBy, selectedRoasts, selectedCountries, selectedSizes],
+    { delay: 300 }
+  );
 
   return (
     <div className="lg:w-40 pb-8">
@@ -151,6 +232,8 @@ export default function Filter({
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
           className="w-full p-4 lg:p-0 flex items-center justify-between bg-black/5 lg:bg-transparent transition-colors"
+          aria-expanded={isFilterOpen}
+          aria-controls="filters-panel"
         >
           <div className="flex items-center gap-2">
             <span className="text-xl font-heading">Filters</span>
@@ -177,6 +260,7 @@ export default function Filter({
         </button>
 
         <div
+          id="filters-panel"
           className={`px-6 lg:px-0 lg:block ${
             isFilterOpen ? "block" : "hidden"
           }`}
@@ -198,6 +282,8 @@ export default function Filter({
                         : setSelectedSizes([...selectedSizes, size])
                     }
                     className="flex items-center gap-2 text-sm transition-colors"
+                    aria-pressed={isSelected}
+                    aria-label={`Toggle size ${size}`}
                   >
                     <span
                       className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
@@ -239,9 +325,11 @@ export default function Filter({
                           : setSelectedRoasts([...selectedRoasts, roast])
                       }
                       className="flex items-center gap-2 text-sm transition-colors"
+                      aria-pressed={isSelected}
+                      aria-label={`Toggle roast ${roast}`}
                     >
                       <span
-                        className={`w-5 h-5 flex items-center justify-center border-1 rounded-sm ${
+                        className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
                           isSelected
                             ? "border-black bg-black"
                             : "border-black/20 hover:border-black"
@@ -284,6 +372,8 @@ export default function Filter({
                             ])
                       }
                       className="flex items-center gap-2 text-sm transition-colors"
+                      aria-pressed={isSelected}
+                      aria-label={`Toggle country ${country}`}
                     >
                       <span
                         className={`w-5 h-5 flex items-center justify-center border rounded-sm ${

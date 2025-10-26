@@ -1,7 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/contexts/ToastContext";
 
 export interface AdminUser {
   id: string;
@@ -21,6 +29,7 @@ interface AuthContextType {
   updateUser: (updates: Partial<AdminUser>) => void;
   updateName: (name: string) => void;
   updateProfilePicture: (base64: string) => void;
+  hasPermission: (roles: string[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,12 +45,21 @@ export function AuthProvider({
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(verifyOnMount);
   const router = useRouter();
+  const { showToast } = useToast();
 
-  // Verify auth
+  // hydrate token if present
+  useEffect(() => {
+    try {
+      const t = sessionStorage.getItem("admin_token");
+      if (t) setToken(t);
+    } catch {}
+  }, []);
+
+  // optional verification on mount
   useEffect(() => {
     if (!verifyOnMount) return;
 
-    const verifyAuth = async () => {
+    (async () => {
       try {
         const response = await fetch("/api/admin/verify", {
           method: "GET",
@@ -49,7 +67,6 @@ export function AuthProvider({
         });
 
         if (response.status === 401 || response.status === 403) {
-          // not authenticated or not admin
           setUser(null);
           router.push("/admin-login");
           return;
@@ -57,51 +74,59 @@ export function AuthProvider({
 
         const data = await response.json();
         if (data.user && data.user.role === "admin") {
-          setUser(data.user);
+          setUser(data.user as AdminUser);
         }
       } catch (err) {
         console.error("Auth verification error:", err);
       } finally {
         setLoading(false);
       }
-    };
-
-    verifyAuth();
+    })();
   }, [router, verifyOnMount]);
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
+  const login = useCallback(
+    async (email: string, password: string) => {
+      setLoading(true);
+      try {
+        const response = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Login failed");
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Login failed");
+        }
+
+        const data = await response.json();
+        if (data.user && data.user.role === "admin") {
+          setUser(data.user as AdminUser);
+          if (data.token) {
+            setToken(data.token);
+            try {
+              sessionStorage.setItem("admin_token", data.token);
+            } catch {}
+          }
+          router.push("/admin");
+        } else {
+          throw new Error("Access denied: Admin role required");
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        const message =
+          err instanceof Error ? err.message : "Authentication failed";
+        showToast(message, "error");
+        throw err;
+      } finally {
+        setLoading(false);
       }
+    },
+    [router, showToast]
+  );
 
-      const data = await response.json();
-      if (data.user && data.user.role === "admin") {
-        setUser(data.user);
-        if (data.token) setToken(data.token);
-        router.push("/admin");
-        return;
-      } else {
-        throw new Error("Access denied: Admin role required");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await fetch("/api/admin/logout", {
         method: "POST",
@@ -112,29 +137,56 @@ export function AuthProvider({
     } finally {
       setUser(null);
       setLoading(false);
+      try {
+        sessionStorage.removeItem("admin_token");
+      } catch {}
       router.push("/admin-login");
     }
-  };
+  }, [router]);
 
-  const updateUser = (updates: Partial<AdminUser>) => {
-    if (user) setUser({ ...user, ...updates });
-  };
+  const updateUser = useCallback((updates: Partial<AdminUser>) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+  }, []);
 
-  const updateName = (name: string) => updateUser({ name });
-  const updateProfilePicture = (base64: string) =>
-    updateUser({ profilePicture: base64 });
+  const updateName = useCallback(
+    (name: string) => updateUser({ name }),
+    [updateUser]
+  );
+  const updateProfilePicture = useCallback(
+    (base64: string) => updateUser({ profilePicture: base64 }),
+    [updateUser]
+  );
 
-  const value: AuthContextType = {
-    user,
-    isAuthenticated: !!user,
-    loading,
-    token,
-    login,
-    logout,
-    updateUser,
-    updateName,
-    updateProfilePicture,
-  };
+  const hasPermission = useCallback(
+    (roles: string[]) => roles.includes(user?.role ?? ""),
+    [user?.role]
+  );
+
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      loading,
+      token,
+      login,
+      logout,
+      updateUser,
+      updateName,
+      updateProfilePicture,
+      hasPermission,
+    }),
+    [
+      user,
+      loading,
+      token,
+      login,
+      logout,
+      updateUser,
+      updateName,
+      updateProfilePicture,
+      hasPermission,
+    ]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
