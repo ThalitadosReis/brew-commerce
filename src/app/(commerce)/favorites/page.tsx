@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
+import Loading from "@/components/common/Loading";
 import ImageCard from "@/components/collection/ImageCard";
 import PageHeader from "@/components/common/PageHeader";
 import ContentBlock from "@/components/common/ContentBlock";
@@ -28,16 +29,7 @@ export default function FavoritesPage() {
     });
   }, [wishlist, sortBy]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black/5">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-black/20 border-t-black/70 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-black/70 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Loading message="Loading favorites..." />;
 
   return (
     <div className="bg-black/5 py-24 space-y-24">

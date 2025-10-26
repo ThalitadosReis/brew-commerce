@@ -9,6 +9,7 @@ import CollectionContent from "@/components/collection/CollectionContent";
 import QualitySection from "@/components/collection/QualitySection";
 import ContentBlock from "@/components/common/ContentBlock";
 import { COLLECTION_CONTACT_IMAGE } from "@/lib/images.collection";
+import Loading from "@/components/common/Loading";
 
 export default function CollectionPage() {
   const collectionRef = useRef<HTMLDivElement>(null);
@@ -43,16 +44,7 @@ export default function CollectionPage() {
     fetchProducts();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black/5">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-black/20 border-t-black/70 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-black/70 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Loading message="Loading..." />;
 
   return (
     <div className="bg-black/5 py-24 space-y-24">
