@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -144,6 +145,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, updateQuantity, removeFromCart, getTotalPrice } = useCart();
   const { showToast } = useToast();
   const { user } = useUser();
+  const router = useRouter();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const subtotal = getTotalPrice();
@@ -157,9 +159,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       const returnUrl = window.location.pathname + window.location.search;
       sessionStorage.setItem("returnAfterLogin", returnUrl);
 
-      window.location.href = `/sign-in?redirect_url=${encodeURIComponent(
-        returnUrl
-      )}`;
+      router.push(`/sign-in?redirect_url=${encodeURIComponent(returnUrl)}`);
       return;
     }
 

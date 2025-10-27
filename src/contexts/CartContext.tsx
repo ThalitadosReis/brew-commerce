@@ -19,10 +19,92 @@ import type {
 import type { ICartItem } from "@/models/Cart";
 import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
 import { readJSON } from "@/hooks/useLocalStorage";
-import { shallowArrayEqual } from "@/utils/array";
 import { useToast } from "@/contexts/ToastContext";
 
-//  reducer and action types
+// -------------------------------- helpers --------------------------------
+
+type SizeStock = { size: string; stock: number };
+
+function normalizeSizes(sizes?: readonly string[]) {
+  return (sizes ?? []).slice().sort((a, b) => a.localeCompare(b));
+}
+
+function areSizesEqual(a?: readonly string[], b?: readonly string[]) {
+  const na = normalizeSizes(a);
+  const nb = normalizeSizes(b);
+  if (na.length !== nb.length) return false;
+  for (let i = 0; i < na.length; i++) if (na[i] !== nb[i]) return false;
+  return true;
+}
+
+function toKeyId(id: string | number | null | undefined) {
+  return id == null ? "" : String(id);
+}
+
+function keyForCartItem(item: Pick<CartItem, "id" | "selectedSizes">) {
+  return `${toKeyId(item.id)}::${normalizeSizes(item.selectedSizes).join("|")}`;
+}
+
+function maxAllowedQuantityForSelection(
+  selectedSizes: string[],
+  sizes?: SizeStock[]
+) {
+  if (!sizes?.length) return Number.POSITIVE_INFINITY;
+  let maxAllowed = Number.POSITIVE_INFINITY;
+  for (const selected of selectedSizes) {
+    const entry = sizes.find((record) => record.size === selected);
+    if (entry) maxAllowed = Math.min(maxAllowed, entry.stock);
+  }
+  return maxAllowed;
+}
+
+// canonicalize sizes, merge duplicates by id + sizes, clamp to stock, drop quantity to 0
+function canonicalizeAndDedupe(items: CartItem[]): CartItem[] {
+  const cartItemMap = new Map<string, CartItem>();
+
+  for (const rawItem of items) {
+    const incomingItem: CartItem = {
+      ...rawItem,
+      selectedSizes: normalizeSizes(rawItem.selectedSizes),
+    };
+    const mergedKey = keyForCartItem(incomingItem);
+    const existingItem = cartItemMap.get(mergedKey);
+
+    if (!existingItem) {
+      cartItemMap.set(mergedKey, { ...incomingItem });
+      continue;
+    }
+
+    const richerItem =
+      (incomingItem.sizes?.length ?? 0) > (existingItem.sizes?.length ?? 0)
+        ? incomingItem
+        : existingItem;
+
+    cartItemMap.set(mergedKey, {
+      ...richerItem,
+      id: richerItem.id,
+      _id: richerItem._id ?? richerItem.id,
+      selectedSizes: normalizeSizes(richerItem.selectedSizes),
+      quantity: (existingItem.quantity ?? 0) + (incomingItem.quantity ?? 0),
+    });
+  }
+
+  return Array.from(cartItemMap.values())
+    .map((item) => {
+      const maxAllowed = maxAllowedQuantityForSelection(
+        item.selectedSizes ?? [],
+        item.sizes
+      );
+      return {
+        ...item,
+        quantity: Math.max(0, Math.min(item.quantity, maxAllowed)),
+      };
+    })
+    .filter((item) => item.quantity > 0);
+}
+
+// -------------------------------- reducer --------------------------------
+
 type CartAction =
   | { type: "ADD_TO_CART"; payload: CartItem }
   | {
@@ -43,48 +125,57 @@ type CartAction =
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
     case "ADD_TO_CART": {
-      const newItem = action.payload;
+      const newItem: CartItem = {
+        ...action.payload,
+        selectedSizes: normalizeSizes(action.payload.selectedSizes),
+      };
+
       const existingIndex = state.findIndex(
-        (cartItem) =>
-          cartItem.id === newItem.id &&
-          shallowArrayEqual(cartItem.selectedSizes, newItem.selectedSizes)
+        (existingItem) =>
+          toKeyId(existingItem.id) === toKeyId(newItem.id) &&
+          areSizesEqual(existingItem.selectedSizes, newItem.selectedSizes)
       );
+
       if (existingIndex >= 0) {
-        const next = [...state];
-        next[existingIndex] = {
-          ...next[existingIndex],
-          quantity: next[existingIndex].quantity + newItem.quantity,
+        const nextState = [...state];
+        nextState[existingIndex] = {
+          ...nextState[existingIndex],
+          quantity: nextState[existingIndex].quantity + newItem.quantity,
         };
-        return next;
+        return canonicalizeAndDedupe(nextState);
       }
-      return [...state, newItem];
+
+      return canonicalizeAndDedupe([...state, newItem]);
     }
 
     case "REMOVE_FROM_CART": {
       const { id, selectedSizes } = action.payload;
-      return state.filter(
-        (cartItem) =>
-          !(
-            cartItem.id === id &&
-            shallowArrayEqual(cartItem.selectedSizes, selectedSizes)
-          )
+      return canonicalizeAndDedupe(
+        state.filter(
+          (existingItem) =>
+            !(
+              toKeyId(existingItem.id) === toKeyId(id) &&
+              areSizesEqual(existingItem.selectedSizes, selectedSizes)
+            )
+        )
       );
     }
 
     case "UPDATE_QUANTITY": {
       const { id, quantity, selectedSizes } = action.payload;
-      return state
-        .map((cartItem) =>
-          cartItem.id === id &&
-          shallowArrayEqual(cartItem.selectedSizes, selectedSizes)
-            ? { ...cartItem, quantity }
-            : cartItem
+      const nextState = state
+        .map((existingItem) =>
+          toKeyId(existingItem.id) === toKeyId(id) &&
+          areSizesEqual(existingItem.selectedSizes, selectedSizes)
+            ? { ...existingItem, quantity }
+            : existingItem
         )
-        .filter((cartItem) => cartItem.quantity > 0);
+        .filter((item) => item.quantity > 0);
+      return canonicalizeAndDedupe(nextState);
     }
 
     case "LOAD_CART":
-      return action.payload;
+      return canonicalizeAndDedupe(action.payload);
 
     case "CLEAR_CART":
       return [];
@@ -94,7 +185,434 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   }
 }
 
-//  helpers
+// -------------------------------- context --------------------------------
+
+type ExtendedCartContextType = CartContextType & {
+  clearServerCart: () => Promise<void>;
+};
+
+const CartContext = createContext<ExtendedCartContextType | undefined>(
+  undefined
+);
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [items, dispatch] = useReducer(cartReducer, []);
+  const { isSignedIn, user, isLoaded } = useUser();
+  const { showToast } = useToast();
+
+  const isClientRef = useRef(false);
+  const previousSignedInRef = useRef<boolean | null>(null);
+  const hasLoadedInitialCartRef = useRef(false);
+  const itemsRef = useRef<CartItem[]>(items);
+  const stableUserIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    isClientRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  // --------------------------- one-time initial load ---------------------------
+  useEffect(() => {
+    if (!isClientRef.current || hasLoadedInitialCartRef.current) return;
+    if (!isLoaded) return;
+
+    (async () => {
+      if (isSignedIn && user) {
+        try {
+          const response = await fetch("/api/cart", {
+            credentials: "include",
+            cache: "no-store",
+          });
+          if (response.ok) {
+            const payload: { items: ICartItem[] } = await response.json();
+            const databaseItems: CartItem[] = (payload.items ?? []).map(
+              (record) => ({
+                id: record.productId,
+                _id: record.productId,
+                name: record.name,
+                description: record.description,
+                price: record.price,
+                quantity: record.quantity,
+                selectedSizes: normalizeSizes(record.selectedSizes || []),
+                images: record.images || [],
+                category: record.category || "",
+                country: record.country || "",
+                sizes: record.sizes || [],
+              })
+            );
+            dispatch({ type: "LOAD_CART", payload: databaseItems });
+          } else {
+            const saved = readJSON<CartItem[]>("brew-cart", []);
+            if (saved?.length) dispatch({ type: "LOAD_CART", payload: saved });
+          }
+        } catch {
+          const saved = readJSON<CartItem[]>("brew-cart", []);
+          if (saved?.length) dispatch({ type: "LOAD_CART", payload: saved });
+        }
+      } else {
+        const saved = readJSON<CartItem[]>("brew-cart", []);
+        if (saved?.length) dispatch({ type: "LOAD_CART", payload: saved });
+      }
+      hasLoadedInitialCartRef.current = true;
+    })();
+  }, [isLoaded, isSignedIn, user]);
+
+  // ---------------------- auth transitions login / logout -------------------
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const currentUserId = user?.id ?? null;
+    const previousUserId = stableUserIdRef.current;
+    const wasSignedIn = previousSignedInRef.current;
+    const isCurrentlySignedIn = !!isSignedIn;
+
+    // handle logout transition
+    if (wasSignedIn === true && !isCurrentlySignedIn) {
+      dispatch({ type: "CLEAR_CART" });
+      try {
+        window.localStorage.removeItem("brew-cart");
+      } catch {}
+      stableUserIdRef.current = null;
+      previousSignedInRef.current = false;
+      return;
+    }
+
+    // do not handle login merge until initial load is done
+    if (!hasLoadedInitialCartRef.current) {
+      previousSignedInRef.current = isCurrentlySignedIn;
+      if (currentUserId) stableUserIdRef.current = currentUserId;
+      return;
+    }
+
+    // handle login transition (merge guest cart with DB cart)
+    if (!previousUserId && currentUserId && user) {
+      (async () => {
+        try {
+          const response = await fetch("/api/cart", {
+            credentials: "include",
+            cache: "no-store",
+          });
+          const payload: { items: ICartItem[] } = response.ok
+            ? await response.json()
+            : { items: [] };
+
+          const databaseItems: CartItem[] = (payload.items ?? []).map(
+            (record) => ({
+              id: record.productId,
+              _id: record.productId,
+              name: record.name,
+              description: record.description,
+              price: record.price,
+              quantity: record.quantity,
+              selectedSizes: normalizeSizes(record.selectedSizes || []),
+              images: record.images || [],
+              category: record.category || "",
+              country: record.country || "",
+              sizes: record.sizes || [],
+            })
+          );
+
+          const mergedItems = canonicalizeAndDedupe([
+            ...databaseItems,
+            ...itemsRef.current,
+          ]);
+
+          await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            cache: "no-store",
+            body: JSON.stringify({ items: mergedItems }),
+          }).catch(() => undefined);
+
+          dispatch({ type: "LOAD_CART", payload: mergedItems });
+          try {
+            window.localStorage.setItem(
+              "brew-cart",
+              JSON.stringify(mergedItems)
+            );
+          } catch {}
+
+          const clamped = mergedItems.filter((item) => {
+            const maxAllowed = maxAllowedQuantityForSelection(
+              item.selectedSizes ?? [],
+              item.sizes
+            );
+            return (
+              item.quantity === maxAllowed &&
+              maxAllowed !== Number.POSITIVE_INFINITY
+            );
+          });
+          if (clamped.length > 0) {
+            showToast(
+              `${clamped.length} cart item${
+                clamped.length > 1 ? "s" : ""
+              } adjusted to available stock`,
+              "warning"
+            );
+          }
+        } catch (error) {
+          console.error("Cart merge on login failed:", error);
+        }
+      })();
+    }
+
+    previousSignedInRef.current = isCurrentlySignedIn;
+    if (currentUserId) stableUserIdRef.current = currentUserId;
+  }, [isSignedIn, user, isLoaded, showToast]);
+
+  // ------------- debounced persistence local + db ----------------
+
+  useDebouncedEffect(
+    () => {
+      if (!isClientRef.current || !isLoaded) return;
+
+      // always mirror to localStorage
+      try {
+        window.localStorage.setItem("brew-cart", JSON.stringify(items));
+      } catch {}
+
+      // save to DB if signed in
+      if (isSignedIn && user) {
+        const url = `${window.location.origin}/api/cart`;
+        void fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items }),
+          credentials: "include",
+          cache: "no-store",
+          keepalive: true,
+        }).catch((error) => console.error("Failed to save cart to DB", error));
+      }
+    },
+    [items, isSignedIn, user, isLoaded],
+    { delay: 500 }
+  );
+
+  useEffect(() => {
+    if (!isSignedIn || !user) return;
+    const url = `${window.location.origin}/api/cart`;
+    const handler = () => {
+      try {
+        const blob = new Blob([JSON.stringify({ items })], {
+          type: "application/json",
+        });
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url, blob);
+        } else {
+          fetch(url, {
+            method: "POST",
+            body: JSON.stringify({ items }),
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            cache: "no-store",
+            keepalive: true,
+          }).catch(() => {});
+        }
+      } catch {}
+    };
+    window.addEventListener("beforeunload", handler);
+    document.addEventListener("visibilitychange", handler);
+    return () => {
+      window.removeEventListener("beforeunload", handler);
+      document.removeEventListener("visibilitychange", handler);
+    };
+  }, [isSignedIn, user, items]);
+
+  // -------------------------------- actions --------------------------------
+
+  const saveNowIfSignedIn = useCallback(
+    (nextItems: CartItem[]) => {
+      if (!isSignedIn || !user) return;
+      fetch(`${window.location.origin}/api/cart`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: nextItems }),
+        credentials: "include",
+        cache: "no-store",
+        keepalive: true,
+      }).catch(() => {});
+    },
+    [isSignedIn, user]
+  );
+
+  const addToCart = useCallback(
+    (product: Product, selectedSizes: string[], quantity: number) => {
+      const normalizedSizes = normalizeSizes(selectedSizes);
+      const existingItem = items.find(
+        (item) =>
+          toKeyId(item.id) === toKeyId(product._id) &&
+          areSizesEqual(item.selectedSizes, normalizedSizes)
+      );
+      const existingQuantity = existingItem ? existingItem.quantity : 0;
+
+      const stockCheck = validateStock(
+        normalizedSizes,
+        product.sizes,
+        existingQuantity + quantity
+      );
+      if (!stockCheck.ok) {
+        showToast(stockCheck.message!, "warning");
+        return;
+      }
+
+      const newItem: CartItem = {
+        id: product._id,
+        _id: product._id,
+        name: product.name,
+        description: product.description,
+        price:
+          product.sizes.find((s) => s.size === normalizedSizes[0])?.price ??
+          product.price,
+        images: product.images,
+        category: product.category,
+        country: product.country,
+        selectedSizes: normalizedSizes,
+        quantity,
+        sizes: product.sizes,
+      };
+
+      dispatch({ type: "ADD_TO_CART", payload: newItem });
+      saveNowIfSignedIn(canonicalizeAndDedupe([...items, newItem]));
+    },
+    [items, showToast, saveNowIfSignedIn]
+  );
+
+  const updateQuantity = useCallback(
+    (
+      productId: string | number,
+      quantity: number,
+      selectedSizes?: string[]
+    ) => {
+      const normalizedSizes = normalizeSizes(selectedSizes);
+      const targetItem = items.find(
+        (item) =>
+          toKeyId(item.id) === toKeyId(productId) &&
+          areSizesEqual(item.selectedSizes, normalizedSizes)
+      );
+      if (!targetItem) return;
+
+      const stockCheck = validateStock(
+        targetItem.selectedSizes,
+        targetItem.sizes,
+        quantity
+      );
+      if (!stockCheck.ok) {
+        showToast(stockCheck.message!, "warning");
+        return;
+      }
+
+      const nextItems = canonicalizeAndDedupe(
+        items
+          .map((item) =>
+            toKeyId(item.id) === toKeyId(productId) &&
+            areSizesEqual(item.selectedSizes, normalizedSizes)
+              ? { ...item, quantity }
+              : item
+          )
+          .filter((item) => item.quantity > 0)
+      );
+
+      dispatch({
+        type: "UPDATE_QUANTITY",
+        payload: { id: productId, quantity, selectedSizes: normalizedSizes },
+      });
+      saveNowIfSignedIn(nextItems);
+    },
+    [items, showToast, saveNowIfSignedIn]
+  );
+
+  const removeFromCart = useCallback(
+    (productId: string | number, selectedSizes?: string[]) => {
+      const normalized = normalizeSizes(selectedSizes);
+      const nextItems = canonicalizeAndDedupe(
+        items.filter(
+          (item) =>
+            !(
+              toKeyId(item.id) === toKeyId(productId) &&
+              areSizesEqual(item.selectedSizes, normalized)
+            )
+        )
+      );
+
+      dispatch({
+        type: "REMOVE_FROM_CART",
+        payload: { id: productId, selectedSizes: normalized },
+      });
+      saveNowIfSignedIn(nextItems);
+    },
+    [items, saveNowIfSignedIn]
+  );
+
+  const clearCart = useCallback(() => {
+    dispatch({ type: "CLEAR_CART" });
+    try {
+      window.localStorage.removeItem("brew-cart");
+    } catch {}
+  }, []);
+
+  const clearServerCart = useCallback(async () => {
+    try {
+      if (!isSignedIn || !user) return;
+      await fetch("/api/cart", {
+        method: "DELETE",
+        credentials: "include",
+        cache: "no-store",
+      });
+    } catch (error) {
+      console.error("Failed to clear server cart", error);
+    }
+  }, [isSignedIn, user]);
+
+  // -------------------------------- selectors -------------------------------
+
+  const totalItemCount = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items]
+  );
+
+  const totalPriceAmount = useMemo(
+    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [items]
+  );
+
+  const value = useMemo<ExtendedCartContextType>(
+    () => ({
+      items,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      getTotalItems: () => totalItemCount,
+      getTotalPrice: () => totalPriceAmount,
+      clearServerCart,
+    }),
+    [
+      items,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      totalItemCount,
+      totalPriceAmount,
+      clearServerCart,
+    ]
+  );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+}
+
+export function useCart() {
+  const context = useContext(CartContext);
+  if (!context) throw new Error("useCart must be used within a CartProvider");
+  return context;
+}
+
+// ---------------------------- stock validation ---------------------------
+
 function validateStock(
   selectedSizes: string[],
   sizes: ProductSize[] = [],
@@ -112,335 +630,4 @@ function validateStock(
     }
   }
   return { ok: true as const };
-}
-
-type SizeLike = { size: string; stock: number };
-
-function maxAllowedQtyForSelection(
-  selectedSizes: string[],
-  sizes?: SizeLike[]
-) {
-  if (!sizes?.length) return Number.POSITIVE_INFINITY;
-  let maxAllowed = Number.POSITIVE_INFINITY;
-  for (const selected of selectedSizes) {
-    const sizeEntry = sizes.find((entry) => entry.size === selected);
-    if (sizeEntry) maxAllowed = Math.min(maxAllowed, sizeEntry.stock);
-  }
-  return maxAllowed;
-}
-
-function keyOf(item: Pick<CartItem, "id" | "selectedSizes">) {
-  return `${item.id}::${(item.selectedSizes ?? []).join("|")}`;
-}
-
-// Merge by id + selectedSizes. Sum quantities then clamp to stock.
-function mergeCartsStockAware(
-  listA: CartItem[],
-  listB: CartItem[]
-): { items: CartItem[]; clampedCount: number } {
-  const mergedMap = new Map<string, CartItem>();
-
-  const insert = (incoming: CartItem) => {
-    const key = keyOf(incoming);
-    const existing = mergedMap.get(key);
-    if (existing) {
-      const richer =
-        (incoming.sizes?.length ?? 0) > (existing.sizes?.length ?? 0)
-          ? incoming
-          : existing;
-      mergedMap.set(key, {
-        ...richer,
-        quantity: (existing.quantity ?? 0) + (incoming.quantity ?? 0),
-      });
-    } else {
-      mergedMap.set(key, { ...incoming });
-    }
-  };
-
-  listA.forEach(insert);
-  listB.forEach(insert);
-
-  let clampedCount = 0;
-  const mergedItems = Array.from(mergedMap.values()).map((cartItem) => {
-    const maxAllowed = maxAllowedQtyForSelection(
-      cartItem.selectedSizes ?? [],
-      cartItem.sizes
-    );
-    if (cartItem.quantity > maxAllowed) {
-      clampedCount++;
-      return { ...cartItem, quantity: Math.max(0, maxAllowed) };
-    }
-    return cartItem;
-  });
-
-  return {
-    items: mergedItems.filter((cartItem) => cartItem.quantity > 0),
-    clampedCount,
-  };
-}
-
-//  context
-const CartContext = createContext<CartContextType | undefined>(undefined);
-
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, dispatch] = useReducer(cartReducer, []);
-  const { isSignedIn, user } = useUser();
-  const { showToast } = useToast();
-
-  const isClientRef = useRef(false);
-  const previousSignedInRef = useRef<boolean | null>(null);
-
-  useEffect(() => {
-    isClientRef.current = true;
-  }, []);
-
-  // load cart from localStorage and/or DB
-  useEffect(() => {
-    if (!isClientRef.current) return;
-    const saved = readJSON<CartItem[]>("brew-cart", []);
-    if (saved?.length) {
-      dispatch({ type: "LOAD_CART", payload: saved });
-    }
-  }, []);
-
-  // handle auth transitions (merge on login, persist & clear on logout)
-  useEffect(() => {
-    const wasSignedIn = previousSignedInRef.current;
-    const isCurrentlySignedIn = !!isSignedIn;
-
-    // guest -> signed-in (login)
-    if (wasSignedIn === false && isCurrentlySignedIn === true && user) {
-      (async () => {
-        try {
-          const databaseResponse = await fetch("/api/cart");
-          const databaseItemsRaw: { items: ICartItem[] } = databaseResponse.ok
-            ? await databaseResponse.json()
-            : { items: [] };
-
-          const databaseItems: CartItem[] = (databaseItemsRaw.items ?? []).map(
-            (record) => ({
-              id: record.productId,
-              _id: record.productId,
-              name: record.name,
-              description: record.description,
-              price: record.price,
-              quantity: record.quantity,
-              selectedSizes: record.selectedSizes || [],
-              images: record.images || [],
-              category: record.category || "",
-              country: record.country || "",
-              sizes: record.sizes || [],
-            })
-          );
-
-          const localItems = readJSON<CartItem[]>("brew-cart", []);
-          const { items: mergedItems, clampedCount } = mergeCartsStockAware(
-            databaseItems,
-            localItems
-          );
-
-          await fetch("/api/cart", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items: mergedItems }),
-          }).catch(() => undefined);
-
-          dispatch({ type: "LOAD_CART", payload: mergedItems });
-          try {
-            window.localStorage.setItem(
-              "brew-cart",
-              JSON.stringify(mergedItems)
-            );
-          } catch {}
-
-          if (clampedCount > 0) {
-            showToast(
-              `${clampedCount} cart item${
-                clampedCount > 1 ? "s" : ""
-              } adjusted to available stock`,
-              "warning"
-            );
-          }
-        } catch (error) {
-          console.error("Cart merge on login failed:", error);
-        }
-      })();
-    }
-
-    // signed-in -> guest (logout)
-    if (wasSignedIn === true && isCurrentlySignedIn === false) {
-      (async () => {
-        try {
-          await fetch("/api/cart", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items }),
-          }).catch(() => undefined);
-        } finally {
-          dispatch({ type: "CLEAR_CART" });
-          try {
-            window.localStorage.removeItem("brew-cart");
-          } catch {}
-        }
-      })();
-    }
-
-    previousSignedInRef.current = isCurrentlySignedIn;
-  }, [isSignedIn, user, items, showToast]);
-
-  // debounced persistence: mirror to localStorage, and if signed in, POST to DB
-  useDebouncedEffect(
-    () => {
-      if (!isClientRef.current) return;
-
-      try {
-        window.localStorage.setItem("brew-cart", JSON.stringify(items));
-      } catch {}
-
-      if (isSignedIn && user) {
-        void fetch("/api/cart", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items }),
-        }).catch((error) => console.error("Failed to save cart to DB", error));
-      }
-    },
-    [items, isSignedIn, user],
-    { delay: 500 }
-  );
-
-  //  actions
-  const addToCart = useCallback(
-    (product: Product, selectedSizes: string[], quantity: number) => {
-      const existing = items.find(
-        (cartItem) =>
-          cartItem.id === product._id &&
-          shallowArrayEqual(cartItem.selectedSizes, selectedSizes)
-      );
-      const currentQuantity = existing ? existing.quantity : 0;
-
-      const stockCheck = validateStock(
-        selectedSizes,
-        product.sizes,
-        currentQuantity + quantity
-      );
-      if (!stockCheck.ok) {
-        showToast(stockCheck.message!, "warning");
-        return;
-      }
-
-      const effectivePrice =
-        product.sizes.find((sizeEntry) => sizeEntry.size === selectedSizes[0])
-          ?.price ?? product.price;
-
-      dispatch({
-        type: "ADD_TO_CART",
-        payload: {
-          id: product._id,
-          _id: product._id,
-          name: product.name,
-          description: product.description,
-          price: effectivePrice,
-          images: product.images,
-          category: product.category,
-          country: product.country,
-          selectedSizes,
-          quantity,
-          sizes: product.sizes,
-        },
-      });
-    },
-    [items, showToast]
-  );
-
-  const updateQuantity = useCallback(
-    (
-      productId: string | number,
-      quantity: number,
-      selectedSizes?: string[]
-    ) => {
-      const target = items.find(
-        (cartItem) =>
-          cartItem.id === productId &&
-          shallowArrayEqual(cartItem.selectedSizes, selectedSizes)
-      );
-      if (!target) return;
-
-      const stockCheck = validateStock(
-        target.selectedSizes,
-        target.sizes,
-        quantity
-      );
-      if (!stockCheck.ok) {
-        showToast(stockCheck.message!, "warning");
-        return;
-      }
-
-      dispatch({
-        type: "UPDATE_QUANTITY",
-        payload: { id: productId, quantity, selectedSizes },
-      });
-    },
-    [items, showToast]
-  );
-
-  const removeFromCart = useCallback(
-    (productId: string | number, selectedSizes?: string[]) => {
-      dispatch({
-        type: "REMOVE_FROM_CART",
-        payload: { id: productId, selectedSizes },
-      });
-    },
-    []
-  );
-
-  const clearCart = useCallback(() => {
-    dispatch({ type: "CLEAR_CART" });
-    try {
-      window.localStorage.removeItem("brew-cart");
-    } catch {}
-  }, []);
-
-  // selectors
-  const totalItems = useMemo(
-    () => items.reduce((sum, cartItem) => sum + cartItem.quantity, 0),
-    [items]
-  );
-  const totalPrice = useMemo(
-    () =>
-      items.reduce(
-        (sum, cartItem) => sum + cartItem.price * cartItem.quantity,
-        0
-      ),
-    [items]
-  );
-
-  const value = useMemo<CartContextType>(
-    () => ({
-      items,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      getTotalItems: () => totalItems,
-      getTotalPrice: () => totalPrice,
-    }),
-    [
-      items,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      totalItems,
-      totalPrice,
-    ]
-  );
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-}
-
-export function useCart() {
-  const context = useContext(CartContext);
-  if (!context) throw new Error("useCart must be used within a CartProvider");
-  return context;
 }

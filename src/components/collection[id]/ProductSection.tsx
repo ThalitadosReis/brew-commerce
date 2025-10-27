@@ -47,7 +47,7 @@ interface ProductSectionProps {
 function Breadcrumb({ productName }: { productName: string }) {
   return (
     <div className="flex gap-1 items-center text-sm font-body">
-      <Link href="/" className="text-black/70 hover:text-black cursor-pointer">
+      <Link href="/homepage" className="text-black/70 hover:text-black cursor-pointer">
         Home
       </Link>
       <CaretRightIcon size={12} weight="light" />
@@ -329,7 +329,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 <Breadcrumb productName={product.name} />
               </div>
 
-              <div className="inline-flex gap-2">
+              <div className=" gap-2">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold font-heading">
                   {product.name}
                 </h2>
