@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { Product } from "@/types/product";
 import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
@@ -22,14 +22,6 @@ interface FilterProps {
   products: Product[];
   onFilter: (filtered: Product[]) => void;
 }
-
-// localStorage keys for filter persistence
-const LS_KEYS = {
-  sortBy: "filters.sortBy",
-  roasts: "filters.roasts",
-  countries: "filters.countries",
-  sizes: "filters.sizes",
-} as const;
 
 // sort by dropdown
 export function SortDropdown({
@@ -113,79 +105,12 @@ export default function Filter({
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // from localStorage on first mount
-  useEffect(() => {
-    try {
-      // sortBy
-      const savedSort = window.localStorage.getItem(LS_KEYS.sortBy);
-      if (
-        savedSort === "a-z" ||
-        savedSort === "z-a" ||
-        savedSort === "price-low" ||
-        savedSort === "price-high"
-      ) {
-        if (savedSort !== sortBy) setSortBy(savedSort as SortOption);
-      }
-
-      // roasts
-      const savedRoasts = window.localStorage.getItem(LS_KEYS.roasts);
-      if (savedRoasts) {
-        const parsed = JSON.parse(savedRoasts);
-        if (Array.isArray(parsed)) setSelectedRoasts(parsed);
-      }
-
-      // countries
-      const savedCountries = window.localStorage.getItem(LS_KEYS.countries);
-      if (savedCountries) {
-        const parsed = JSON.parse(savedCountries);
-        if (Array.isArray(parsed)) setSelectedCountries(parsed);
-      }
-
-      // sizes
-      const savedSizes = window.localStorage.getItem(LS_KEYS.sizes);
-      if (savedSizes) {
-        const parsed = JSON.parse(savedSizes);
-        if (Array.isArray(parsed)) setSelectedSizes(parsed);
-      }
-    } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // persist to localStorage when filters change (debounced)
-  useDebouncedEffect(
-    () => {
-      try {
-        window.localStorage.setItem(LS_KEYS.sortBy, sortBy);
-        window.localStorage.setItem(
-          LS_KEYS.roasts,
-          JSON.stringify(selectedRoasts)
-        );
-        window.localStorage.setItem(
-          LS_KEYS.countries,
-          JSON.stringify(selectedCountries)
-        );
-        window.localStorage.setItem(
-          LS_KEYS.sizes,
-          JSON.stringify(selectedSizes)
-        );
-      } catch {}
-    },
-    [sortBy, selectedRoasts, selectedCountries, selectedSizes],
-    { delay: 200 }
-  );
-
-  // reset (also clears localStorage)
+  // reset filter selections
   const resetFilters = () => {
     setSelectedRoasts([]);
     setSelectedCountries([]);
     setSelectedSizes([]);
     setSortBy("a-z");
-    try {
-      window.localStorage.removeItem(LS_KEYS.sortBy);
-      window.localStorage.removeItem(LS_KEYS.roasts);
-      window.localStorage.removeItem(LS_KEYS.countries);
-      window.localStorage.removeItem(LS_KEYS.sizes);
-    } catch {}
   };
 
   // debounced filtering + sorting

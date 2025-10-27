@@ -14,7 +14,6 @@ import {
   CaretRightIcon,
   CaretLeftIcon,
   HeartIcon,
-  SmileySadIcon,
   StarIcon,
   StarHalfIcon,
 } from "@phosphor-icons/react";
@@ -47,7 +46,10 @@ interface ProductSectionProps {
 function Breadcrumb({ productName }: { productName: string }) {
   return (
     <div className="flex gap-1 items-center text-sm font-body">
-      <Link href="/homepage" className="text-black/70 hover:text-black cursor-pointer">
+      <Link
+        href="/homepage"
+        className="text-black/70 hover:text-black cursor-pointer"
+      >
         Home
       </Link>
       <CaretRightIcon size={12} weight="light" />
@@ -213,30 +215,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
   };
 
   if (!product) {
-    return (
-      <div className="max-w-7xl mx-auto px-6 pt-24">
-        <div className="flex-1">
-          <div className="mx-auto text-center py-24">
-            <SmileySadIcon
-              size={72}
-              weight="light"
-              className="mx-auto mb-2 text-black/70"
-            />
-            <h3 className="font-heading text-2xl">Product not found</h3>
-            <p className="font-body text-black/70">
-              {"The product you're looking for doesn't exist."}
-            </p>
-            <Link
-              href="/collection"
-              className="inline-flex items-center gap-2 text-sm font-body relative group mt-8"
-            >
-              <CaretLeftIcon className="transition-transform duration-300 ease-out group-hover:-translate-x-1" />
-              Back to Collection
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const isProductInWishlist = isInWishlist(product._id);

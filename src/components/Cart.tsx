@@ -142,7 +142,14 @@ function CartItemComponent({
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, updateQuantity, removeFromCart, getTotalPrice } = useCart();
+  const {
+    items,
+    updateQuantity,
+    removeFromCart,
+    getTotalPrice,
+    clearCart,
+    clearServerCart,
+  } = useCart();
   const { showToast } = useToast();
   const { user } = useUser();
   const router = useRouter();
@@ -150,6 +157,15 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const subtotal = getTotalPrice();
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleClearCart = () => {
+    if (items.length === 0) return;
+    clearCart();
+    clearServerCart().catch((error) => {
+      console.error("Failed to clear server cart", error);
+    });
+    showToast("All items removed from cart", "success");
+  };
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
@@ -218,7 +234,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const footerContent = items.length > 0 && (
     <>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex items-center justify-between mb-8">
         <p className="font-body">Subtotal</p>
         <span className="text-lg font-semibold">CHF {subtotal.toFixed(2)}</span>
       </div>
@@ -244,6 +260,20 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       title={`${totalQuantity} ${totalQuantity === 1 ? "item" : "items"}`}
       footer={footerContent}
       ariaLabel="Shopping cart"
+      headerActions={
+        items.length > 0 ? (
+          <button
+            type="button"
+            onClick={handleClearCart}
+            disabled={isCheckingOut}
+            className={`text-sm text-black/70 underline ${
+              isCheckingOut ? "" : "hover:text-black"
+            }`}
+          >
+            Clear cart
+          </button>
+        ) : null
+      }
     >
       <div className="space-y-4">
         {items.length === 0 ? (

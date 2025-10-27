@@ -13,6 +13,7 @@ interface DrawerProps {
   width?: string;
   showHeader?: boolean;
   ariaLabel?: string;
+  headerActions?: React.ReactNode;
 }
 
 export default function Drawer({
@@ -25,6 +26,7 @@ export default function Drawer({
   width = "md:w-[400px]",
   showHeader = true,
   ariaLabel = "Drawer",
+  headerActions,
 }: DrawerProps) {
   const translateClass = isOpen
     ? "translate-x-0"
@@ -51,22 +53,24 @@ export default function Drawer({
         aria-label={ariaLabel}
       >
         {showHeader && (
-          <div className="flex items-center justify-between p-6 border-b border-black/10 flex-shrink-0">
+          <div className="flex items-center justify-between gap-4 p-6 border-b border-black/10 flex-shrink-0">
             {title && <h3 className="text-xl font-heading">{title}</h3>}
-            <button
-              onClick={onClose}
-              className="hover:opacity-70"
-              aria-label={`Close ${ariaLabel}`}
-            >
-              <XIcon size={18} weight="light" />
-            </button>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              {headerActions}
+              <button
+                onClick={onClose}
+                aria-label={`Close ${ariaLabel}`}
+              >
+                <XIcon size={18} weight="light" />
+              </button>
+            </div>
           </div>
         )}
 
         <div className="flex-1 overflow-y-auto p-6">{children}</div>
 
         {footer && (
-          <div className="p-6 border-t border-black/10 flex-shrink-0 sticky bottom-0 bg-white">
+          <div className="p-6 border-t border-black/10 flex-shrink-0 sticky bottom-0">
             {footer}
           </div>
         )}

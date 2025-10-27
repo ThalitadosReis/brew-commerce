@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import {
   CoffeeIcon,
   TimerIcon,
@@ -43,11 +42,11 @@ export function BenefitsSection() {
       />
 
       <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] items-center gap-y-8 md:gap-y-16 lg:gap-x-8">
-        <div className="grid gap-y-12">
+        <div className="order-1 lg:order-1 grid gap-y-8">
           {benefits.slice(0, 2).map((b, i) => (
             <div
               key={i}
-              className="flex flex-col items-center text-center space-y-4"
+              className="flex flex-col items-center text-center space-y-1"
             >
               <div>{b.icon}</div>
               <h3 className="text-lg font-heading font-semibold">{b.title}</h3>
@@ -56,23 +55,24 @@ export function BenefitsSection() {
           ))}
         </div>
 
-        <div className="relative w-full sm:col-span-2 lg:col-span-1">
-          <div className="relative h-[500px] w-full overflow-hidden">
+        <div className="order-3 lg:order-2 relative w-full sm:col-span-2 lg:col-span-1">
+          <div className="relative h-[350px] lg:h-[500px] w-full overflow-hidden">
             <Image
               src={BENEFIT_IMAGE}
               alt="Coffee beans in a cup"
               fill
+              sizes="(max-width: 1024px) 100vw"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-black/30" />
           </div>
         </div>
 
-        <div className="grid gap-y-12">
+        <div className="order-2 lg:order-3 grid gap-y-8">
           {benefits.slice(2).map((b, i) => (
             <div
               key={i}
-              className="flex flex-col items-center text-center space-y-4"
+              className="flex flex-col items-center text-center space-y-1"
             >
               <div>{b.icon}</div>
               <h3 className="text-lg font-heading font-semibold">{b.title}</h3>
@@ -83,11 +83,11 @@ export function BenefitsSection() {
       </div>
 
       <div className="mt-8 flex items-center justify-center gap-4">
-        <Button variant="secondary">
-          <Link href="/collection">Learn more</Link>
+        <Button variant="secondary" as="link" href="/collection">
+          Learn more
         </Button>
-        <Button variant="tertiary">
-          <Link href="/collection">Shop</Link>
+        <Button variant="tertiary" as="link" href="/collection">
+          Shop
         </Button>
       </div>
     </section>
