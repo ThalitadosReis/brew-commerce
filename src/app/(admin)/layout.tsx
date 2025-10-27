@@ -1,20 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+
 import { AuthProvider } from "@/contexts/AuthContext";
-import AdminNavbar from "@/components/AdminNavbar";
+import { ToastProvider } from "@/contexts/ToastContext";
 
 export default function AdminLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const [activeTab, setActiveTab] = useState("overview");
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const isAdminLogin = pathname === "/admin-login";
 
   return (
-    <AuthProvider verifyOnMount={true}>
-      <div>
-        <AdminNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
-        <main>{children}</main>
-      </div>
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider verifyOnMount={!isAdminLogin}>
+        <div className="min-h-screen">{children}</div>
+      </AuthProvider>
+    </ToastProvider>
   );
 }

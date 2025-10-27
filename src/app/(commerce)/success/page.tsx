@@ -5,30 +5,60 @@ import { useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { CaretRightIcon } from "@phosphor-icons/react";
+import Loading from "@/components/common/Loading";
 import { useCart } from "@/contexts/CartContext";
+import type { CartItem } from "@/types/product";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const { user } = useUser();
-  const { items: cartItems, clearCart } = useCart();
+  const { user, isLoaded: userLoaded } = useUser();
+  const { items: cartItems, clearCart, clearServerCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasProcessed, setHasProcessed] = useState(false);
 
   useEffect(() => {
-    if (!sessionId || !user) {
+    if (hasProcessed) return;
+
+    if (!sessionId) {
       setLoading(false);
+      setHasProcessed(true);
       return;
     }
 
-    const saveOrderToDB = async () => {
-      try {
-        if (!cartItems || cartItems.length === 0) {
-          setLoading(false);
-          return;
-        }
+    if (!userLoaded) return;
 
-        const formattedItems = cartItems.map((item) => ({
+    const saveOrderToDB = async () => {
+      const clearAllCarts = () => {
+        setHasProcessed(true);
+        clearCart();
+        clearServerCart().catch((err) =>
+          console.error("Failed to clear server cart", err)
+        );
+      };
+
+      const itemsSource: CartItem[] = (() => {
+        if (cartItems && cartItems.length > 0) return cartItems;
+        try {
+          const saved = window.localStorage.getItem("brew-cart");
+          if (!saved) return [];
+          const parsed = JSON.parse(saved) as CartItem[];
+          if (Array.isArray(parsed)) return parsed;
+        } catch (storageError) {
+          console.error("Failed to read fallback cart data", storageError);
+        }
+        return [];
+      })();
+
+      if (itemsSource.length === 0) {
+        clearAllCarts();
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const formattedItems = itemsSource.map((item) => ({
           productId: item.id || item._id,
           name: item.name,
           quantity: item.quantity,
@@ -37,10 +67,31 @@ export default function SuccessPage() {
           image: item.images?.[0] || "",
         }));
 
-        const subtotal = formattedItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        );
+        const subtotal = formattedItems.reduce((sum, item) => {
+          const lineTotal =
+            Number.isFinite(item.price) && Number.isFinite(item.quantity)
+              ? item.price * item.quantity
+              : 0;
+          return sum + lineTotal;
+        }, 0);
+
+        let shippingAddress: Record<string, string | undefined> | null = null;
+        let checkoutEmail: string | null = null;
+        try {
+          const sessionRes = await fetch(
+            `/api/checkout/session?session_id=${encodeURIComponent(sessionId)}`
+          );
+
+          if (sessionRes.ok) {
+            const sessionData = await sessionRes.json();
+            shippingAddress = sessionData.shippingAddress ?? null;
+            checkoutEmail = sessionData.customerEmail ?? null;
+          } else if (sessionRes.status === 404) {
+            shippingAddress = null;
+          }
+        } catch (addressError) {
+          console.error("Failed to retrieve shipping address", addressError);
+        }
 
         const orderPayload = {
           sessionId,
@@ -48,8 +99,10 @@ export default function SuccessPage() {
           subtotal,
           shipping: subtotal >= 50 ? 0 : 4.5,
           total: subtotal >= 50 ? subtotal : subtotal + 4.5,
-          userId: user.id,
-          customerEmail: user.primaryEmailAddress?.emailAddress,
+          userId: user?.id,
+          customerEmail:
+            user?.primaryEmailAddress?.emailAddress ?? checkoutEmail ?? undefined,
+          shippingAddress,
         };
 
         const response = await fetch("/api/orders", {
@@ -63,44 +116,42 @@ export default function SuccessPage() {
           try {
             const json = JSON.parse(text);
             if (json.error === "Order already exists") {
-              clearCart();
-              setLoading(false);
+              clearAllCarts();
               return;
             }
           } catch {
             setError("Failed to create order. Please contact support.");
           }
 
-          setLoading(false);
           return;
         }
 
         await response.json();
-        clearCart();
+        clearAllCarts();
       } catch (err) {
         console.error("Error saving order:", err);
         setError("Unexpected error occurred while processing order.");
       } finally {
+        setHasProcessed(true);
         setLoading(false);
       }
     };
 
     saveOrderToDB();
-  }, [sessionId, user, cartItems, clearCart]);
+  }, [
+    sessionId,
+    user,
+    userLoaded,
+    cartItems,
+    clearCart,
+    clearServerCart,
+    hasProcessed,
+  ]);
 
   const userName = user?.firstName || "";
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black/5">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-black/20 border-t-black/70 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-black/70 text-sm font-medium">
-            Processing order...
-          </p>
-        </div>
-      </div>
-    );
+    return <Loading message="Processing order..." />;
   }
 
   return (
