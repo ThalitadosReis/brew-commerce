@@ -9,7 +9,7 @@ import PageHeader from "@/components/common/PageHeader";
 import CollectionContent from "@/components/collection/CollectionContent";
 import QualitySection from "@/components/collection/QualitySection";
 import ContentBlock from "@/components/common/ContentBlock";
-import { COLLECTION_CONTACT_IMAGE } from "@/lib/images.collection";
+import { COLLECTION_CONTACT_IMAGE } from "@/lib/images/collection";
 
 export default function CollectionPage() {
   const collectionRef = useRef<HTMLDivElement>(null);

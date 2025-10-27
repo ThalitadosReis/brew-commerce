@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Section from "../common/Section";
-import { QUALITY_IMAGES } from "@/lib/images.collection";
+import { QUALITY_IMAGES } from "@/lib/images/collection";
 
 const TABS = [
   {

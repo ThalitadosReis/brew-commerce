@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import connectDB from "@/lib/mongodb";
-import Wishlist, { IWishlist, IWishlistItem } from "@/models/Wishlist";
-import Product, { IProduct } from "@/models/Product";
 
-// fetch user's wishlist
+import connectDB from "@/lib/mongodb";
+import Favorites, {
+  type IFavorites,
+  type IFavoriteItem,
+} from "@/models/Favorites";
+import Product, { type IProduct } from "@/models/Product";
+
+// fetch user's favorites
 export async function GET() {
   try {
     const { userId } = await auth();
@@ -14,26 +18,24 @@ export async function GET() {
 
     await connectDB();
 
-    let wishlist: IWishlist | null = await Wishlist.findOne({ userId });
-    if (!wishlist) {
-      wishlist = await Wishlist.create({ userId, items: [] });
+    let favorites: IFavorites | null = await Favorites.findOne({ userId });
+    if (!favorites) {
+      favorites = await Favorites.create({ userId, items: [] });
     }
 
-    // ensure wishlist exists at this point
-    if (!wishlist || !wishlist.items) {
+    if (!favorites || !favorites.items) {
       return NextResponse.json({ items: [] });
     }
 
-    const productIds = wishlist.items.map(
-      (item: IWishlistItem) => item.productId
+    const productIds = favorites.items.map(
+      (item: IFavoriteItem) => item.productId
     );
     const products = await Product.find({ _id: { $in: productIds } }).lean<
       IProduct[]
     >();
 
-    // map wishlist items with full product details
-    const wishlistItems = wishlist.items
-      .map((item: IWishlistItem) => {
+    const favoriteItems = favorites.items
+      .map((item: IFavoriteItem) => {
         const product = products.find(
           (p) => p._id?.toString() === item.productId
         );
@@ -54,17 +56,17 @@ export async function GET() {
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
 
-    return NextResponse.json({ items: wishlistItems });
+    return NextResponse.json({ items: favoriteItems });
   } catch (error) {
-    console.error("Error fetching wishlist:", error);
+    console.error("Error fetching favorites:", error);
     return NextResponse.json(
-      { error: "Failed to fetch wishlist" },
+      { error: "Failed to fetch favorites" },
       { status: 500 }
     );
   }
 }
 
-// add product to wishlist
+// add product to favorites
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -82,52 +84,48 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    // verify product exists
     const product = await Product.findById(productId).lean<IProduct>();
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    let wishlist: IWishlist | null = await Wishlist.findOne({ userId });
+    let favorites: IFavorites | null = await Favorites.findOne({ userId });
 
-    if (!wishlist) {
-      // create new wishlist with the product
-      wishlist = await Wishlist.create({
+    if (!favorites) {
+      favorites = await Favorites.create({
         userId,
         items: [{ productId, addedAt: new Date() }],
       });
     } else {
-      // check if product already in wishlist
-      const existingItem = wishlist.items.find(
-        (item: IWishlistItem) => item.productId === productId
+      const existingItem = favorites.items.find(
+        (item: IFavoriteItem) => item.productId === productId
       );
 
       if (existingItem) {
         return NextResponse.json(
-          { message: "Product already in wishlist" },
+          { message: "Product already in favorites" },
           { status: 200 }
         );
       }
 
-      // add product to existing wishlist
-      wishlist.items.push({ productId, addedAt: new Date() });
-      await wishlist.save();
+      favorites.items.push({ productId, addedAt: new Date() });
+      await favorites.save();
     }
 
     return NextResponse.json(
-      { message: "Product added to wishlist" },
+      { message: "Product added to favorites" },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error adding to wishlist:", error);
+    console.error("Error adding to favorites:", error);
     return NextResponse.json(
-      { error: "Failed to add to wishlist" },
+      { error: "Failed to add to favorites" },
       { status: 500 }
     );
   }
 }
 
-// delete item from wishlist
+// delete item from favorites
 export async function DELETE(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -145,38 +143,36 @@ export async function DELETE(request: NextRequest) {
 
     await connectDB();
 
-    const wishlist: IWishlist | null = await Wishlist.findOne({ userId });
-    if (!wishlist) {
+    const favorites: IFavorites | null = await Favorites.findOne({ userId });
+    if (!favorites) {
       return NextResponse.json(
-        { error: "Wishlist not found" },
+        { error: "Favorites not found" },
         { status: 404 }
       );
     }
 
-    // remove product from wishlist
-    const initialLength = wishlist.items.length;
-    wishlist.items = wishlist.items.filter(
-      (item: IWishlistItem) => item.productId !== productId
+    const initialLength = favorites.items.length;
+    favorites.items = favorites.items.filter(
+      (item: IFavoriteItem) => item.productId !== productId
     );
 
-    // check if product was removed
-    if (wishlist.items.length === initialLength) {
+    if (favorites.items.length === initialLength) {
       return NextResponse.json(
-        { message: "Product not found in wishlist" },
+        { message: "Product not found in favorites" },
         { status: 404 }
       );
     }
 
-    await wishlist.save();
+    await favorites.save();
 
     return NextResponse.json(
-      { message: "Product removed from wishlist" },
+      { message: "Product removed from favorites" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error removing from wishlist:", error);
+    console.error("Error removing from favorites:", error);
     return NextResponse.json(
-      { error: "Failed to remove from wishlist" },
+      { error: "Failed to remove from favorites" },
       { status: 500 }
     );
   }

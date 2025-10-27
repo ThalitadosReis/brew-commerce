@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Section from "../common/Section";
-import { STORY_IMAGES } from "@/lib/images.about";
+import { STORY_IMAGES } from "@/lib/images/about";
 
 export default function StorySection() {
   const scrollRef = useRef<HTMLDivElement>(null);

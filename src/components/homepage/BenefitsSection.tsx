@@ -7,7 +7,7 @@ import {
 } from "@phosphor-icons/react";
 import Section from "@/components/common/Section";
 import Button from "@/components/common/Button";
-import { BENEFIT_IMAGE } from "@/lib/images.home";
+import { BENEFIT_IMAGE } from "@/lib/images/home";
 
 export function BenefitsSection() {
   const benefits = [

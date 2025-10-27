@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Section from "../common/Section";
-import { TEAM_AVATARS } from "@/lib/images.about";
+import { TEAM_AVATARS } from "@/lib/images/about";
 
 export default function TeamSection() {
   const carouselRef = useRef<HTMLDivElement>(null);

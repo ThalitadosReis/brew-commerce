@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
-import { useWishlist } from "@/contexts/WishlistContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/contexts/ToastContext";
 
 import {
@@ -67,7 +67,7 @@ function Breadcrumb({ productName }: { productName: string }) {
 
 export default function ProductSection({ product }: ProductSectionProps) {
   const { addToCart, items } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -171,13 +171,13 @@ export default function ProductSection({ product }: ProductSectionProps) {
     setQuantity(1);
   };
 
-  const handleWishlistToggle = () => {
+  const handleFavoritesToggle = () => {
     if (!product) return;
 
-    if (isInWishlist(product._id)) {
-      removeFromWishlist(product._id);
+    if (isFavorite(product._id)) {
+      removeFromFavorites(product._id);
     } else {
-      addToWishlist(product);
+      addToFavorites(product);
     }
   };
 
@@ -218,7 +218,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
     return null;
   }
 
-  const isProductInWishlist = isInWishlist(product._id);
+  const isProductFavorite = isFavorite(product._id);
   const hasMultipleImages = product.images.length > 1;
 
   return (
@@ -234,17 +234,17 @@ export default function ProductSection({ product }: ProductSectionProps) {
 
               <div className="relative aspect-square bg-black/10 overflow-hidden group">
                 <button
-                  onClick={handleWishlistToggle}
+                  onClick={handleFavoritesToggle}
                   className="absolute top-4 left-4 z-10 p-2 bg-white hover:bg-white/50 rounded-full transition-colors"
                   title={
-                    isProductInWishlist
-                      ? "Remove from wishlist"
-                      : "Add to wishlist"
+                    isProductFavorite
+                      ? "Remove from favorites"
+                      : "Add to favorites"
                   }
                 >
                   <HeartIcon
                     size={20}
-                    weight={isProductInWishlist ? "fill" : "light"}
+                    weight={isProductFavorite ? "fill" : "light"}
                   />
                 </button>
 

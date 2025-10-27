@@ -1,6 +1,6 @@
 import Section from "../common/Section";
 import Card from "@/components/common/Card";
-import { ABOUT_IMAGES } from "@/lib/images.about";
+import { ABOUT_IMAGES } from "@/lib/images/about";
 
 export default function AboutSection() {
   return (

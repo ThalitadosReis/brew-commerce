@@ -8,7 +8,7 @@ import { BenefitsSection } from "@/components/homepage/BenefitsSection";
 import { CraftSection } from "@/components/homepage/CraftSection";
 import { TestimonialsSection } from "@/components/homepage/TestimonialsSection";
 
-import { FINAL_CTA_IMAGE } from "@/lib/images.home";
+import { FINAL_CTA_IMAGE } from "@/lib/images/home";
 
 export default function Homepage() {
   return (

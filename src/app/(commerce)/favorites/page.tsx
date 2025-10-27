@@ -1,21 +1,21 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useWishlist } from "@/contexts/WishlistContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
 import Loading from "@/components/common/Loading";
 import ImageCard from "@/components/collection/ImageCard";
 import PageHeader from "@/components/common/PageHeader";
 import ContentBlock from "@/components/common/ContentBlock";
 import Button from "@/components/common/Button";
-import { FAVORITES_CTA_IMAGE } from "@/lib/images.favorites";
+import { FAVORITES_CTA_IMAGE } from "@/lib/images/favorites";
 
 export default function FavoritesPage() {
-  const { wishlist, loading } = useWishlist();
+  const { favorites, loading } = useFavorites();
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
 
-  const sortedWishlist = useMemo(() => {
-    return [...wishlist].sort((a, b) => {
+  const sortedFavorites = useMemo(() => {
+    return [...favorites].sort((a, b) => {
       switch (sortBy) {
         case "price-low":
           return a.price - b.price;
@@ -27,7 +27,7 @@ export default function FavoritesPage() {
           return a.name.localeCompare(b.name);
       }
     });
-  }, [wishlist, sortBy]);
+  }, [favorites, sortBy]);
 
   if (loading) return <Loading message="Loading favorites..." />;
 
@@ -43,9 +43,9 @@ export default function FavoritesPage() {
           <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
         </div>
 
-        {sortedWishlist.length > 0 ? (
+        {sortedFavorites.length > 0 ? (
           <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedWishlist.map((product) => (
+            {sortedFavorites.map((product) => (
               <ImageCard
                 key={product._id}
                 id={product._id}
@@ -62,7 +62,7 @@ export default function FavoritesPage() {
             <p className="font-light text-center">
               No favorites yet
               <br />
-              Start adding products to your wishlist
+              Start adding products to your favorites list
             </p>
 
             <Button as="link" href="/collection" variant="tertiary">

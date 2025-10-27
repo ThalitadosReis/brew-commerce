@@ -2,7 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Section from "@/components/common/Section";
 import Button from "@/components/common/Button";
-import { CONTACT_LOCATION_IMAGES } from "@/lib/images.contact";
+import { CONTACT_LOCATION_IMAGES } from "@/lib/images/contact";
 
 export default function LocationSection() {
   const locations = [

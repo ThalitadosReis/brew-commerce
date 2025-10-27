@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useWishlist } from "@/contexts/WishlistContext";
+
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { Product } from "@/types/product";
 import { HeartIcon } from "@phosphor-icons/react";
 
@@ -24,17 +25,17 @@ export default function ImageCard({
   className = "",
   product,
 }: ImageCardProps) {
-  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
-  const isProductInWishlist = isInWishlist(id);
+  const { isFavorite, addToFavorites, removeFromFavorites } = useFavorites();
+  const isProductFavorite = isFavorite(id);
 
-  const handleWishlistToggle = (e: React.MouseEvent) => {
+  const handleFavoritesToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isProductInWishlist) {
-      removeFromWishlist(id);
+    if (isProductFavorite) {
+      removeFromFavorites(id);
     } else if (product) {
-      addToWishlist(product);
+      addToFavorites(product);
     }
   };
 
@@ -42,15 +43,13 @@ export default function ImageCard({
     <div className={`space-y-4 ${className}`}>
       <div className="relative p-4 flex items-center justify-center bg-black/10 w-full overflow-hidden group">
         <button
-          onClick={handleWishlistToggle}
+          onClick={handleFavoritesToggle}
           className="absolute top-4 left-4 z-10 p-2 bg-white hover:bg-white/50 rounded-full transition-colors"
-          title={
-            isProductInWishlist ? "Remove from wishlist" : "Add to wishlist"
-          }
+          title={isProductFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           <HeartIcon
             size={20}
-            weight={isProductInWishlist ? "fill" : "light"}
+            weight={isProductFavorite ? "fill" : "light"}
           />
         </button>
 

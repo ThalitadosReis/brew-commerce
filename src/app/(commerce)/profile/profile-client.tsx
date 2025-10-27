@@ -61,11 +61,27 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
         const data: { orders?: ApiOrder[] } = await res.json();
 
         const mapped: UiRecentOrder[] = (data?.orders ?? []).map((o) => {
-          // Normalize line items (string -> string[])
-          const items: UiOrderItem[] = (o.items ?? []).map((it) => ({
-            ...it,
-            images: it.images ? [it.images] : [],
-          }));
+          const items: UiOrderItem[] = (o.items ?? []).map((item) => {
+            const {
+              images: rawImages,
+              image,
+              ...rest
+            } = item;
+
+            const normalizedImages = new Set<string>();
+            if (Array.isArray(rawImages)) {
+              rawImages.filter(Boolean).forEach((img) => normalizedImages.add(img));
+            } else if (typeof rawImages === "string" && rawImages) {
+              normalizedImages.add(rawImages);
+            }
+            if (image) normalizedImages.add(image);
+
+            return {
+              ...rest,
+              image,
+              images: Array.from(normalizedImages),
+            };
+          });
 
           const subtotal =
             items.reduce(
@@ -80,7 +96,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
             (o.sessionId && String(o.sessionId)) ||
             (o._id && String(o._id)) ||
             (typeof crypto !== "undefined" && crypto.randomUUID()) ||
-            String(Math.random());
+            `order-${Math.random().toString(36).slice(2)}`;
 
           return {
             id: safeId,
@@ -236,7 +252,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                           <h4 className="text-sm font-semibold">Items</h4>
                           {order.items.map((item, idx) => (
                             <div
-                              key={`${item.id}-${idx}`}
+                              key={`${item.productId ?? item.id ?? idx}-${idx}`}
                               className="flex gap-4 border-b border-black/10 pb-4"
                             >
                               <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden bg-black/5 grid place-items-center">

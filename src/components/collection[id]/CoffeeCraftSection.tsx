@@ -1,5 +1,5 @@
 import ContentBlock from "@/components/common/ContentBlock";
-import { CRAFT_IMAGE } from "@/lib/images.products";
+import { CRAFT_IMAGE } from "@/lib/images/products";
 
 export default function CoffeeCraftSection() {
   return (

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Section from "@/components/common/Section";
 import ContentBlock from "@/components/common/ContentBlock";
-import { FLAVOUR_TABS } from "@/lib/images.products";
+import { FLAVOUR_TABS } from "@/lib/images/products";
 
 type TabKeys = keyof typeof FLAVOUR_TABS;
 

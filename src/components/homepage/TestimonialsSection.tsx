@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Button from "@/components/common/Button";
-import { TESTIMONIALS_AVATARS } from "@/lib/images.home";
+import { TESTIMONIALS_AVATARS } from "@/lib/images/home";
 
 const testimonials = [
   {

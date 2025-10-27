@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Section from "@/components/common/Section";
-import { MOMENTS_IMAGES } from "@/lib/images.products";
+import { MOMENTS_IMAGES } from "@/lib/images/products";
 
 export default function CoffeeMoments() {
   return (

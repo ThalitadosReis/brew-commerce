@@ -1,5 +1,5 @@
 import ContentBlock from "@/components/common/ContentBlock";
-import { CRAFT_IMAGES } from "@/lib/images.home";
+import { CRAFT_IMAGES } from "@/lib/images/home";
 
 export function CraftSection() {
   const crafts = [

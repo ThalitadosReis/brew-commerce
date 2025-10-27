@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { SmileySadIcon } from "@phosphor-icons/react";
 import { Product } from "@/types/product";
 import ImageCard from "@/components/collection/ImageCard";
 import { SortDropdown, SortOption } from "@/components/collection/Filter";
@@ -54,11 +53,7 @@ export default function CollectionContent({
 
       {filteredProducts.length === 0 ? (
         <div className="mx-auto text-center py-24">
-          <SmileySadIcon
-            size={72}
-            weight="light"
-            className="mx-auto mb-2 text-black/70"
-          />
+         
           <h3 className="font-heading text-2xl">No products found</h3>
           <p className="font-body text-black/70">Try adjusting your filters</p>
         </div>

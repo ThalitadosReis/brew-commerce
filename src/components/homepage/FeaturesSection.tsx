@@ -1,6 +1,6 @@
 import Section from "../common/Section";
 import Card from "@/components/common/Card";
-import { FEATURE_IMAGES } from "@/lib/images.home";
+import { FEATURE_IMAGES } from "@/lib/images/home";
 
 export function FeaturesSection() {
   return (
