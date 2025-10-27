@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, Types } from "mongoose";
+import { Schema, model, models, type Types } from "mongoose";
 
 export interface ProductSize {
   size: "250g" | "500g" | "1kg";
@@ -54,6 +54,6 @@ const CartSchema = new Schema<ICart>(
   { timestamps: true }
 );
 
-const Cart = models.Cart || mongoose.model<ICart>("Cart", CartSchema);
+const Cart = models.Cart || model<ICart>("Cart", CartSchema);
 
 export default Cart;

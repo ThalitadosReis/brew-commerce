@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, Types } from "mongoose";
+import { Schema, model, models, type Types } from "mongoose";
 
 export interface IOrderItem {
   productId: string;
@@ -9,6 +9,16 @@ export interface IOrderItem {
   image?: string;
 }
 
+export interface IShippingAddress {
+  name?: string;
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  country?: string;
+}
+
 export interface IOrder {
   _id?: Types.ObjectId;
   userId?: string;
@@ -17,8 +27,8 @@ export interface IOrder {
   subtotal: number;
   shipping: number;
   total: number;
-  status: "pending" | "processing" | "completed" | "cancelled";
   customerEmail?: string;
+  shippingAddress?: IShippingAddress | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -50,6 +60,19 @@ const OrderItemSchema = new Schema<IOrderItem>(
     image: {
       type: String,
     },
+  },
+  { _id: false }
+);
+
+const ShippingAddressSchema = new Schema<IShippingAddress>(
+  {
+    name: { type: String },
+    line1: { type: String },
+    line2: { type: String },
+    city: { type: String },
+    state: { type: String },
+    postal_code: { type: String },
+    country: { type: String },
   },
   { _id: false }
 );
@@ -90,15 +113,15 @@ const OrderSchema = new Schema<IOrder>(
       required: true,
       min: 0,
     },
-    status: {
-      type: String,
-      enum: ["pending", "processing", "completed", "cancelled"],
-      default: "completed",
-    },
     customerEmail: {
       type: String,
       trim: true,
       lowercase: true,
+    },
+    shippingAddress: {
+      type: ShippingAddressSchema,
+      required: false,
+      default: null,
     },
   },
   {
@@ -106,6 +129,6 @@ const OrderSchema = new Schema<IOrder>(
   }
 );
 
-const Order = models.Order || mongoose.model<IOrder>("Order", OrderSchema);
+const Order = models.Order || model<IOrder>("Order", OrderSchema);
 
 export default Order;

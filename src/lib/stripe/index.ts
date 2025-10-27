@@ -1,7 +1,8 @@
 import { loadStripe } from "@stripe/stripe-js";
 import Stripe from "stripe";
 
-// Client-side Stripe
+// ----------------------------- client helpers -----------------------------
+
 export const getStripe = () => {
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
@@ -21,20 +22,19 @@ export const getStripe = () => {
   return loadStripe(publishableKey);
 };
 
-// Server-side Stripe - lazy initialization
-let _stripe: Stripe | null = null;
+// ----------------------------- server helpers -----------------------------
+
+let stripeClient: Stripe | null = null;
 
 export const getServerStripe = (): Stripe => {
-  if (_stripe) {
-    return _stripe;
+  if (stripeClient) {
+    return stripeClient;
   }
 
   const secretKey = process.env.STRIPE_SECRET_KEY;
 
   if (!secretKey) {
-    throw new Error(
-      "STRIPE_SECRET_KEY is not defined in environment variables"
-    );
+    throw new Error("STRIPE_SECRET_KEY is not defined in environment variables");
   }
 
   if (secretKey === "sk_test_your_secret_key_here") {
@@ -43,22 +43,19 @@ export const getServerStripe = (): Stripe => {
     );
   }
 
-  _stripe = new Stripe(secretKey, {
+  stripeClient = new Stripe(secretKey, {
     apiVersion: "2025-08-27.basil",
     typescript: true,
   });
 
-  return _stripe;
+  return stripeClient;
 };
 
-// Server-side only Stripe instance - only initialize when actually needed
 export const stripe = (() => {
-  // Only initialize if we're in a server environment
   if (typeof window === "undefined") {
     return getServerStripe();
   }
 
-  // Return a proxy that throws an error if used on client side
   return new Proxy({} as Stripe, {
     get() {
       throw new Error(
@@ -68,12 +65,7 @@ export const stripe = (() => {
   });
 })();
 
-// Utility function to format amount for Stripe (cents)
-export const formatAmountForStripe = (amount: number): number => {
-  return Math.round(amount * 100);
-};
+// ----------------------------- utilities ---------------------------------
 
-// Utility function to format amount for display
-export const formatAmountFromStripe = (amount: number): number => {
-  return amount / 100;
-};
+export const formatAmountForStripe = (amount: number): number =>
+  Math.round(amount * 100);

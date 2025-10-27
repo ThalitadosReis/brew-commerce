@@ -21,9 +21,5 @@ export const initialProductFormState: ProductFormData = {
   category: "",
   country: "",
   stock: 0,
-  sizes: [
-    { size: "250g", price: 0, stock: 0 },
-    { size: "500g", price: 0, stock: 0 },
-    { size: "1kg", price: 0, stock: 0 },
-  ],
+  sizes: [{ size: "250g", price: 0, stock: 0 }],
 };

@@ -1,4 +1,4 @@
-import mongoose, { Types, Schema, models } from "mongoose";
+import { Schema, model, models, type Types } from "mongoose";
 
 export interface IProductSize {
   size: "250g" | "500g" | "1kg";
@@ -91,7 +91,6 @@ const ProductSchema = new Schema<IProduct>(
   { timestamps: true }
 );
 
-const Product =
-  models.Product || mongoose.model<IProduct>("Product", ProductSchema);
+const Product = models.Product || model<IProduct>("Product", ProductSchema);
 
 export default Product;

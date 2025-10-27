@@ -7,7 +7,7 @@ import { CaretUpIcon } from "@phosphor-icons/react";
 
 import { ToastProvider } from "@/contexts/ToastContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { WishlistProvider } from "@/contexts/WishlistContext";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CartProvider } from "@/contexts/CartContext";
 
 import Navbar from "@/components/Navbar";
@@ -21,7 +21,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const heroRef = useRef<HTMLDivElement | null>(null);
 
-  // routes that should hide chrome (Navbar/Footer), but still keep providers
   const hideLayout = useMemo(() => {
     const hidden = new Set(["/sign-in", "/sign-up", "/user-profile"]);
     return hidden.has(pathname ?? "");
@@ -83,7 +82,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
       <AuthProvider verifyOnMount={verifyAuth}>
-        <WishlistProvider>
+        <FavoritesProvider>
           <CartProvider>
             {hideLayout ? (
               children
@@ -113,7 +112,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
               </>
             )}
           </CartProvider>
-        </WishlistProvider>
+        </FavoritesProvider>
       </AuthProvider>
     </ToastProvider>
   );

@@ -1,8 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+
 import { verifyTokenEdge } from "@/lib/jwt-edge";
 
-// Public routes (no Clerk authentication required)
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
@@ -21,18 +21,14 @@ const isPublicRoute = createRouteMatcher([
   "/api/admin/login(.*)",
 ]);
 
-// Admin routes requiring MongoDB-based authentication
 const isAdminRoute = createRouteMatcher(["/admin", "/admin/((?!login).*)"]);
-
-// Admin API routes (auth handled in route handlers)
 const isAdminApiRoute = createRouteMatcher([
   "/api/admin(.*)",
   "/api/orders(.*)",
   "/api/checkout(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, request: NextRequest) => {
-  // Handle admin routes with MongoDB authentication
+const routerMiddleware = clerkMiddleware(async (auth, request: NextRequest) => {
   if (isAdminRoute(request)) {
     try {
       const token = request.cookies.get("token")?.value;
@@ -47,19 +43,16 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
         return NextResponse.redirect(new URL("/admin-login", request.url));
       }
 
-      // Allow request to proceed
       return NextResponse.next();
     } catch {
       return NextResponse.redirect(new URL("/admin-login", request.url));
     }
   }
 
-  // Admin API routes bypass middleware auth here
   if (isAdminApiRoute(request)) {
     return NextResponse.next();
   }
 
-  // Protect all other non-public routes with Clerk authentication
   if (!isPublicRoute(request) && !isAdminRoute(request)) {
     await auth.protect();
   }
@@ -67,9 +60,9 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
 
 export const config = {
   matcher: [
-    // Exclude Next.js internals and static files
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };
+
+export default routerMiddleware;
