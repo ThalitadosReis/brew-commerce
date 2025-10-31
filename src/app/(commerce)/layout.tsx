@@ -22,8 +22,9 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const heroRef = useRef<HTMLDivElement | null>(null);
 
   const hideLayout = useMemo(() => {
-    const hidden = new Set(["/sign-in", "/sign-up", "/user-profile"]);
-    return hidden.has(pathname ?? "");
+    if (!pathname) return false;
+    const hiddenPrefixes = ["/user-profile"];
+    return hiddenPrefixes.some((prefix) => pathname.startsWith(prefix));
   }, [pathname]);
 
   // verify auth only on admin pages to avoid unnecessary calls elsewhere
