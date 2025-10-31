@@ -5,15 +5,15 @@ export interface AuthenticatedRequest extends NextRequest {
   user?: JWTPayload;
 }
 
-export type RouteHandler = (
+export type RouteHandler<T = unknown> = (
   request: AuthenticatedRequest,
-  context: { params?: Record<string, string> }
+  context: T
 ) => Promise<NextResponse> | NextResponse;
 
-export function withAuth(handler: RouteHandler) {
+export function withAuth<T = unknown>(handler: RouteHandler<T>) {
   return async (
     request: NextRequest & Partial<AuthenticatedRequest>,
-    context: { params?: Record<string, string> }
+    context: T
   ): Promise<NextResponse> => {
     try {
       const cookieToken = request.cookies.get("token")?.value;
@@ -52,8 +52,8 @@ export function withAuth(handler: RouteHandler) {
   };
 }
 
-export function withAdmin(handler: RouteHandler) {
-  return withAuth(async (request, context) => {
+export function withAdmin<T = unknown>(handler: RouteHandler<T>) {
+  return withAuth<T>(async (request, context) => {
     if (request.user?.role !== "admin") {
       return NextResponse.json(
         { error: "Admin access required" },

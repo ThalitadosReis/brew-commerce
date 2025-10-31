@@ -36,7 +36,7 @@ export const extractShippingFromSession = (
   paymentIntent?: Stripe.PaymentIntent | null
 ): IShippingAddress | null => {
   const sessionWithShipping = session as Stripe.Checkout.Session & {
-    shipping_details?: Stripe.Checkout.Session.ShippingDetails | null;
+    shipping_details?: Stripe.PaymentIntent.Shipping | null;
   };
 
   const shippingDetails =
