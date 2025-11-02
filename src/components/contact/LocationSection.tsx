@@ -33,41 +33,37 @@ export default function LocationSection() {
   const active = locations[activeIndex];
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <Section
         subtitle="brew."
         title="Our locations"
         description="Find us across Europe — visit our coffee spaces and experience the craft up close."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-[.5fr_1fr] gap-8 mt-12">
-        <div className="grid items-start gap-y-10">
+      <div className="grid grid-cols-1 md:grid-cols-[.5fr_1fr] gap-8">
+        <div className="grid items-start gap-y-8">
           {locations.map((loc, index) => (
             <div
               key={loc.name}
-              className={`border-l-2 pl-4 cursor-pointer transition-all ${
+              className={`border-l-2 pl-4 cursor-pointer transition-all space-y-2 ${
                 activeIndex === index
                   ? "border-black"
-                  : "border-transparent text-black/60 hover:text-black"
+                  : "border-transparent text-black/50 hover:text-black/75"
               }`}
               onClick={() => setActiveIndex(index)}
             >
-              <h3 className="text-xl md:text-2xl font-heading font-semibold">
-                {loc.name}
-              </h3>
-              <p className="text-black/70 mt-2">{loc.description}</p>
-              <div className="mt-4">
-                <Button
-                  as="a"
-                  href={loc.mapLink}
-                  variant="tertiary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm"
-                >
-                  {loc.linkText}
-                </Button>
-              </div>
+              <h4 className="font-light!">{loc.name}</h4>
+              <p className="font-light">{loc.description}</p>
+              <Button
+                as="a"
+                href={loc.mapLink}
+                variant="tertiary"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm"
+              >
+                {loc.linkText}
+              </Button>
             </div>
           ))}
         </div>
@@ -81,7 +77,7 @@ export default function LocationSection() {
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px"
             className="object-cover transition-opacity duration-500"
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
       </div>
     </section>

@@ -19,7 +19,7 @@ export default function Section({
     <div className="mb-12 lg:mb-24">
       <div className={`max-w-2xl mx-auto text-center ${className}`}>
         {subtitle && <h6>{subtitle}</h6>}
-        <h2>{title}</h2>
+        <h2 className="leading-tight!">{title}</h2>
         {description && <p>{description}</p>}
       </div>
     </div>

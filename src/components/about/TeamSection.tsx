@@ -111,7 +111,7 @@ export default function TeamSection() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <Section
         className="ml-0 text-left"
         subtitle="Team"
@@ -148,30 +148,30 @@ export default function TeamSection() {
                   />
                 </div>
                 <div className="mb-3 md:mb-4">
-                  <h5 className="text-lg font-semibold">{member.name}</h5>
-                  <h6 className="text-medium">{member.title}</h6>
+                  <h5>{member.name}</h5>
+                  <p>{member.title}</p>
                 </div>
-                <p>{member.description}</p>
+                <p className="font-light">{member.description}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex items-end justify-end gap-2 md:gap-4 mt-6">
+        <div className="flex items-end justify-end gap-2 md:gap-4 mt-8">
           <button
             ref={prevButtonRef}
             onClick={scrollPrev}
             aria-label="Previous team member"
-            className="inline-flex items-center justify-center p-3 border border-black/10 text-black/70 transition-opacity"
+            className="inline-flex items-center justify-center p-4 border border-black/10 text-black/75 transition-opacity"
           >
-            <CaretLeftIcon size={20} weight="bold" />
+            <CaretLeftIcon size={20} />
           </button>
           <button
             onClick={scrollNext}
             aria-label="Next team member"
-            className="inline-flex items-center justify-center p-3 border border-black/10 text-black/70"
+            className="inline-flex items-center justify-center p-4 border border-black/10 text-black/75"
           >
-            <CaretRightIcon size={20} weight="bold" />
+            <CaretRightIcon size={20} />
           </button>
         </div>
       </div>
