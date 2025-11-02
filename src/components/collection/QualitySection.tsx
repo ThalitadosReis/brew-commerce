@@ -49,7 +49,7 @@ export default function QualitySection() {
             >
               <h4>{tab.title}</h4>
               <p
-                className={`font-light transition-all duration-300 ${
+                className={`transition-all duration-300 ${
                   activeTab === tab.key
                     ? "opacity-100"
                     : "opacity-0 h-0 overflow-hidden"

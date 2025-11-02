@@ -182,7 +182,7 @@ const CarouselPrevious = React.forwardRef<
       size={size}
       aria-label="Previous slide"
       className={cn(
-        "absolute z-10 h-10 w-10 rounded-full bg-background/95 shadow-sm transition",
+        "absolute z-10 h-10 w-10 bg-background/95 shadow-sm transition",
         orientation === "horizontal"
           ? "left-2 top-1/2 -translate-y-1/2"
           : "left-1/2 top-2 -translate-x-1/2 rotate-90",
@@ -211,7 +211,7 @@ const CarouselNext = React.forwardRef<
       size={size}
       aria-label="Next slide"
       className={cn(
-        "absolute z-10 h-10 w-10 rounded-full bg-background/95 shadow-sm transition",
+        "absolute z-10 h-10 w-10 bg-background/95 shadow-sm transition",
         orientation === "horizontal"
           ? "right-2 top-1/2 -translate-y-1/2"
           : "left-1/2 bottom-2 -translate-x-1/2 rotate-90",
@@ -247,7 +247,7 @@ const CarouselIndicators = React.forwardRef<
           type="button"
           onClick={() => api?.scrollTo(index)}
           className={cn(
-            "h-2.5 w-2.5 rounded-full transition",
+            "h-2.5 w-2.5 transition",
             index === selectedIndex
               ? "bg-foreground"
               : "bg-muted-foreground/40 hover:bg-muted-foreground/70"

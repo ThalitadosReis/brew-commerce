@@ -56,7 +56,7 @@ function TimelineCard({ card }: { card: TimelineCardType }) {
       <div className="p-8 space-y-4">
         <small>{card.date}</small>
         <h4>{card.heading}</h4>
-        <p className="font-light">{card.text}</p>
+        <p>{card.text}</p>
       </div>
     </div>
   );

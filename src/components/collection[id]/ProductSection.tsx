@@ -341,7 +341,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 </div>
               </div>
 
-              <p className="font-light">{product.description}</p>
+              <p>{product.description}</p>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2">

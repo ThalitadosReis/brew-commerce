@@ -49,7 +49,7 @@ export default function ImageCard({
         <h6 className="text-black/75">
           {name} / {country}
         </h6>
-        <p className="font-medium">from CHF{price}</p>
+        <p className="font-medium!">from CHF{price}</p>
       </div>
     </div>
   );

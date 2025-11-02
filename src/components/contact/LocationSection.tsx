@@ -53,7 +53,7 @@ export default function LocationSection() {
               onClick={() => setActiveIndex(index)}
             >
               <h4 className="font-light!">{loc.name}</h4>
-              <p className="font-light">{loc.description}</p>
+              <p>{loc.description}</p>
               <Button
                 as="a"
                 href={loc.mapLink}

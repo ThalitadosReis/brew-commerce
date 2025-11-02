@@ -32,19 +32,19 @@ export default function FavoritesPage() {
   if (loading) return <Loading message="Loading favorites..." />;
 
   return (
-    <div className="bg-black/5 py-24 space-y-24">
+    <div className="bg-black/5 pt-48 pb-24 space-y-24">
       <PageHeader
         title="Favourites"
         description="Your carefully selected coffee selection tells a story of taste and passion."
       />
 
-      <section className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-end mb-4">
+      <section className="max-w-7xl mx-auto px-8">
+        <div className="flex justify-end mb-2">
           <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
         </div>
 
         {sortedFavorites.length > 0 ? (
-          <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-4">
             {sortedFavorites.map((product) => (
               <ImageCard
                 key={product._id}
@@ -59,7 +59,7 @@ export default function FavoritesPage() {
           </div>
         ) : (
           <div className="text-center py-24 bg-white space-y-8 flex flex-col items-center">
-            <p className="font-light text-center">
+            <p>
               No favorites yet
               <br />
               Start adding products to your favorites list

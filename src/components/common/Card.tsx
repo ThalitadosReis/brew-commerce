@@ -32,7 +32,7 @@ export default function Card({
         <div className="p-8 space-y-4">
           {subtitle && <small>{subtitle}</small>}
           <h5>{title}</h5>
-          <p className="font-light">{description}</p>
+          <p>{description}</p>
           {href && (
             <Button as="link" href={href} variant="tertiary">
               Learn more

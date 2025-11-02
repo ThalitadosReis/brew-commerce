@@ -52,7 +52,7 @@ const ContentBlock = ({
             {subtitle && <h6>{subtitle}</h6>}
 
             <h4>{title}</h4>
-            <div className="font-light">{text}</div>
+            <div>{text}</div>
           </div>
 
           {buttons.length > 0 && (

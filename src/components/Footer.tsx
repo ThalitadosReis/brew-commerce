@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="space-y-8 py-12">
         <div className="space-y-2 text-center">
           <h5>brew.</h5>
-          <p className="font-light">
+          <p>
             Premium coffee delivered to your doorstep.
             <br />
             Ethically sourced, expertly roasted, and served with love.

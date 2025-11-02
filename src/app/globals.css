@@ -1,14 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Questrial&family=Open+Sans:wght@300;400;600;700;800&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Questrial&display=swap');
 
 @import "tailwindcss";
+@import "tw-animate-css";
 
-@theme {
+/* @custom-variant dark (&:is(.dark *)); */
+
+:root {
   --font-heading: "Questrial", sans-serif;
-  --font-body: "Open Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
 
-  --text-tiny: 0.625rem;
-  --text-tiny--font-weight: 500;
+/* headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+h1 {
+  font-size: 61px;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 48px;
+  line-height: 4.5rem;
+  letter-spacing: -0.005em;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 39px;
+  line-height: 3.5rem;
+  font-weight: 300;
+}
+
+h4 {
+  font-size: 31px;
+  line-height: 2.5rem;
+  letter-spacing: 0.0025em;
+  font-weight: 600;
+}
+
+h5 {
+  font-size: 24px;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 20px;
+  line-height: 1.5rem;
+  font-weight: 300;
+}
+
+/* body */
+body,
+p {
+  font-family: var(--font-body);
+  line-height: 1.5rem;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+small {
+  font-family: var(--font-body);
+  line-height: 1.25rem;
+  font-size: 12px;
+}
+
+span {
+  font-family: var(--font-body);
+  line-height: 1.25rem;
 }
 
 input:-webkit-autofill {

@@ -50,7 +50,7 @@ export function BenefitsSection() {
             >
               <div>{b.icon}</div>
               <h5>{b.title}</h5>
-              <p className="font-light">{b.text}</p>
+              <p>{b.text}</p>
             </div>
           ))}
         </div>
@@ -76,7 +76,7 @@ export function BenefitsSection() {
             >
               <div>{b.icon}</div>
               <h5>{b.title}</h5>
-              <p className="font-light">{b.text}</p>
+              <p>{b.text}</p>
             </div>
           ))}
         </div>

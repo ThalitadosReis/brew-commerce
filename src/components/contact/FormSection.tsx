@@ -255,16 +255,16 @@ export default function FormSection() {
             >
               <div>{item.icon}</div>
               <h5>{item.heading}</h5>
-              <p className="text-sm! font-light">{item.text}</p>
+              <p>{item.text}</p>
 
               {item.heading === "Hours" ? (
-                <div className="font-light">
+                <div>
                   <p>Mon-Fri: 9:00-18:00</p>
                   <p>Saturday: 10:00-16:00</p>
                   <p>Sunday: Closed</p>
                 </div>
               ) : (
-                <>{item.info && <p className="font-light">{item.info}</p>}</>
+                <>{item.info && <p>{item.info}</p>}</>
               )}
             </div>
           ))}

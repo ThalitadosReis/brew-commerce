@@ -151,7 +151,7 @@ export default function TeamSection() {
                   <h5>{member.name}</h5>
                   <p>{member.title}</p>
                 </div>
-                <p className="font-light">{member.description}</p>
+                <p>{member.description}</p>
               </div>
             </div>
           ))}

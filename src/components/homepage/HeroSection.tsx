@@ -32,7 +32,7 @@ export function HeroSection() {
         <h1 className="leading-tight">
           Craft coffee that tells a story in every cup
         </h1>
-        <p className="font-light">
+        <p>
           Discover exceptional coffee sourced sustainably from around the world.
         </p>
       </div>

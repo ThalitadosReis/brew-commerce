@@ -12,6 +12,14 @@ import {
 
 import type { ApiOrder, OrderItem as ApiOrderItem } from "@/types/orders";
 import Loading from "@/components/common/Loading";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { useToast } from "@/contexts/ToastContext";
+import { Badge } from "@/components/ui/badge";
 
 type UiOrderItem = Omit<ApiOrderItem, "images"> & { images: string[] };
 
@@ -37,6 +45,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
   const [openOrderId, setOpenOrderId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const ordersPerPage = 9;
 
@@ -62,15 +71,13 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
 
         const mapped: UiRecentOrder[] = (data?.orders ?? []).map((o) => {
           const items: UiOrderItem[] = (o.items ?? []).map((item) => {
-            const {
-              images: rawImages,
-              image,
-              ...rest
-            } = item;
+            const { images: rawImages, image, ...rest } = item;
 
             const normalizedImages = new Set<string>();
             if (Array.isArray(rawImages)) {
-              rawImages.filter(Boolean).forEach((img) => normalizedImages.add(img));
+              rawImages
+                .filter(Boolean)
+                .forEach((img) => normalizedImages.add(img));
             } else if (typeof rawImages === "string" && rawImages) {
               normalizedImages.add(rawImages);
             }
@@ -154,16 +161,20 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
 
   const itemCount = (items: UiOrderItem[]) =>
     items.reduce((t, i) => t + (i.quantity ?? 0), 0);
-  const toggleOrder = (id: string) =>
-    setOpenOrderId((prev) => (prev === id ? null : id));
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, "error");
+    }
+  }, [error, showToast]);
 
   if (loading) return <Loading message="Loading profile..." />;
 
   return (
-    <div className="min-h-screen bg-black/5 py-24 space-y-24">
-      <header className="max-w-5xl mx-auto px-6 pt-12">
-        <div className="flex flex-col items-center text-center space-y-4">
-          <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-black/20 bg-white">
+    <div className="bg-black/5 pt-48 pb-24 space-y-12">
+      <header className="max-w-7xl mx-auto px-8">
+        <div className="flex flex-col items-center text-center space-y-2">
+          <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-black/25 bg-white">
             {imageUrl ? (
               <Image
                 src={imageUrl}
@@ -174,88 +185,69 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <UserIcon size={32} className="text-black/30" weight="light" />
+              <UserIcon size={32} className="text-black/25" weight="light" />
             )}
           </div>
-          <h1 className="text-2xl font-semibold font-heading">{firstName}</h1>
-          {email && <p className="text-sm text-black/70">{email}</p>}
+          <div>
+            <h5>{firstName}</h5>
+            {email && <p>{email}</p>}
+          </div>
         </div>
       </header>
 
-      <section className="max-w-5xl mx-auto px-6">
+      <section className="max-w-7xl mx-auto px-8">
         <div className="mb-4">
-          <h2 className="text-xl font-heading font-semibold">Order history</h2>
-          <p className="text-sm text-black/70">Tap a row to view details</p>
+          <h5>Order history</h5>
+          <span>Tap a row to view details</span>
         </div>
-
-        {error && (
-          <div className="mb-6 border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">
-            {error}
-          </div>
-        )}
 
         {orders.length > 0 ? (
           <div className="space-y-4">
-            {paginated.map((order) => {
-              const isOpen = openOrderId === order.id;
-              const panelId = `panel-${order.id}`;
-              return (
-                <div
-                  key={order.id}
-                  className="border border-black/10 bg-white overflow-hidden"
-                >
-                  <button
-                    onClick={() => toggleOrder(order.id)}
-                    className="group w-full px-6 py-4 text-left flex items-center justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-                    aria-expanded={isOpen}
-                    aria-controls={panelId}
+            <Accordion
+              type="single"
+              collapsible
+              value={openOrderId ?? undefined}
+              onValueChange={(value) => setOpenOrderId(value ?? null)}
+              className="space-y-4"
+            >
+              {paginated.map((order) => {
+                const totalItems = itemCount(order.items);
+                return (
+                  <AccordionItem
+                    key={order.id}
+                    value={order.id}
+                    className="group overflow-hidden border border-black/10 bg-white"
                   >
-                    <div className="min-w-0 flex-1">
-                      <div className="mb-1 flex items-center gap-3">
-                        <span className="truncate text-sm font-medium text-black/70">
-                          #{order.id.slice(0, 8)}…
-                        </span>
-                        <span className="rounded-full bg-black/5 px-3 py-1 text-xs text-black/70">
-                          {itemCount(order.items)} item
-                          {itemCount(order.items) !== 1 ? "s" : ""}
+                    <AccordionTrigger className="px-8 py-4 text-left">
+                      <div className="flex w-full items-center justify-between gap-4">
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <div className="flex items-center gap-4">
+                            <span className="truncate text-black">
+                              #{order.id.slice(0, 12)}…
+                            </span>
+                            <Badge className="rounded-full bg-black/5 text-black/75 border-transparent">
+                              {totalItems} item{totalItems !== 1 ? "s" : ""}
+                            </Badge>{" "}
+                          </div>
+                          <small className="text-black/50">
+                            {fmtDate(order.date)}
+                          </small>
+                        </div>
+                        <span className="text-lg font-semibold">
+                          {fmtCHF(order.total)}
                         </span>
                       </div>
-                      <p className="text-xs text-black/50">
-                        {fmtDate(order.date)}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <span className="text-lg font-semibold">
-                        {fmtCHF(order.total)}
-                      </span>
-                      <CaretRightIcon
-                        size={18}
-                        className={`opacity-50 transition-transform ${
-                          isOpen ? "rotate-90" : "group-hover:translate-x-0.5"
-                        }`}
-                      />
-                    </div>
-                  </button>
-
-                  <div
-                    id={panelId}
-                    role="region"
-                    aria-label={`Order ${order.id} details`}
-                    className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                    }`}
-                  >
-                    <div className="min-h-0 overflow-hidden border-t border-black/10">
-                      <div className="p-5 space-y-4">
+                    </AccordionTrigger>
+                    <AccordionContent className="border-t border-black/10">
+                      <div className="space-y-4 p-8">
                         <div className="space-y-4">
-                          <h4 className="text-sm font-semibold">Items</h4>
+                          <h6>Items</h6>
                           {order.items.map((item, idx) => (
                             <div
                               key={`${item.productId ?? item.id ?? idx}-${idx}`}
                               className="flex gap-4 border-b border-black/10 pb-4"
                             >
-                              <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden bg-black/5 grid place-items-center">
+                              <div className="grid h-24 w-24 shrink-0 place-items-center overflow-hidden bg-black/5">
                                 {item.images[0] ? (
                                   <Image
                                     src={item.images[0]}
@@ -273,68 +265,62 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                                 )}
                               </div>
                               <div className="flex-1 space-y-1">
-                                <h5 className="font-heading font-semibold">
-                                  {item.name}
-                                </h5>
-                                <p className="text-xs text-black/50">
-                                  {item.quantity} × {item.size || "—"}
-                                </p>
-                                {item.quantity > 1 && (
-                                  <p className="text-xs text-black/50">
-                                    {fmtCHF(item.price)} each
-                                  </p>
-                                )}
+                                <h6>{item.name}</h6>
+                                <div className="flex flex-col">
+                                  <small>
+                                    {item.quantity} × {item.size || "—"}
+                                  </small>
+                                  {item.quantity > 1 && (
+                                    <small className="text-black/75">
+                                      {fmtCHF(item.price)} each
+                                    </small>
+                                  )}
+                                </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-semibold">
-                                  {fmtCHF(item.price * item.quantity)}
-                                </p>
+                                <p>{fmtCHF(item.price * item.quantity)}</p>
                               </div>
                             </div>
                           ))}
                         </div>
 
                         <div className="space-y-2">
-                          <h4 className="mb-2 text-base font-semibold">
-                            Summary
-                          </h4>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-black/50">
-                              Subtotal ({itemCount(order.items)} item
-                              {itemCount(order.items) !== 1 ? "s" : ""})
+                          <h6>Summary</h6>
+                          <div className="flex justify-between">
+                            <span className="text-black/75">
+                              Subtotal ({totalItems} item
+                              {totalItems !== 1 ? "s" : ""})
                             </span>
                             <span>{fmtCHF(order.subtotal)}</span>
                           </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-black/50">Shipping</span>
+                          <div className="flex justify-between">
+                            <span className="text-black/75">Shipping</span>
                             <span>
                               {order.shipping === 0
                                 ? "Free"
                                 : fmtCHF(order.shipping)}
                             </span>
                           </div>
-                          <div className="flex justify-between pt-4">
-                            <span className="text-base font-semibold">
-                              Total
-                            </span>
-                            <span className="text-lg font-semibold">
+                          <div className="flex justify-between">
+                            <span className="font-semibold">Total</span>
+                            <span className="font-semibold">
                               {fmtCHF(order.total)}
                             </span>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
 
             {totalPages > 1 && (
               <div className="flex items-center justify-between pt-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="inline-flex items-center gap-2 text-sm font-medium hover:text-black/70 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 text-sm font-medium hover:text-black/75 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <CaretLeftIcon size={16} />
                   Previous
@@ -347,7 +333,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="inline-flex items-center gap-2 text-sm font-medium hover:text-black/70 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 text-sm font-medium hover:text-black/75 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Next <CaretRightIcon size={16} />
                 </button>
@@ -355,17 +341,17 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
             )}
           </div>
         ) : (
-          <div className="border border-black/20 bg-white px-6 py-24 text-center">
-            <div className="mx-auto mb-4 grid h-16 w-16 place-items-center bg-black/5">
-              <PackageIcon size={24} weight="light" className="text-black/50" />
+          <div className="bg-white px-6 py-24 text-center">
+            <div className="mx-auto mb-4 grid h-20 w-20 place-items-center bg-black/5">
+              <PackageIcon size={24} className="text-black/50" />
             </div>
-            <h3 className="mb-1 text-lg font-medium">No orders yet</h3>
-            <p className="mb-6 text-black/70">
-              Start exploring our collection to place your first order.
-            </p>
-            <Button as="link" href="/collection" variant="tertiary">
-              Start shopping
-            </Button>
+            <h6>No orders yet</h6>
+            <p>Start exploring our collection to place your first order.</p>
+            <div className="flex justify-center mt-4">
+              <Button as="link" href="/collection" variant="tertiary">
+                Start shopping
+              </Button>
+            </div>
           </div>
         )}
       </section>

@@ -38,7 +38,7 @@ export default function CraftGrid() {
           >
             <div>{item.icon}</div>
             <h5>{item.heading}</h5>
-            <p className="font-light">{item.text}</p>
+            <p>{item.text}</p>
           </div>
         ))}
       </div>
