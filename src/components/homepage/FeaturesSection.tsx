@@ -4,7 +4,7 @@ import { FEATURE_IMAGES } from "@/lib/images/home";
 
 export function FeaturesSection() {
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <Section
         subtitle="Our craft"
         title="Exceptional coffee experiences"
@@ -30,7 +30,7 @@ export function FeaturesSection() {
         </div>
 
         <Card
-          subtitle="brew."
+          subtitle="Contact"
           title="Reach out to us for brewing guidance"
           description="Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat."
           href="/contact"

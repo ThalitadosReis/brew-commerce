@@ -41,8 +41,8 @@ export default function Button({
 }: ButtonProps) {
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
 
-  const primaryClasses = `relative overflow-hidden bg-black text-white px-6 py-3 group ${disabledClasses} ${className}`;
-  const secondaryClasses = `relative bg-black/15 hover:bg-black/10 px-6 py-3 ${disabledClasses} ${className}`;
+  const primaryClasses = `relative overflow-hidden bg-black text-white px-8 py-4 group ${disabledClasses} ${className}`;
+  const secondaryClasses = `relative bg-black/10 hover:bg-black/5 px-8 py-4 ${disabledClasses} ${className}`;
   const tertiaryClasses = `relative flex items-center gap-2 group transition-all duration-300 ease-out ${disabledClasses} ${className}`;
   const defaultClasses = `${disabledClasses} ${className}`;
 
@@ -69,7 +69,7 @@ export default function Button({
         />
       )}
       {variant === "primary" && !disabled && (
-        <span className="pointer-events-none absolute top-[-50px] left-[-75px] w-[50px] h-[155px] bg-white opacity-20 rotate-[35deg] transition-all duration-[550ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:left-[120%]" />
+        <span className="pointer-events-none absolute top-[-50px] left-[-75px] w-[50px] h-[155px] bg-white opacity-25 rotate-35 transition-all duration-550 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:left-[120%]" />
       )}
     </>
   );

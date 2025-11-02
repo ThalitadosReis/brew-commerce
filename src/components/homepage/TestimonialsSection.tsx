@@ -57,7 +57,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <div
         className="relative overflow-hidden group"
         role="region"
@@ -74,8 +74,8 @@ export default function TestimonialsSection() {
               aria-roledescription="slide"
               className="shrink-0 basis-full mb-8"
             >
-              <div className="max-w-xl mx-auto flex flex-col items-center justify-center text-center space-y-8">
-                <blockquote className="text-lg lg:text-xl font-light">
+              <div className="flex flex-col items-center justify-center space-y-8">
+                <blockquote className="max-w-xl mx-auto text-lg lg:text-xl font-light text-center">
                   “{t.quote}”
                 </blockquote>
 
@@ -90,7 +90,7 @@ export default function TestimonialsSection() {
                     />
                   </div>
                   <p className="font-semibold">{t.name}</p>
-                  <p className="text-sm text-black/70">{t.role}</p>
+                  <small>{t.role}</small>
                 </div>
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function TestimonialsSection() {
         </div>
 
         <Button
-          className="hidden md:flex !p-3 !absolute left-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="hidden md:flex p-3! absolute! left-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           onClick={prevSlide}
           aria-label="Previous slide"
           variant="secondary"
@@ -106,7 +106,7 @@ export default function TestimonialsSection() {
           <CaretLeftIcon size={24} weight="light" />
         </Button>
         <Button
-          className="hidden md:flex !p-3 !absolute right-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="hidden md:flex p-3! absolute! right-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           onClick={nextSlide}
           aria-label="Next slide"
           variant="secondary"
@@ -122,7 +122,7 @@ export default function TestimonialsSection() {
               onClick={() => setActive(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={`w-2 h-2 rounded-full transition-all ${
-                i === active ? "bg-black" : "bg-black/20 hover:bg-black/50"
+                i === active ? "bg-black" : "bg-black/25 hover:bg-black/10"
               }`}
             />
           ))}

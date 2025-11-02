@@ -10,42 +10,44 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative max-w-7xl mx-auto px-6 py-10">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-heading tracking-tight">brew.</h2>
-        <p className="mx-auto text-sm text-black/70 leading-relaxed">
-          Premium coffee delivered to your doorstep.
-          <br className="hidden sm:block" />
-          Ethically sourced, expertly roasted, and served with love.
-        </p>
-      </div>
+    <footer className="max-w-7xl mx-auto px-8">
+      <div className="space-y-8 py-12">
+        <div className="space-y-2 text-center">
+          <h5>brew.</h5>
+          <p className="font-light">
+            Premium coffee delivered to your doorstep.
+            <br />
+            Ethically sourced, expertly roasted, and served with love.
+          </p>
+        </div>
 
-      {/* links */}
-      <nav className="flex items-center justify-center flex-wrap mt-4 text-sm font-medium text-black/70">
-        {links.map(({ href, label }, i) => (
-          <div key={href} className="flex items-center">
-            <Link
-              href={href}
-              className="relative inline-block overflow-hidden group hover:text-foreground transition-colors"
-            >
-              <span className="block transition-transform duration-300 group-hover:-translate-y-full">
-                {label}
-              </span>
-              <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
-                {label}
-              </span>
-            </Link>
-            {i < links.length - 1 && (
-              <span className="mx-6 text-black/30">|</span>
-            )}
-          </div>
-        ))}
-      </nav>
+        <nav className="flex items-center justify-center flex-wrap">
+          {links.map(({ href, label }, i) => (
+            <div key={href} className="flex items-center">
+              <Link
+                href={href}
+                className="relative inline-block overflow-hidden group hover:text-foreground transition-colors"
+              >
+                <small className="block transition-transform duration-300 group-hover:-translate-y-full">
+                  {label}
+                </small>
+                <small className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
+                  {label}
+                </small>
+              </Link>
+              {i < links.length - 1 && (
+                <span className="mx-4 text-black/25">|</span>
+              )}
+            </div>
+          ))}
+        </nav>
 
-      {/* bottom bar */}
-      <div className="mt-8 pt-8 border-t border-black/10 flex flex-col md:flex-row items-center justify-between gap-2 text-sm text-black/70">
-        <p>© 2025 brew. All rights reserved.</p>
-        <p>Made with by Thalita dos Reis</p>
+        <div className="border-t border-black/10" />
+
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          <small>© 2025 brew. All rights reserved.</small>
+          <small>Made with by Thalita dos Reis</small>
+        </div>
       </div>
     </footer>
   );

@@ -14,43 +14,43 @@ export function BenefitsSection() {
     {
       title: "Why choose our coffee",
       text: "Premium beans, perfectly roasted, ethically sourced.",
-      icon: <CoffeeIcon size={40} weight="thin" />,
+      icon: <CoffeeIcon size={36} />,
     },
     {
       title: "Expert roasting",
       text: "Every batch roasted with precision and care.",
-      icon: <TimerIcon size={40} weight="thin" />,
+      icon: <TimerIcon size={36} />,
     },
     {
       title: "Sustainable practices",
       text: "Supporting farmers and protecting the environment.",
-      icon: <PlantIcon size={40} weight="thin" />,
+      icon: <PlantIcon size={36} />,
     },
     {
       title: "Crafted for you",
       text: "Coffee designed to enhance your experience.",
-      icon: <GearIcon size={40} weight="thin" />,
+      icon: <GearIcon size={36} />,
     },
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <Section
         subtitle="Benefits"
         title="Highest grade Arabica beans"
         description="Quality, sustainability, and taste in every cup."
       />
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] items-center gap-y-8 md:gap-y-16 lg:gap-x-8">
+      <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] items-center gap-y-8 md:gap-y-16 lg:gap-x-8 mb-12">
         <div className="order-1 lg:order-1 grid gap-y-8">
           {benefits.slice(0, 2).map((b, i) => (
             <div
               key={i}
-              className="flex flex-col items-center text-center space-y-1"
+              className="flex flex-col items-center text-center space-y-2"
             >
               <div>{b.icon}</div>
-              <h3 className="text-lg font-heading font-semibold">{b.title}</h3>
-              <p className="text-black/70">{b.text}</p>
+              <h5>{b.title}</h5>
+              <p className="font-light">{b.text}</p>
             </div>
           ))}
         </div>
@@ -64,7 +64,7 @@ export function BenefitsSection() {
               sizes="(max-width: 1024px) 100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-black/20" />
           </div>
         </div>
 
@@ -75,14 +75,14 @@ export function BenefitsSection() {
               className="flex flex-col items-center text-center space-y-1"
             >
               <div>{b.icon}</div>
-              <h3 className="text-lg font-heading font-semibold">{b.title}</h3>
-              <p className="text-black/70">{b.text}</p>
+              <h5>{b.title}</h5>
+              <p className="font-light">{b.text}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-8 flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <Button variant="secondary" as="link" href="/collection">
           Learn more
         </Button>

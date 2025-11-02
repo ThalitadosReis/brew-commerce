@@ -15,8 +15,8 @@ export default function Loading({
         fullscreen ? "min-h-screen" : ""
       } flex flex-col items-center justify-center bg-black/5 text-center`}
     >
-      <div className="w-8 h-8 border-2 border-black/20 border-t-black rounded-full animate-spin mb-4" />
-      <p className="text-sm text-black/70 font-medium">{message}</p>
+      <div className="w-8 h-8 border-2 border-black/25 border-t-black rounded-full animate-spin mb-4" />
+      <p>{message}</p>
     </div>
   );
 }

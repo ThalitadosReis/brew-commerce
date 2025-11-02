@@ -26,20 +26,15 @@ export default function Card({
     <div
       className={`flex flex-col ${
         imagePosition === "right" ? "md:flex-row" : "md:flex-col"
-      } border border-black/20 overflow-hidden ${className}`}
+      } border border-black/25 overflow-hidden ${className}`}
     >
       <div className="flex flex-col justify-center flex-1">
-        <div className="p-6 space-y-4">
-          {subtitle && <p className="font-heading mb-1">{subtitle}</p>}
-          <h3 className="text-xl font-medium">{title}</h3>
-          <p className="text-black/70">{description}</p>
+        <div className="p-8 space-y-4">
+          {subtitle && <small>{subtitle}</small>}
+          <h5>{title}</h5>
+          <p className="font-light">{description}</p>
           {href && (
-            <Button
-              as="link"
-              href={href}
-              variant="tertiary"
-              className="px-0 py-0"
-            >
+            <Button as="link" href={href} variant="tertiary">
               Learn more
             </Button>
           )}
@@ -47,7 +42,7 @@ export default function Card({
       </div>
 
       <div
-        className={`relative flex-shrink-0 w-full ${
+        className={`relative shrink-0 w-full ${
           imagePosition === "right"
             ? "md:w-1/2 min-h-[300px]"
             : "h-[300px] lg:h-full"
@@ -60,7 +55,7 @@ export default function Card({
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
     </div>
   );
