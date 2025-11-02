@@ -5,19 +5,38 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
-import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/contexts/ToastContext";
 
 import {
   MinusIcon,
   PlusIcon,
-  CaretRightIcon,
-  CaretLeftIcon,
-  HeartIcon,
   StarIcon,
   StarHalfIcon,
 } from "@phosphor-icons/react";
 import Button from "../common/Button";
+import FavoriteToggleButton from "../common/FavoriteToggleButton";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  useCarousel,
+} from "@/components/ui/carousel";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Breadcrumb as UiBreadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const accordionItems = (product: Product | null) => [
   {
@@ -42,39 +61,89 @@ interface ProductSectionProps {
   product: Product | null;
 }
 
-// breadcrumb component
-function Breadcrumb({ productName }: { productName: string }) {
+function CarouselThumbnails({
+  images,
+  productName,
+}: {
+  images: string[];
+  productName: string;
+}) {
+  const { api, selectedIndex } = useCarousel();
+
+  if (!api || images.length <= 1) return null;
+
   return (
-    <div className="flex gap-1 items-center text-sm font-body">
-      <Link
-        href="/homepage"
-        className="text-black/70 hover:text-black cursor-pointer"
-      >
-        Home
-      </Link>
-      <CaretRightIcon size={12} weight="light" />
-      <Link
-        href="/collection"
-        className="text-black/70 hover:text-black cursor-pointer"
-      >
-        Collection
-      </Link>
-      <CaretRightIcon size={12} weight="light" />
-      <span className="text-black underline">{productName}</span>
+    <div className="w-fit absolute inset-x-0 bottom-4 z-10 flex justify-center gap-2 bg-white mx-auto p-2">
+      {images.map((img, index) => {
+        const isActive = selectedIndex === index;
+        return (
+          <button
+            key={`${img}-${index}`}
+            type="button"
+            onClick={() => api.scrollTo(index)}
+            className={`pointer-events-auto relative h-20 w-20 overflow-hidden bg-black/25 backdrop-blur-sm transition ${
+              isActive
+                ? "ring-2 ring-black/25"
+                : "opacity-50 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2"
+            }`}
+            aria-label={`View image ${index + 1}`}
+          >
+            <Image
+              src={img}
+              alt={`${productName} thumbnail ${index + 1}`}
+              fill
+              sizes="64px"
+              className="object-contain"
+            />
+          </button>
+        );
+      })}
     </div>
+  );
+}
+
+// breadcrumb component
+function ProductBreadcrumb({ productName }: { productName: string }) {
+  return (
+    <UiBreadcrumb className="font-body text-sm text-black/50">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link
+              href="/homepage"
+              className="text-black/50 hover:text-black/75 transition-colors"
+            >
+              Home
+            </Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link
+              href="/collection"
+              className="text-black/50 hover:text-black/75 transition-colors"
+            >
+              Collection
+            </Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage className="text-black underline">
+            {productName}
+          </BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </UiBreadcrumb>
   );
 }
 
 export default function ProductSection({ product }: ProductSectionProps) {
   const { addToCart, items } = useCart();
-  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>(
-    {}
-  );
 
   // helper function to get quantity in cart for a specific size
   const getQuantityInCart = useMemo(
@@ -171,23 +240,6 @@ export default function ProductSection({ product }: ProductSectionProps) {
     setQuantity(1);
   };
 
-  const handleFavoritesToggle = () => {
-    if (!product) return;
-
-    if (isFavorite(product._id)) {
-      removeFromFavorites(product._id);
-    } else {
-      addToFavorites(product);
-    }
-  };
-
-  const toggleAccordion = (key: string) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
   const handleQuantityIncrease = () => {
     if (canIncreaseQuantity) {
       setQuantity(quantity + 1);
@@ -203,126 +255,81 @@ export default function ProductSection({ product }: ProductSectionProps) {
     setQuantity(1);
   };
 
-  const navigateImage = (direction: "prev" | "next") => {
-    if (!product) return;
-    setCurrentImageIndex((prev) => {
-      if (direction === "prev") {
-        return prev === 0 ? product.images.length - 1 : prev - 1;
-      } else {
-        return prev === product.images.length - 1 ? 0 : prev + 1;
-      }
-    });
-  };
-
   if (!product) {
     return null;
   }
 
-  const isProductFavorite = isFavorite(product._id);
   const hasMultipleImages = product.images.length > 1;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 pt-24">
+    <div className="max-w-7xl mx-auto px-8 pt-24">
       <div className="flex-1">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* image */}
           <div className="lg:order-2">
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="lg:hidden">
-                <Breadcrumb productName={product.name} />
+                <ProductBreadcrumb productName={product.name} />
               </div>
 
-              <div className="relative aspect-square bg-black/10 overflow-hidden group">
-                <button
-                  onClick={handleFavoritesToggle}
-                  className="absolute top-4 left-4 z-10 p-2 bg-white hover:bg-white/50 rounded-full transition-colors"
-                  title={
-                    isProductFavorite
-                      ? "Remove from favorites"
-                      : "Add to favorites"
-                  }
-                >
-                  <HeartIcon
-                    size={20}
-                    weight={isProductFavorite ? "fill" : "light"}
-                  />
-                </button>
-
-                {hasMultipleImages && (
-                  <>
-                    <button
-                      onClick={() => navigateImage("prev")}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Previous image"
-                    >
-                      <CaretLeftIcon size={20} weight="bold" />
-                    </button>
-                    <button
-                      onClick={() => navigateImage("next")}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Next image"
-                    >
-                      <CaretRightIcon size={20} weight="bold" />
-                    </button>
-                  </>
-                )}
-
-                <Image
-                  src={product.images[currentImageIndex]}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  className="object-contain"
+              <div className="relative aspect-square overflow-hidden bg-black/10 group">
+                <FavoriteToggleButton
+                  productId={product._id}
+                  product={product}
                 />
-              </div>
 
-              {hasMultipleImages && (
-                <div className="grid grid-cols-4 gap-4">
-                  {product.images.map((img, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`relative aspect-square bg-black/10 overflow-hidden transition-all ${
-                        currentImageIndex === index ? "" : "opacity-50"
-                      }`}
-                    >
-                      <Image
-                        src={img}
-                        alt={`${product.name}}`}
-                        fill
-                        sizes="100px"
-                        className="object-contain"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+                <Carousel className="flex h-full flex-col">
+                  <div className="relative flex-1">
+                    <CarouselContent className="h-full">
+                      {product.images.map((img, index) => (
+                        <CarouselItem
+                          key={index}
+                          className="flex h-full items-center justify-center"
+                        >
+                          <div className="relative h-full w-full">
+                            <Image
+                              src={img}
+                              alt={`${product.name}-${index + 1}`}
+                              fill
+                              priority={index === 0}
+                              sizes="(max-width: 1024px) 100vw, 33vw"
+                              className="object-contain"
+                            />
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </div>
+
+                  {hasMultipleImages && (
+                    <CarouselThumbnails
+                      images={product.images}
+                      productName={product.name}
+                    />
+                  )}
+                </Carousel>
+              </div>
             </div>
           </div>
 
           {/* content */}
           <div className="lg:order-1">
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="hidden lg:block">
-                <Breadcrumb productName={product.name} />
+                <ProductBreadcrumb productName={product.name} />
               </div>
 
-              <div className=" gap-2">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold font-heading">
-                  {product.name}
-                </h2>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-black/20">
+              <h3 className="font-bold!">
+                {product.name}{" "}
+                <span className="font-semibold text-black/25">
                   {product.country}
-                </h2>
-              </div>
+                </span>
+              </h3>
 
               <div className="flex items-center gap-4">
-                <h3 className="text-xl md:text-2xl font-semibold">
-                  CHF {displayPrice.toFixed(2)}
-                </h3>
+                <h4>CHF {displayPrice.toFixed(2)}</h4>
 
-                <div className="w-px h-6 bg-black/70" />
+                <div className="w-px h-8 bg-black/25" />
 
                 <div className="flex items-center gap-1">
                   <StarIcon size={16} weight="fill" />
@@ -330,23 +337,21 @@ export default function ProductSection({ product }: ProductSectionProps) {
                   <StarIcon size={16} weight="fill" />
                   <StarIcon size={16} weight="fill" />
                   <StarHalfIcon size={16} weight="fill" />
-                  <span className="ml-1 text-black/70 text-sm">
-                    4.5 · 31 reviews
-                  </span>
+                  <small className="ml-2">4.5 · 31 reviews</small>
                 </div>
               </div>
 
-              <p className="font-body text-black/70">{product.description}</p>
+              <p className="font-light">{product.description}</p>
 
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm font-body">Size</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <p>Size</p>
 
                   {selectedSize && selectedSizeOption && (
-                    <span className="flex items-center text-xs font-light">
-                      <span className="w-2 h-2 bg-black rounded-full inline-block mr-2" />
+                    <small className="flex items-center font-light">
+                      <span className="w-1.5 h-1.5 bg-black rounded-full inline-block mr-2" />
                       {availableStock} in Stock
-                    </span>
+                    </small>
                   )}
                 </div>
 
@@ -361,12 +366,12 @@ export default function ProductSection({ product }: ProductSectionProps) {
                         key={sizeOption.size}
                         onClick={() => handleSizeSelect(sizeOption.size)}
                         disabled={sizeOutOfStock}
-                        className={`w-fit px-6 py-3 text-xs transition-colors ${
+                        className={`w-fit px-6 py-4 text-xs transition-colors ${
                           sizeOutOfStock
-                            ? "border-1 border-black/10 text-black/30 cursor-not-allowed"
+                            ? "border border-black/25 text-black/50 cursor-not-allowed"
                             : selectedSize === sizeOption.size
                             ? "bg-black text-white"
-                            : "bg-black/10 hover:bg-black/20"
+                            : "bg-black/10 hover:bg-black/5"
                         }`}
                       >
                         {sizeOption.size}
@@ -376,31 +381,31 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 </div>
               </div>
 
-              <div className="text-center space-y-3">
+              <div className="text-center space-y-4">
                 <div className="flex flex-row gap-2">
                   <div className="flex gap-2">
                     <button
                       onClick={handleQuantityDecrease}
-                      className={`px-3 py-3 transition-colors ${
+                      className={`p-4 transition-colors ${
                         quantity <= 1
                           ? "bg-black/10 opacity-50 cursor-not-allowed"
-                          : "bg-black/10 hover:bg-black/20"
+                          : "bg-black/10 hover:bg-black/5"
                       }`}
                       disabled={quantity <= 1}
                     >
                       <MinusIcon size={20} weight="light" />
                     </button>
 
-                    <span className="px-5 bg-white flex items-center">
+                    <span className="px-6 bg-white flex items-center">
                       {quantity}
                     </span>
 
                     <button
                       onClick={handleQuantityIncrease}
-                      className={`px-3 py-3 transition-colors ${
+                      className={`p-4 transition-colors ${
                         !canIncreaseQuantity
                           ? "bg-black/10 opacity-50 cursor-not-allowed"
-                          : "bg-black/10 hover:bg-black/20"
+                          : "bg-black/10 hover:bg-black/5"
                       }`}
                       disabled={!canIncreaseQuantity}
                     >
@@ -422,42 +427,31 @@ export default function ProductSection({ product }: ProductSectionProps) {
                   </Button>
                 </div>
 
-                <span className="block text-xs text-black/70">
+                <small className="block text-black/50">
                   Free Shipping over $50
-                </span>
+                </small>
               </div>
 
-              <div className="space-y-4">
+              <Accordion
+                type="single"
+                collapsible
+                className="flex flex-col gap-4"
+              >
                 {accordionItems(product).map((item) => (
-                  <div key={item.stateKey} className="bg-white p-6">
-                    <button
-                      onClick={() => toggleAccordion(item.stateKey)}
-                      className="w-full flex items-center justify-between group"
-                    >
-                      <h3 className="text-lg font-heading">{item.title}</h3>
-                      <span
-                        className={`transition-transform duration-200 ease-in-out ${
-                          openSections[item.stateKey]
-                            ? ""
-                            : "group-hover:rotate-[90deg]"
-                        }`}
-                      >
-                        {openSections[item.stateKey] ? (
-                          <MinusIcon size={20} weight="light" />
-                        ) : (
-                          <PlusIcon size={20} weight="light" />
-                        )}
-                      </span>
-                    </button>
-
-                    {openSections[item.stateKey] && (
-                      <div className="mt-4 text-sm font-body text-black/70">
-                        <div>{item.content}</div>
-                      </div>
-                    )}
-                  </div>
+                  <AccordionItem
+                    key={item.stateKey}
+                    value={item.stateKey}
+                    className="overflow-hidden bg-white shadow-sm"
+                  >
+                    <AccordionTrigger className="px-8 text-lg font-heading">
+                      {item.title}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-8 text-sm font-body text-black/75">
+                      {item.content}
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             </div>
           </div>
         </div>

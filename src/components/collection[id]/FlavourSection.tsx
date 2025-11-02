@@ -45,20 +45,20 @@ export default function FlavourSection() {
   return (
     <section className="max-w-7xl mx-auto">
       <Section
-        className="px-6"
+        className="px-8"
         subtitle="Origin"
         title="Taste the difference"
         description="Our coffee represents more than a drink. It's a journey through Ethiopian landscapes and traditions."
       />
 
-      <div className="flex justify-center mb-8 gap-x-6 px-6">
+      <div className="flex justify-center mb-8 gap-x-8">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             className={`text-sm md:text-base border-b-2 pb-1 ${
               activeTab === tab.key
                 ? "border-black font-semibold"
-                : "border-transparent text-black/70"
+                : "border-transparent text-black/75"
             }`}
             onClick={() => setActiveTab(tab.key)}
           >
@@ -68,7 +68,7 @@ export default function FlavourSection() {
       </div>
 
       <ContentBlock
-        className="bg-white border border-black/20"
+        className="bg-white border border-black/25"
         title={active.title}
         text={active.text}
         image={active.image}

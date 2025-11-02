@@ -38,24 +38,19 @@ export default function CollectionContent({
   }, []);
 
   if (loading) {
-    return (
-      <div className="py-24">
-        <Loading message="Loading products..." />
-      </div>
-    );
+    return <Loading message="Loading products..." />;
   }
 
   return (
     <div className="flex-1">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-2">
         <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="mx-auto text-center py-24">
-         
-          <h3 className="font-heading text-2xl">No products found</h3>
-          <p className="font-body text-black/70">Try adjusting your filters</p>
+        <div className="mx-auto text-center pt-24">
+          <h5>No products found</h5>
+          <p className="font-light">Try adjusting your filters</p>
         </div>
       ) : (
         <>
@@ -74,10 +69,10 @@ export default function CollectionContent({
           </div>
 
           {itemsToShow < filteredProducts.length && (
-            <div className="flex flex-col items-center text-center mt-16 space-y-2">
-              <span className="text-xs text-black/70">
+            <div className="flex flex-col items-center text-center mt-12 space-y-2">
+              <small className="text-black/75">
                 {displayedProducts.length} of {filteredProducts.length} products
-              </span>
+              </small>
               <Button
                 variant="secondary"
                 onClick={() =>
@@ -92,8 +87,10 @@ export default function CollectionContent({
           )}
 
           {itemsToShow >= filteredProducts.length && (
-            <div className="text-center mt-6 text-sm text-black/70">
-              Showing all {filteredProducts.length} products
+            <div className="mt-12 text-center">
+              <small className="text-black/75">
+                Showing all {filteredProducts.length} products
+              </small>
             </div>
           )}
         </>

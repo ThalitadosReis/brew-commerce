@@ -48,7 +48,7 @@ export default function CollectionPage() {
   if (loading) return <Loading message="Loading..." />;
 
   return (
-    <div className="bg-black/5 py-24 space-y-24">
+    <div className="bg-black/5 pt-48 pb-24 space-y-24">
       <PageHeader
         title="Craft coffee selection"
         description="Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions."
@@ -56,10 +56,10 @@ export default function CollectionPage() {
 
       <div
         ref={collectionRef}
-        className="max-w-7xl mx-auto px-6 lg:flex lg:gap-12"
+        className="max-w-7xl mx-auto px-8 lg:flex lg:gap-12"
       >
         {/* filter */}
-        <div className="lg:sticky lg:top-10 h-fit">
+        <div className="lg:sticky lg:top-12 h-fit">
           <Filter
             showFilters={showFilters}
             onClose={() => setShowFilters(false)}

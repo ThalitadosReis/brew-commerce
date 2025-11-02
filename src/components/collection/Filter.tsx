@@ -41,7 +41,7 @@ export function SortDropdown({
   return (
     <div className="relative inline-flex items-center">
       <span className="text-sm select-none pointer-events-none">
-        <span className="text-black/70">Sort by </span>
+        <span className="text-black/50">Sort by </span>
         {options.find((o) => o.value === sortBy)?.label}
       </span>
 
@@ -152,69 +152,109 @@ export default function Filter({
   );
 
   return (
-    <div className="lg:w-40 pb-8">
-      <div className="w-full space-y-8 mb-8">
-        <button
-          onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className="w-full p-4 lg:p-0 flex items-center justify-between bg-black/5 lg:bg-transparent transition-colors"
-          aria-expanded={isFilterOpen}
-          aria-controls="filters-panel"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-heading">Filters</span>
-            <CaretDownIcon
-              size={12}
-              weight="light"
-              className={`transition-transform lg:hidden ${
-                isFilterOpen ? "rotate-180" : ""
-              }`}
-            />
+    <div className="w-full lg:w-40 pb-8">
+      <button
+        onClick={() => setIsFilterOpen(!isFilterOpen)}
+        className="w-full p-4 lg:p-0 flex items-center justify-between bg-black/5 lg:bg-transparent transition-colors"
+        aria-expanded={isFilterOpen}
+        aria-controls="filters-panel"
+      >
+        <div className="flex items-center gap-2">
+          <h6>Filters</h6>
+          <CaretDownIcon
+            size={12}
+            weight="light"
+            className={`transition-transform lg:hidden ${
+              isFilterOpen ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+
+        {hasActiveFilters && (
+          <small
+            onClick={(e) => {
+              e.stopPropagation();
+              resetFilters();
+            }}
+            className="text-black/50 hover:underline"
+          >
+            Reset
+          </small>
+        )}
+      </button>
+
+      <div
+        id="filters-panel"
+        className={`px-6 lg:px-0 lg:block ${isFilterOpen ? "block" : "hidden"}`}
+      >
+        {/* size */}
+        <div className="my-4">
+          <p>Size</p>
+          <div className="w-full flex flex-col gap-2 mt-2">
+            {sizes.map((size) => {
+              const isSelected = selectedSizes.includes(size);
+              return (
+                <button
+                  key={size}
+                  onClick={() =>
+                    isSelected
+                      ? setSelectedSizes(
+                          selectedSizes.filter((s) => s !== size)
+                        )
+                      : setSelectedSizes([...selectedSizes, size])
+                  }
+                  className="flex items-center gap-2 text-sm transition-colors"
+                  aria-pressed={isSelected}
+                  aria-label={`Toggle size ${size}`}
+                >
+                  <span
+                    className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
+                      isSelected
+                        ? "bg-black"
+                        : "border-black/25 hover:border-black/50"
+                    }`}
+                  >
+                    {isSelected && (
+                      <CheckIcon
+                        size={12}
+                        weight="bold"
+                        className="text-white"
+                      />
+                    )}
+                  </span>
+                  <span>{size}</span>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {hasActiveFilters && (
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                resetFilters();
-              }}
-              className="text-xs text-black/70 hover:underline"
-            >
-              Reset
-            </span>
-          )}
-        </button>
-
-        <div
-          id="filters-panel"
-          className={`px-6 lg:px-0 lg:block ${
-            isFilterOpen ? "block" : "hidden"
-          }`}
-        >
-          {/* size */}
-          <div className="my-6">
-            <h3 className="font-heading">Size</h3>
+        {/* roast */}
+        {availableRoasts.length > 0 && (
+          <div className="my-4">
+            <p>Roast</p>
             <div className="w-full flex flex-col gap-2 mt-2">
-              {sizes.map((size) => {
-                const isSelected = selectedSizes.includes(size);
+              {availableRoasts.map((roast) => {
+                const isSelected = selectedRoasts.includes(roast);
                 return (
                   <button
-                    key={size}
+                    key={roast}
                     onClick={() =>
                       isSelected
-                        ? setSelectedSizes(
-                            selectedSizes.filter((s) => s !== size)
+                        ? setSelectedRoasts(
+                            selectedRoasts.filter((r) => r !== roast)
                           )
-                        : setSelectedSizes([...selectedSizes, size])
+                        : setSelectedRoasts([...selectedRoasts, roast])
                     }
                     className="flex items-center gap-2 text-sm transition-colors"
                     aria-pressed={isSelected}
-                    aria-label={`Toggle size ${size}`}
+                    aria-label={`Toggle roast ${roast}`}
                   >
                     <span
                       className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
                         isSelected
-                          ? "border-black bg-black"
-                          : "border-black/20 hover:border-black"
+                          ? "bg-black"
+                          : "border-black/25 hover:border-black/50"
                       }`}
                     >
                       {isSelected && (
@@ -225,104 +265,57 @@ export default function Filter({
                         />
                       )}
                     </span>
-                    <span>{size}</span>
+                    <span>{roast}</span>
                   </button>
                 );
               })}
             </div>
           </div>
+        )}
 
-          {/* roast */}
-          {availableRoasts.length > 0 && (
-            <div className="my-6">
-              <h3 className="font-heading">Roast</h3>
-              <div className="w-full flex flex-col gap-2 mt-2">
-                {availableRoasts.map((roast) => {
-                  const isSelected = selectedRoasts.includes(roast);
-                  return (
-                    <button
-                      key={roast}
-                      onClick={() =>
+        {/* countries */}
+        {availableCountries.length > 0 && (
+          <div>
+            <p>Country</p>
+            <div className="w-full flex flex-col gap-2 mt-2">
+              {availableCountries.map((country) => {
+                const isSelected = selectedCountries.includes(country);
+                return (
+                  <button
+                    key={country}
+                    onClick={() =>
+                      isSelected
+                        ? setSelectedCountries(
+                            selectedCountries.filter((c) => c !== country)
+                          )
+                        : setSelectedCountries([...selectedCountries, country])
+                    }
+                    className="flex items-center gap-2 text-sm transition-colors"
+                    aria-pressed={isSelected}
+                    aria-label={`Toggle country ${country}`}
+                  >
+                    <span
+                      className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
                         isSelected
-                          ? setSelectedRoasts(
-                              selectedRoasts.filter((r) => r !== roast)
-                            )
-                          : setSelectedRoasts([...selectedRoasts, roast])
-                      }
-                      className="flex items-center gap-2 text-sm transition-colors"
-                      aria-pressed={isSelected}
-                      aria-label={`Toggle roast ${roast}`}
+                          ? "bg-black"
+                          : "border-black/25 hover:border-black/50"
+                      }`}
                     >
-                      <span
-                        className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
-                          isSelected
-                            ? "border-black bg-black"
-                            : "border-black/20 hover:border-black"
-                        }`}
-                      >
-                        {isSelected && (
-                          <CheckIcon
-                            size={12}
-                            weight="bold"
-                            className="text-white"
-                          />
-                        )}
-                      </span>
-                      <span>{roast}</span>
-                    </button>
-                  );
-                })}
-              </div>
+                      {isSelected && (
+                        <CheckIcon
+                          size={12}
+                          weight="bold"
+                          className="text-white"
+                        />
+                      )}
+                    </span>
+                    <span>{country}</span>
+                  </button>
+                );
+              })}
             </div>
-          )}
-
-          {/* countries */}
-          {availableCountries.length > 0 && (
-            <div>
-              <span className="font-heading">Country</span>
-              <div className="w-full flex flex-col gap-2 mt-2">
-                {availableCountries.map((country) => {
-                  const isSelected = selectedCountries.includes(country);
-                  return (
-                    <button
-                      key={country}
-                      onClick={() =>
-                        isSelected
-                          ? setSelectedCountries(
-                              selectedCountries.filter((c) => c !== country)
-                            )
-                          : setSelectedCountries([
-                              ...selectedCountries,
-                              country,
-                            ])
-                      }
-                      className="flex items-center gap-2 text-sm transition-colors"
-                      aria-pressed={isSelected}
-                      aria-label={`Toggle country ${country}`}
-                    >
-                      <span
-                        className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
-                          isSelected
-                            ? "border-black bg-black"
-                            : "border-black/20 hover:border-black"
-                        }`}
-                      >
-                        {isSelected && (
-                          <CheckIcon
-                            size={12}
-                            weight="bold"
-                            className="text-white"
-                          />
-                        )}
-                      </span>
-                      <span>{country}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

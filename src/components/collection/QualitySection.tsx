@@ -30,7 +30,7 @@ export default function QualitySection() {
   const active = TABS.find((t) => t.key === activeTab) ?? TABS[0];
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <Section
         subtitle="Quality"
         title="Beyond the perfect cup"
@@ -42,14 +42,14 @@ export default function QualitySection() {
           {TABS.map((tab) => (
             <button
               key={tab.key}
-              className={`text-left font-body py-4 border-b space-y-2 ${
+              className={`text-left py-4 border-b space-y-2 ${
                 activeTab === tab.key ? "text-black" : "text-black opacity-50"
               }`}
               onClick={() => setActiveTab(tab.key)}
             >
-              <h2 className="text-2xl md:text-3xl font-heading">{tab.title}</h2>
+              <h4>{tab.title}</h4>
               <p
-                className={`font-body transition-all duration-300 ${
+                className={`font-light transition-all duration-300 ${
                   activeTab === tab.key
                     ? "opacity-100"
                     : "opacity-0 h-0 overflow-hidden"
@@ -70,7 +70,7 @@ export default function QualitySection() {
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-black/20" />
           </div>
         </div>
       </div>
