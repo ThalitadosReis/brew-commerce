@@ -31,7 +31,7 @@ export default function StorySection() {
   return (
     <section className="max-w-7xl mx-auto">
       <Section
-        className="px-6"
+        className="px-8"
         subtitle="Roots"
         title="A journey of passion and precision in coffee"
         description="Born from a deep love of coffee and commitment to craft, our small business began in a tiny kitchen with a single mission."
@@ -52,9 +52,9 @@ export default function StorySection() {
                 alt={`Coffee story image ${idx + 1}`}
                 width={500}
                 height={400}
-                className="aspect-[4/3] w-full object-cover"
+                className="aspect-4/3 w-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+              <div className="absolute inset-0 bg-black/20" />
             </div>
           ))}
         </div>

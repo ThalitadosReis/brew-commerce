@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import Link from "next/link";
-import { CaretRightIcon } from "@phosphor-icons/react";
-import Loading from "@/components/common/Loading";
-import { useCart } from "@/contexts/CartContext";
 import type { CartItem } from "@/types/product";
+import { useCart } from "@/contexts/CartContext";
+import Loading from "@/components/common/Loading";
+import Button from "@/components/common/Button";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
@@ -101,7 +100,9 @@ export default function SuccessPage() {
           total: subtotal >= 50 ? subtotal : subtotal + 4.5,
           userId: user?.id,
           customerEmail:
-            user?.primaryEmailAddress?.emailAddress ?? checkoutEmail ?? undefined,
+            user?.primaryEmailAddress?.emailAddress ??
+            checkoutEmail ??
+            undefined,
           shippingAddress,
         };
 
@@ -155,18 +156,18 @@ export default function SuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black/10 flex items-center justify-center">
-      <div className="px-6 text-center space-y-8">
-        <h2 className="text-4xl lg:text-5xl font-heading">
-          Thanks, {userName}
+    <div className="min-h-screen bg-black/5 flex items-center justify-center">
+      <div className="px-8 text-center space-y-4">
+        <h3>
+          Thanks, {userName}!
           <br />
           We received your order
-        </h2>
+        </h3>
 
         {sessionId && (
-          <div className="bg-white p-8 space-y-4">
-            <p className="font-body">Your order confirmation:</p>
-            <p className="text-xs font-mono break-all">{sessionId}</p>
+          <div className="bg-white p-8 space-y-2">
+            <p>Your order confirmation:</p>
+            <small className="text-xs font-mono break-all">{sessionId}</small>
           </div>
         )}
 
@@ -174,18 +175,16 @@ export default function SuccessPage() {
           <div className="bg-white p-4 text-red-600 font-body">{error}</div>
         )}
 
-        <p className="text-sm font-body">
+        <p>
           You will receive a confirmation email with tracking details as your
           items ship.
         </p>
 
-        <Link
-          href="/collection"
-          className="inline-flex items-center gap-2 text-sm font-body relative group"
-        >
-          Continue shopping
-          <CaretRightIcon className="transition-transform duration-300 ease-out group-hover:translate-x-1" />
-        </Link>
+        <div className="flex justify-center">
+          <Button as="link" href="/collection" variant="tertiary">
+            Continue shopping
+          </Button>
+        </div>
       </div>
     </div>
   );

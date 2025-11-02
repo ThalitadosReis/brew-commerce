@@ -4,7 +4,7 @@ import { ABOUT_IMAGES } from "@/lib/images/about";
 
 export default function AboutSection() {
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-8">
       <Section
         subtitle="Pure"
         title="Why our coffee is different"

@@ -14,22 +14,22 @@ export function BenefitsSection() {
     {
       title: "Why choose our coffee",
       text: "Premium beans, perfectly roasted, ethically sourced.",
-      icon: <CoffeeIcon size={36} />,
+      icon: <CoffeeIcon size={32} />,
     },
     {
       title: "Expert roasting",
       text: "Every batch roasted with precision and care.",
-      icon: <TimerIcon size={36} />,
+      icon: <TimerIcon size={32} />,
     },
     {
       title: "Sustainable practices",
       text: "Supporting farmers and protecting the environment.",
-      icon: <PlantIcon size={36} />,
+      icon: <PlantIcon size={32} />,
     },
     {
       title: "Crafted for you",
       text: "Coffee designed to enhance your experience.",
-      icon: <GearIcon size={36} />,
+      icon: <GearIcon size={32} />,
     },
   ];
 
@@ -72,7 +72,7 @@ export function BenefitsSection() {
           {benefits.slice(2).map((b, i) => (
             <div
               key={i}
-              className="flex flex-col items-center text-center space-y-1"
+              className="flex flex-col items-center text-center space-y-2"
             >
               <div>{b.icon}</div>
               <h5>{b.title}</h5>
