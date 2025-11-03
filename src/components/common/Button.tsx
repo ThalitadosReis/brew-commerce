@@ -41,9 +41,9 @@ export default function Button({
 }: ButtonProps) {
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
 
-  const primaryClasses = `relative overflow-hidden bg-black text-white px-8 py-4 group ${disabledClasses} ${className}`;
-  const secondaryClasses = `relative bg-black/10 hover:bg-black/5 px-8 py-4 ${disabledClasses} ${className}`;
-  const tertiaryClasses = `relative flex items-center gap-2 group transition-all duration-300 ease-out ${disabledClasses} ${className}`;
+  const primaryClasses = `relative overflow-hidden bg-black text-white font-medium px-8 py-4 group ${disabledClasses} ${className}`;
+  const secondaryClasses = `relative bg-black/10 hover:bg-black/5 font-medium px-8 py-4 ${disabledClasses} ${className}`;
+  const tertiaryClasses = `relative flex items-center gap-2 group font-medium transition-all duration-300 ease-out ${disabledClasses} ${className}`;
   const defaultClasses = `${disabledClasses} ${className}`;
 
   const getClasses = () => {

@@ -4,20 +4,21 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useUser, UserButton, useClerk } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
 
 import { useCart } from "@/contexts/CartContext";
-import { useWishlist } from "@/contexts/WishlistContext";
-import { Product } from "@/types/cart";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { Product } from "@/types/product";
 import Cart from "./Cart";
+import Drawer from "./common/Drawer";
 
 import {
   HeartIcon,
   ListIcon,
   MagnifyingGlassIcon,
   PackageIcon,
-  ShoppingCartSimpleIcon,
-  UserIcon,
+  ShoppingBagIcon,
+  UserCirclePlusIcon,
   XIcon,
 } from "@phosphor-icons/react";
 
@@ -38,110 +39,97 @@ const SearchBar: React.FC<SearchBarProps> = ({
   searchResults,
   isSearchOpen,
   onClose,
-}) => (
-  <>
-    {isSearchOpen && (
-      <div
-        className="fixed inset-0 bg-black/40 z-40 h-screen"
-        onClick={onClose}
-      />
-    )}
-    <div
-      className={`fixed top-4 right-4 w-[calc(100%-2rem)] md:w-[400px] bg-white rounded-2xl z-50 transform transition-transform duration-300 ${
-        isSearchOpen ? "translate-x-0" : "translate-x-[calc(100%+2rem)]"
-      }`}
-    >
-      <div className="p-6 flex flex-col h-full">
-        <button
-          onClick={onClose}
-          className="mb-2 text-sm underline text-secondary hover:opacity-70 text-end"
-        >
-          Back
-        </button>
+}) => {
+  const searchContent = (
+    <>
+      <div className="relative">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => onQueryChange(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder="Search coffee..."
+          className="w-full text-sm pl-12 py-4 bg-black/10 focus:outline-none"
+          autoFocus
+        />
 
-        {/* input */}
-        <div className="relative mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => onQueryChange(e.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder="Search coffee..."
-            className="w-full text-sm pl-10 pr-10 py-5 bg-secondary/10 rounded-lg focus:outline-none placeholder-secondary/50"
-            autoFocus
-          />
+        <MagnifyingGlassIcon
+          size={20}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2"
+        />
 
-          <MagnifyingGlassIcon
-            size={20}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2"
-          />
+        {searchQuery && (
+          <button
+            onClick={() => onQueryChange("")}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs underline hover:opacity-75"
+          >
+            Clear
+          </button>
+        )}
+      </div>
 
-          {searchQuery && (
-            <button
-              onClick={() => onQueryChange("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-70"
+      {/* results */}
+      {searchResults.length > 0 ? (
+        <div className="mt-4 space-y-4">
+          {searchResults.map((product) => (
+            <Link
+              key={product._id}
+              href={`/collection/${product._id}`}
+              onClick={onClose}
+              className="flex items-center gap-4 transform transition-transform duration-200 hover:scale-105"
             >
-              <XIcon size={16} weight="light" />
-            </button>
-          )}
-        </div>
-
-        {/* results */}
-        <div className="flex-1 p-4">
-          {searchResults.length > 0 ? (
-            <div className="space-y-4">
-              <Link
-                href={`/collection?search=${encodeURIComponent(
-                  searchQuery.trim()
-                )}`}
-                className="block text-sm underline text-secondary hover:opacity-70"
-                onClick={onClose}
-              >
-                See all {searchResults.length} result
-                {searchResults.length !== 1 ? "s" : ""}
-              </Link>
-              {searchResults.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/collection/${product.id}`}
-                  onClick={onClose}
-                  className="flex items-center gap-2 hover:bg-muted/70 rounded-lg"
-                >
-                  <div className="relative w-22 h-22">
-                    <Image
-                      src={product.images[0]}
-                      alt={product.name}
-                      fill
-                      className="object-contain p-3"
+              <div className="bg-black/5">
+                {product.images?.[0] ? (
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    width={80}
+                    height={100}
+                    className="object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-black/5">
+                    <PackageIcon
+                      size={20}
+                      weight="light"
+                      className="text-black/30"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text- font-body text-primary">
-                      {product.name}
-                    </span>
-                    <span className="text-sm text-secondary/70">
-                      CHF{product.price}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : searchQuery.trim() ? (
-            <div className="py-8 text-center text-secondary/70">
-              <p className="text-sm">No products found</p>
-              <p className="text-xs mt-1">Try adjusting your search</p>
-            </div>
-          ) : (
-            <div className="text-center text-secondary/70">
-              <MagnifyingGlassIcon size={48} className="mx-auto" />
-              <p className="text-sm mt-1">Start typing to search</p>
-            </div>
-          )}
+                )}
+              </div>
+              <div className="flex flex-col">
+                <h6>{product.name}</h6>
+                <small>from CHF{product.price}</small>
+              </div>
+            </Link>
+          ))}
         </div>
-      </div>
-    </div>
-  </>
-);
+      ) : searchQuery.trim() ? (
+        <div className="py-24 text-center text-black/50">
+          <p>No products found</p>
+          <p>Try adjusting your search</p>
+        </div>
+      ) : (
+        <div className="py-24 text-center text-black/50">
+          <MagnifyingGlassIcon size={48} className="mx-auto mb-2" />
+          <p>Start typing to search</p>
+        </div>
+      )}
+    </>
+  );
+
+  return (
+    <Drawer
+      isOpen={isSearchOpen}
+      onClose={onClose}
+      title="Search"
+      ariaLabel="Search products"
+      showHeader={true}
+    >
+      {searchContent}
+    </Drawer>
+  );
+};
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -152,11 +140,11 @@ export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const router = useRouter();
 
   const pathname = usePathname();
+  const router = useRouter();
   const { getTotalItems } = useCart();
-  const { getTotalWishlistItems } = useWishlist();
+  const { getTotalFavorites } = useFavorites();
   const { isSignedIn } = useUser();
 
   // fetch products on mount
@@ -171,18 +159,20 @@ export default function Navbar() {
               _id: string;
               name: string;
               price: number;
-              image: string;
+              images: string[];
               description: string;
               country: string;
               category: string;
+              stock: number;
             }) => ({
-              id: p._id,
+              _id: p._id,
               name: p.name,
               price: p.price,
-              images: [p.image, p.image],
+              images: p.images || [],
               description: p.description,
               country: p.country,
-              roast: p.category,
+              category: p.category,
+              stock: p.stock,
               sizes: ["250g", "500g", "1kg"],
             })
           );
@@ -199,9 +189,9 @@ export default function Navbar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/collection?search=${encodeURIComponent(
-        searchQuery.trim()
-      )}`;
+      router.push(
+        `/collection?search=${encodeURIComponent(searchQuery.trim())}`
+      );
     }
   };
 
@@ -236,7 +226,7 @@ export default function Navbar() {
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
             product.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.roast.toLowerCase().includes(searchQuery.toLowerCase())
+            product.category.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .slice(0, 5);
       setSearchResults(filtered);
@@ -244,7 +234,7 @@ export default function Navbar() {
   }, [searchQuery, allProducts]);
 
   const links = [
-    { href: "/", label: "Home" },
+    { href: "/homepage", label: "Home" },
     { href: "/collection", label: "Collection" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
@@ -257,7 +247,7 @@ export default function Navbar() {
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-7xl mx-auto p-4 bg-white rounded-xl">
+        <div className="max-w-7xl mx-auto p-6 bg-white shadow-md">
           <div className="flex items-center justify-between">
             {/* navigation links */}
             <div className="hidden lg:flex gap-6">
@@ -265,7 +255,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative inline-block overflow-hidden group text-sm font-heading"
+                  className="relative inline-block overflow-hidden font-heading group"
                 >
                   <span className="block transition-transform duration-300 group-hover:-translate-y-full">
                     {link.label}
@@ -277,16 +267,34 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* logo */}
-            <Link
-              href="/"
-              className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl lg:text-3xl font-heading"
-            >
-              brew.
-            </Link>
+            <div className="flex items-center justify-center gap-4">
+              {/* mobile menu toggle */}
+              <button
+                className="lg:hidden"
+                onClick={() => {
+                  setIsMenuOpen(!isMenuOpen);
+                  setIsSearchOpen(false);
+                }}
+                title="Menu"
+              >
+                {isMenuOpen ? (
+                  <XIcon weight="light" size={20} />
+                ) : (
+                  <ListIcon weight="light" size={20} />
+                )}
+              </button>
+
+              {/* logo */}
+              <Link
+                href="/homepage"
+                className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl font-heading"
+              >
+                brew.
+              </Link>
+            </div>
 
             {/* right section */}
-            <div className="flex items-center gap-4 relative justify-end">
+            <div className="flex items-center gap-2 relative justify-end">
               {/* search button */}
               <button
                 onClick={() => {
@@ -296,27 +304,27 @@ export default function Navbar() {
                 title="Search"
               >
                 <MagnifyingGlassIcon
-                  size={20}
-                  className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                  size={24}
+                  weight="light"
+                  className="hover:scale-90 transition-transform duration-300 ease-in-out"
                 />
               </button>
 
-              {/* wishlist */}
+              {/* favorites */}
               <div className="relative">
                 <Link
                   href="/favorites"
                   className="relative flex items-center"
-                  title={`Wishlist (${getTotalWishlistItems()} items)`}
+                  title={`Favorites (${getTotalFavorites()} items)`}
                 >
                   <HeartIcon
-                    size={20}
-                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                    size={24}
+                    weight="light"
+                    className="hover:scale-90 transition-transform duration-300 ease-in-out"
                   />
-                  {getTotalWishlistItems() > 0 && (
-                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
-                      {getTotalWishlistItems() > 99
-                        ? "99+"
-                        : getTotalWishlistItems()}
+                  {getTotalFavorites() > 0 && (
+                    <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-[10px] font-semibold text-white bg-black rounded-full flex items-center justify-center">
+                      {getTotalFavorites() > 99 ? "99+" : getTotalFavorites()}
                     </span>
                   )}
                 </Link>
@@ -329,12 +337,13 @@ export default function Navbar() {
                   className="relative flex items-center justify-center"
                   title={`Cart (${getTotalItems()} items)`}
                 >
-                  <ShoppingCartSimpleIcon
-                    size={20}
-                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
+                  <ShoppingBagIcon
+                    size={24}
+                    weight="light"
+                    className="hover:scale-90 transition-transform duration-300 ease-in-out"
                   />
                   {getTotalItems() > 0 && (
-                    <span className="absolute top-1 -right-4 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-tiny font-bold text-white bg-primary rounded-full flex items-center justify-center">
+                    <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-[10px] font-semibold text-white bg-black rounded-full flex items-center justify-center">
                       {getTotalItems() > 99 ? "99+" : getTotalItems()}
                     </span>
                   )}
@@ -343,7 +352,7 @@ export default function Navbar() {
               </div>
 
               {/* profile */}
-              <div className="relative flex items-center justify-end">
+              <div className="relative flex items-center justify-end group">
                 {isSignedIn ? (
                   <UserButton
                     appearance={{
@@ -351,37 +360,26 @@ export default function Navbar() {
                         userButtonAvatarBox: "w-8 h-8",
                       },
                     }}
+                    afterSignOutUrl="/homepage"
                   >
                     <UserButton.MenuItems>
                       <UserButton.Link
                         label="Orders"
-                        labelIcon={<PackageIcon size={16} />}
+                        labelIcon={<PackageIcon size={16} weight="bold" />}
                         href="/profile"
                       />
                     </UserButton.MenuItems>
                   </UserButton>
                 ) : (
-                  <Link
-                    href="/sign-up"
-                    title="Sign Up"
-                    className="hover:scale-85 transition-transform duration-300 ease-in-out"
-                  >
-                    <UserIcon size={20} />
+                  <Link href="/sign-in">
+                    <UserCirclePlusIcon
+                      size={24}
+                      weight="light"
+                      className="hover:scale-90 transition-transform duration-300 ease-in-out"
+                    />
                   </Link>
                 )}
               </div>
-
-              {/* mobile menu toggle */}
-              <button
-                className="lg:hidden"
-                onClick={() => {
-                  setIsMenuOpen(!isMenuOpen);
-                  setIsSearchOpen(false);
-                }}
-                title="Menu"
-              >
-                {isMenuOpen ? <XIcon size={20} /> : <ListIcon size={20} />}
-              </button>
             </div>
           </div>
         </div>
@@ -402,28 +400,26 @@ export default function Navbar() {
       <div className="lg:hidden relative z-40">
         {isMenuOpen && (
           <div
-            className="fixed inset-0 bg-black/40 z-10"
+            className="fixed inset-0 bg-black/25 z-10"
             onClick={() => setIsMenuOpen(false)}
           />
         )}
         <div
-          className={`lg:hidden fixed left-4 right-4 bg-white rounded-xl transition-transform duration-300 z-40 ${
-            isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+8rem)]"
+          className={`lg:hidden fixed left-4 right-4 bg-white transition-transform duration-300 z-40 ${
+            isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+6rem)]"
           }`}
           style={{ top: "var(--navbar-height, 96px)" }}
         >
-          <nav className="px-6 py-6">
+          <nav className="px-8 py-4">
             {links.map((link, index) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-body tracking-wide text-sm flex items-center justify-between py-3 ${
-                  pathname === link.href
-                    ? "text-primary font-semibold"
-                    : "text-secondary hover:text-primary"
+                className={`text-sm flex items-center py-2 ${
+                  pathname === link.href ? "font-medium" : "hover:text-black/75"
                 } ${
                   index < links.length - 1
-                    ? "border-b border-secondary/10 py-2"
+                    ? "border-b border-black/10 py-2"
                     : ""
                 }`}
                 onClick={() => setIsMenuOpen(false)}

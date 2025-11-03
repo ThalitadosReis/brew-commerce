@@ -77,7 +77,7 @@ function CartItemComponent({
   return (
     <div className="flex justify-between pb-4 border-b border-black/10">
       <div className="flex items-start gap-4">
-        <div className="w-24 h-24 bg-black/10 overflow-hidden shrink-0">
+        <div className="w-20 h-20 bg-black/10 overflow-hidden shrink-0">
           {item?.images ? (
             <Image
               src={item.images[0]}
@@ -94,17 +94,17 @@ function CartItemComponent({
         </div>
 
         <div className="flex flex-col">
-          <h3 className="text-lg font-heading">{item.name}</h3>
-          <p className="text-sm text-black/70">Size: {selectedSizes}</p>
+          <h6>{item.name}</h6>
+          <small className="text-black/75">Size: {selectedSizes}</small>
         </div>
       </div>
-      <div className="flex flex-col justify-between">
-        <p className="font-semibold">CHF {itemTotal.toFixed(2)}</p>
-        <div className="w-fit inline-flex items-center border border-black/10">
+      <div className="flex flex-col justify-between items-end">
+        <p className="font-medium!">CHF {itemTotal.toFixed(2)}</p>
+        <div className="w-fit inline-flex items-center border border-black/5">
           {quantity > 1 ? (
             <button
               onClick={handleDecreaseQuantity}
-              className="p-2 bg-black/10 hover:bg-black/15"
+              className="p-2 bg-black/10 hover:bg-black/5"
               aria-label="Decrease quantity"
             >
               <MinusIcon size={16} weight="light" />
@@ -112,16 +112,14 @@ function CartItemComponent({
           ) : (
             <button
               onClick={handleRemove}
-              className="p-2 bg-black/10 hover:bg-black/15"
+              className="p-2 bg-black/10 hover:bg-black/5"
               aria-label="Remove item from cart"
             >
               <TrashSimpleIcon size={16} weight="light" />
             </button>
           )}
 
-          <span className="text-sm font-body px-3 text-center bg-white">
-            {quantity}
-          </span>
+          <span className="px-4 text-center bg-white">{quantity}</span>
 
           <button
             onClick={handleIncreaseQuantity}
@@ -129,7 +127,7 @@ function CartItemComponent({
             className={`p-2 bg-black/10 ${
               !canIncrease
                 ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-black/15"
+                : "hover:bg-black/5"
             }`}
             aria-label="Increase quantity"
           >
@@ -234,9 +232,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const footerContent = items.length > 0 && (
     <>
-      <div className="flex items-center justify-between mb-8">
-        <p className="font-body">Subtotal</p>
-        <span className="text-lg font-semibold">CHF {subtotal.toFixed(2)}</span>
+      <div className="flex items-center justify-between mb-6">
+        <p>Subtotal</p>
+        <span className="font-semibold">CHF {subtotal.toFixed(2)}</span>
       </div>
       <Button
         variant="primary"
@@ -266,18 +264,18 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             type="button"
             onClick={handleClearCart}
             disabled={isCheckingOut}
-            className={`text-sm text-black/70 underline ${
-              isCheckingOut ? "" : "hover:text-black"
+            className={`text-xs underline ${
+              isCheckingOut ? "" : "hover:opacity-75"
             }`}
           >
-            Clear cart
+            Clear
           </button>
         ) : null
       }
     >
       <div className="space-y-4">
         {items.length === 0 ? (
-          <p className="text-center text-black/70">Your cart is empty.</p>
+          <p className="text-center">Your cart is empty</p>
         ) : (
           items.map((item) => (
             <CartItemComponent
