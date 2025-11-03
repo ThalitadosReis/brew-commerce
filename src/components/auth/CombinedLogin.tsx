@@ -83,70 +83,67 @@ export default function CombinedLogin() {
         onValueChange={(value) => setActiveTab(value as TabValue)}
         className="w-full"
       >
-        <TabsContent value="user-login" className="w-fit">
+        <TabsContent value="user-login" className="w-full">
           <div className="mb-4 text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold leading-tight">
-              Welcome back!
-            </h2>
-            <p className="text-sm text-black/50">Sign in to continue</p>
+            <h3 className="leading-tight!">Welcome back!</h3>
+            <p>Sign in to continue</p>
           </div>
 
-          <TabsList className="mx-auto mb-6 flex w-fit justify-center gap-2 rounded-full bg-black/5 py-5 text-xs sm:text-sm">
+          <TabsList className="mx-auto mb-4 flex w-fit justify-center gap-2 rounded-full bg-black/5 py-5">
             <TabsTrigger
               value="user-login"
-              className="rounded-full px-5 py-2 font-medium text-black/70 transition data-[state=active]:bg-white"
+              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
             >
               Customer
             </TabsTrigger>
             <TabsTrigger
               value="admin-login"
-              className="rounded-full px-5 py-2 font-medium text-black/70 transition data-[state=active]:bg-white"
+              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
             >
               Admin
             </TabsTrigger>
           </TabsList>
 
-          <SignIn
-            forceRedirectUrl={redirectUrl}
-            appearance={{
-              elements: {
-                card: "rounded-none",
-                headerTitle: "hidden",
-                headerSubtitle: "hidden",
-              },
-            }}
-          />
+          <div className="flex justify-center">
+            <SignIn
+              forceRedirectUrl={redirectUrl}
+              appearance={{
+                elements: {
+                  headerTitle: "hidden",
+                  headerSubtitle: "hidden",
+                },
+              }}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="admin-login" className="w-full">
-          <div className="mb-5 text-center">
-            <h2 className="text-2xl font-semibold leading-tight text-black sm:text-3xl">
-              Admin access
-            </h2>
-            <p className="mt-1 text-sm text-black/50">Team accounts only</p>
+          <div className="mb-4 text-center">
+            <h3 className="leading-tight!">Admin access</h3>
+            <p>Team accounts only</p>
           </div>
 
-          <TabsList className="mx-auto mb-6 flex w-fit justify-center gap-2 rounded-full bg-black/5 py-5 text-xs sm:text-sm">
+          <TabsList className="mx-auto mb-4 flex w-fit justify-center gap-2 rounded-full bg-black/5 py-5">
             <TabsTrigger
               value="user-login"
-              className="rounded-full px-5 py-2 font-medium text-black/70 transition data-[state=active]:bg-white"
+              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
             >
               Customer
             </TabsTrigger>
             <TabsTrigger
               value="admin-login"
-              className="rounded-full px-5 py-2 font-medium text-black/70 transition data-[state=active]:bg-white"
+              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
             >
               Admin
             </TabsTrigger>
           </TabsList>
 
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <form className="space-y-5" onSubmit={handleAdminLogin}>
+          <div className="rounded-xl shadow-md bg-white p-8">
+            <form className="space-y-4" onSubmit={handleAdminLogin}>
               <div className="space-y-2">
                 <Label
                   htmlFor="admin-email"
-                  className="text-sm font-medium text-black/70"
+                  className="text-sm font-medium text-black/75"
                 >
                   Email address
                 </Label>
@@ -158,7 +155,7 @@ export default function CombinedLogin() {
                   value={adminEmail}
                   onChange={(event) => setAdminEmail(event.target.value)}
                   disabled={adminLoading}
-                  className="rounded border-black/10 focus:border-black/50 focus:ring-black/10"
+                  className="rounded border-black/10 focus-visible:ring-2 focus:ring-black/10"
                 />
               </div>
 
@@ -177,14 +174,14 @@ export default function CombinedLogin() {
                   value={adminPassword}
                   onChange={(event) => setAdminPassword(event.target.value)}
                   disabled={adminLoading}
-                  className="rounded border-black/10 focus:border-black/50 focus:ring-black/10"
+                  className="rounded border-black/10 focus-visible:ring-2 focus:ring-black/10"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={adminLoading}
-                className="w-full rounded bg-black text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+                className="w-full rounded bg-black/75 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
               >
                 {adminLoading ? "Signing in..." : "Sign in to Admin"}
               </Button>

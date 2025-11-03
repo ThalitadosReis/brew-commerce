@@ -34,12 +34,13 @@ export function AuthLayout({
       <>
         <div className="mb-auto">
           <span className="inline-flex bg-white p-2">
-            {quote.icon ?? <QuotesIcon size={28} weight="fill" />}
+            {quote.icon ?? <QuotesIcon size={32} weight="fill" />}
           </span>
         </div>
-        <blockquote className="space-y-2 text-base leading-relaxed text-white">
-          <p className="text-2xl font-medium">{quote.text}</p>
-          <p className="text-lg text-white/70">{quote.author}</p>
+        <blockquote className="space-y-2 text-white">
+          <p>
+            {quote.text} - <span className="font-medium!">{quote.author}</span>
+          </p>
         </blockquote>
       </>
     ) : null);
@@ -52,10 +53,10 @@ export function AuthLayout({
     .join(" ");
 
   return (
-    <div className="min-h-screen bg-black/5 py-24">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="relative overflow-hidden h-[420px] sm:h-[480px] md:h-[560px] lg:h-[720px]">
+    <div className="min-h-screen bg-black/5 flex items-center py-24">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid lg:grid-cols-2 gap-8">
+          <div className="relative overflow-hidden h-[480px] md:h-[560px] lg:h-[720px]">
             <div
               className="absolute inset-0"
               style={{
@@ -65,9 +66,11 @@ export function AuthLayout({
               }}
               aria-hidden="true"
             />
+            <div className="absolute inset-0 bg-black/20" />
+
             {imageAlt ? <span className="sr-only">{imageAlt}</span> : null}
             <div
-              className={`relative flex h-full flex-col justify-end p-6 lg:p-8 ${
+              className={`relative flex h-full flex-col justify-end p-8 ${
                 overlayWrapperClassName ?? ""
               }`}
             >

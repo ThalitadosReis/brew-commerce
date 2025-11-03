@@ -31,17 +31,13 @@ export default function SignUpPage() {
         author: "Charlotte Park",
       }}
     >
-      <div className="w-full space-y-4 text-center">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-semibold leading-tight">
-            Join brew.
-          </h2>
-          <p className="text-sm text-black/50">
-            It only takes a minute to unlock personalised recommendations.
-          </p>
+      <div className="w-full px-8">
+        <div className="mb-4 text-center">
+          <h3 className="leading-tight!">Join brew.</h3>
+          <p>It only takes a minute to unlock personalised recommendations.</p>
         </div>
 
-        <div className="mx-auto w-full max-w-sm">
+        <div className="flex justify-center">
           <SignUp
             forceRedirectUrl={redirectUrl}
             appearance={{
