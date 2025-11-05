@@ -6,10 +6,6 @@ import { SignIn } from "@clerk/nextjs";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { AuthLayout } from "./AuthLayout";
 import { AUTH_LOGIN_IMAGE } from "@/lib/images/auth";
@@ -64,6 +60,28 @@ export default function CombinedLogin() {
     }
   };
 
+  const renderTabButtons = () => (
+    <div className="mx-auto mb-6 flex w-fit justify-center rounded-full bg-black/5 p-1">
+      {TAB_VALUES.map((value) => {
+        const isActive = activeTab === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setActiveTab(value)}
+            className={`rounded-full px-6 py-2 text-sm font-medium transition ${
+              isActive
+                ? "bg-white text-black"
+                : "text-black/60 hover:text-black"
+            }`}
+          >
+            {value === "user-login" ? "Customer" : "Admin"}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AuthLayout
       imageUrl={AUTH_LOGIN_IMAGE}
@@ -78,117 +96,79 @@ export default function CombinedLogin() {
         author: "Jamie Ortega",
       }}
     >
-      <Tabs
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as TabValue)}
-        className="w-full"
-      >
-        <TabsContent value="user-login" className="w-full">
-          <div className="mb-4 text-center">
-            <h3 className="leading-tight!">Welcome back!</h3>
-            <p>Sign in to continue</p>
+      <div className="w-full">
+        {activeTab === "user-login" ? (
+          <div className="w-full">
+            <div className="mb-6 text-center">
+              <h3 className="text-xl font-semibold text-black">
+                Welcome back!
+              </h3>
+              <p className="text-sm text-black/60">Sign in to continue</p>
+            </div>
+            {renderTabButtons()}
+
+            <div className="flex justify-center">
+              <SignIn
+                forceRedirectUrl={redirectUrl}
+                appearance={{
+                  elements: {
+                    headerTitle: "hidden",
+                    headerSubtitle: "hidden",
+                  },
+                }}
+              />
+            </div>
           </div>
+        ) : (
+          <div className="w-full">
+            <div className="mb-6 text-center">
+              <h3 className="text-xl font-semibold text-black">Admin access</h3>
+              <p className="text-sm text-black/60">Team accounts only</p>
+            </div>
+            {renderTabButtons()}
 
-          <TabsList className="mx-auto mb-4 flex w-fit justify-center gap-2 rounded-full bg-black/5 py-5">
-            <TabsTrigger
-              value="user-login"
-              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
-            >
-              Customer
-            </TabsTrigger>
-            <TabsTrigger
-              value="admin-login"
-              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
-            >
-              Admin
-            </TabsTrigger>
-          </TabsList>
+            <div className="rounded-xl bg-white p-8 shadow-lg shadow-black/10">
+              <form className="space-y-4" onSubmit={handleAdminLogin}>
+                <label className="block space-y-2 text-sm font-medium text-black/75">
+                  <span>Email address</span>
+                  <input
+                    id="admin-email"
+                    type="email"
+                    required
+                    placeholder="admin@brewcommerce.com"
+                    value={adminEmail}
+                    onChange={(event) => setAdminEmail(event.target.value)}
+                    disabled={adminLoading}
+                    className="w-full rounded border border-black/10 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-black/20"
+                  />
+                </label>
 
-          <div className="flex justify-center">
-            <SignIn
-              forceRedirectUrl={redirectUrl}
-              appearance={{
-                elements: {
-                  headerTitle: "hidden",
-                  headerSubtitle: "hidden",
-                },
-              }}
-            />
-          </div>
-        </TabsContent>
+                <label className="block space-y-2 text-sm font-medium text-black/75">
+                  <span>Password</span>
+                  <input
+                    id="admin-password"
+                    type="password"
+                    required
+                    placeholder="Enter your password"
+                    value={adminPassword}
+                    onChange={(event) => setAdminPassword(event.target.value)}
+                    disabled={adminLoading}
+                    className="w-full rounded border border-black/10 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-black/20"
+                  />
+                </label>
 
-        <TabsContent value="admin-login" className="w-full">
-          <div className="mb-4 text-center">
-            <h3 className="leading-tight!">Admin access</h3>
-            <p>Team accounts only</p>
-          </div>
-
-          <TabsList className="mx-auto mb-4 flex w-fit justify-center gap-2 rounded-full bg-black/5 py-5">
-            <TabsTrigger
-              value="user-login"
-              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
-            >
-              Customer
-            </TabsTrigger>
-            <TabsTrigger
-              value="admin-login"
-              className="rounded-full px-4 py-2 font-medium text-black/75 transition data-[state=active]:bg-white"
-            >
-              Admin
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="rounded-xl shadow-md bg-white p-8">
-            <form className="space-y-4" onSubmit={handleAdminLogin}>
-              <div className="space-y-2">
-                <Label
-                  htmlFor="admin-email"
-                  className="text-sm font-medium text-black/75"
-                >
-                  Email address
-                </Label>
-                <Input
-                  id="admin-email"
-                  type="email"
-                  required
-                  placeholder="admin@brewcommerce.com"
-                  value={adminEmail}
-                  onChange={(event) => setAdminEmail(event.target.value)}
+                <button
+                  type="submit"
                   disabled={adminLoading}
-                  className="rounded border-black/10 focus-visible:ring-2 focus:ring-black/10"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="admin-password"
-                  className="text-sm font-medium text-black/70"
+                  className="w-full rounded-lg border border-black bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-black/80 disabled:opacity-60"
                 >
-                  Password
-                </Label>
-                <Input
-                  id="admin-password"
-                  type="password"
-                  required
-                  placeholder="Enter your password"
-                  value={adminPassword}
-                  onChange={(event) => setAdminPassword(event.target.value)}
-                  disabled={adminLoading}
-                  className="rounded border-black/10 focus-visible:ring-2 focus:ring-black/10"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                disabled={adminLoading}
-                className="w-full rounded bg-black/75 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
-              >
-                {adminLoading ? "Signing in..." : "Sign in to Admin"}
-              </Button>
-            </form>
+                  {adminLoading ? "Signing in..." : "Sign in to Admin"}
+                </button>
+              </form>
+            </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
     </AuthLayout>
   );
 }

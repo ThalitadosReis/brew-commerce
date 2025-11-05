@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
@@ -12,31 +12,13 @@ import {
   PlusIcon,
   StarIcon,
   StarHalfIcon,
+  PackageIcon,
+  CaretDownIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
 } from "@phosphor-icons/react";
 import Button from "../common/Button";
 import FavoriteToggleButton from "../common/FavoriteToggleButton";
-
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  useCarousel,
-} from "@/components/ui/carousel";
-
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Breadcrumb as UiBreadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 
 const accordionItems = (product: Product | null) => [
   {
@@ -64,78 +46,125 @@ interface ProductSectionProps {
 function CarouselThumbnails({
   images,
   productName,
+  activeIndex,
+  onSelect,
 }: {
   images: string[];
   productName: string;
+  activeIndex: number;
+  onSelect: (index: number) => void;
 }) {
-  const { api, selectedIndex } = useCarousel();
+  if (images.length === 0) {
+    return (
+      <div className="relative flex h-full items-center justify-center bg-black/5">
+        <PackageIcon size={32} className="text-black/40" />
+      </div>
+    );
+  }
 
-  if (!api || images.length <= 1) return null;
+  const activeImage = images[activeIndex] ?? images[0];
+
+  const showControls = images.length > 1;
+
+  const handlePrevious = () => {
+    const nextIndex = (activeIndex - 1 + images.length) % images.length;
+    onSelect(nextIndex);
+  };
+
+  const handleNext = () => {
+    const nextIndex = (activeIndex + 1) % images.length;
+    onSelect(nextIndex);
+  };
 
   return (
-    <div className="w-fit absolute inset-x-0 bottom-4 z-10 flex justify-center gap-2 bg-white mx-auto p-2">
-      {images.map((img, index) => {
-        const isActive = selectedIndex === index;
-        return (
+    <div className="relative aspect-square w-full overflow-hidden bg-black/5">
+      <Image
+        src={activeImage}
+        alt={productName}
+        fill
+        sizes="(min-width: 1024px) 600px, 100vw"
+        className="object-contain"
+      />
+
+      {showControls && (
+        <>
           <button
-            key={`${img}-${index}`}
             type="button"
-            onClick={() => api.scrollTo(index)}
-            className={`pointer-events-auto relative h-20 w-20 overflow-hidden bg-black/25 backdrop-blur-sm transition ${
-              isActive
-                ? "ring-2 ring-black/25"
-                : "opacity-50 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2"
-            }`}
-            aria-label={`View image ${index + 1}`}
+            onClick={handlePrevious}
+            className="absolute left-4 top-1/2 flex p-3 -translate-y-1/2 items-center justify-center bg-black/10 hover:bg-black/5 transition"
+            aria-label="Previous image"
           >
-            <Image
-              src={img}
-              alt={`${productName} thumbnail ${index + 1}`}
-              fill
-              sizes="64px"
-              className="object-contain"
-            />
+            <CaretLeftIcon size={16} />
           </button>
-        );
-      })}
+          <button
+            type="button"
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 flex p-3 -translate-y-1/2 items-center justify-center  bg-black/10 hover:bg-black/5 transition"
+            aria-label="Next image"
+          >
+            <CaretRightIcon size={16} />
+          </button>
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
+            <div className="pointer-events-auto flex gap-2 bg-white/95 p-2">
+              {images.map((img, index) => {
+                const isActive = activeIndex === index;
+                return (
+                  <button
+                    key={`${img}-${index}`}
+                    type="button"
+                    onClick={() => onSelect(index)}
+                    className={`relative h-16 w-16 overflow-hidden bg-black/10 transition ${
+                      isActive
+                        ? "ring-2 ring-black/25"
+                        : "opacity-75 hover:opacity-100"
+                    }`}
+                    aria-label={`View image ${index + 1}`}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${productName} thumbnail ${index + 1}`}
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-// breadcrumb component
-function ProductBreadcrumb({ productName }: { productName: string }) {
+function Breadcrumb({ productName }: { productName: string }) {
   return (
-    <UiBreadcrumb className="font-body text-sm text-black/50">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link
-              href="/homepage"
-              className="text-black/50 hover:text-black/75 transition-colors"
-            >
-              Home
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link
-              href="/collection"
-              className="text-black/50 hover:text-black/75 transition-colors"
-            >
-              Collection
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-black underline">
-            {productName}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </UiBreadcrumb>
+    <nav aria-label="Breadcrumb" className="font-body text-sm text-black/50">
+      <ol className="flex items-center gap-2">
+        <li>
+          <Link href="/homepage" className="transition-colors hover:text-black">
+            Home
+          </Link>
+        </li>
+        <li aria-hidden className="text-black/40">
+          <CaretRightIcon size={12} />
+        </li>
+        <li>
+          <Link
+            href="/collection"
+            className="transition-colors hover:text-black"
+          >
+            Collection
+          </Link>
+        </li>
+        <li aria-hidden className="text-black/40">
+          <CaretRightIcon size={12} />
+        </li>
+        <li className="text-black underline">{productName}</li>
+      </ol>
+    </nav>
   );
 }
 
@@ -144,6 +173,31 @@ export default function ProductSection({ product }: ProductSectionProps) {
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [openSection, setOpenSection] = useState<string | null>("details");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const productImages = useMemo(() => {
+    if (!product) return [] as string[];
+    if (!Array.isArray(product.images)) return [];
+    return Array.from(
+      new Set(
+        product.images
+          .filter((img): img is string => typeof img === "string")
+          .map((img) => img.trim())
+          .filter((img) => img.length > 0)
+      )
+    );
+  }, [product]);
+
+  useEffect(() => {
+    if (productImages.length === 0) {
+      setActiveImageIndex(0);
+      return;
+    }
+    setActiveImageIndex((current) =>
+      current >= productImages.length ? productImages.length - 1 : current
+    );
+  }, [productImages]);
 
   // helper function to get quantity in cart for a specific size
   const getQuantityInCart = useMemo(
@@ -186,6 +240,10 @@ export default function ProductSection({ product }: ProductSectionProps) {
       setQuantity(1);
     }
   }, [selectedSize, isOutOfStock]);
+
+  React.useEffect(() => {
+    setActiveImageIndex(0);
+  }, [product?._id]);
 
   const handleAddToCart = () => {
     if (!product || !selectedSize || !selectedSizeOption) return;
@@ -255,11 +313,13 @@ export default function ProductSection({ product }: ProductSectionProps) {
     setQuantity(1);
   };
 
+  const toggleSection = (key: string) => {
+    setOpenSection((prev) => (prev === key ? null : key));
+  };
+
   if (!product) {
     return null;
   }
-
-  const hasMultipleImages = product.images.length > 1;
 
   return (
     <div className="max-w-7xl mx-auto px-8 pt-24">
@@ -269,45 +329,19 @@ export default function ProductSection({ product }: ProductSectionProps) {
           <div className="lg:order-2">
             <div className="space-y-2">
               <div className="lg:hidden">
-                <ProductBreadcrumb productName={product.name} />
+                <Breadcrumb productName={product.name} />
               </div>
-
-              <div className="relative aspect-square overflow-hidden bg-black/10 group">
+              <div className="relative">
                 <FavoriteToggleButton
                   productId={product._id}
                   product={product}
                 />
-
-                <Carousel className="flex h-full flex-col">
-                  <div className="relative flex-1">
-                    <CarouselContent className="h-full">
-                      {product.images.map((img, index) => (
-                        <CarouselItem
-                          key={index}
-                          className="flex h-full items-center justify-center"
-                        >
-                          <div className="relative h-full w-full">
-                            <Image
-                              src={img}
-                              alt={`${product.name}-${index + 1}`}
-                              fill
-                              priority={index === 0}
-                              sizes="(max-width: 1024px) 100vw, 33vw"
-                              className="object-contain"
-                            />
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                  </div>
-
-                  {hasMultipleImages && (
-                    <CarouselThumbnails
-                      images={product.images}
-                      productName={product.name}
-                    />
-                  )}
-                </Carousel>
+                <CarouselThumbnails
+                  images={productImages}
+                  productName={product.name}
+                  activeIndex={activeImageIndex}
+                  onSelect={setActiveImageIndex}
+                />
               </div>
             </div>
           </div>
@@ -316,7 +350,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
           <div className="lg:order-1">
             <div className="space-y-4">
               <div className="hidden lg:block">
-                <ProductBreadcrumb productName={product.name} />
+                <Breadcrumb productName={product.name} />
               </div>
 
               <h3 className="font-bold!">
@@ -432,26 +466,48 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 </small>
               </div>
 
-              <Accordion
-                type="single"
-                collapsible
-                className="flex flex-col gap-4"
-              >
-                {accordionItems(product).map((item) => (
-                  <AccordionItem
-                    key={item.stateKey}
-                    value={item.stateKey}
-                    className="overflow-hidden bg-white shadow-sm"
-                  >
-                    <AccordionTrigger className="px-8 text-lg font-heading">
-                      {item.title}
-                    </AccordionTrigger>
-                    <AccordionContent className="px-8 text-sm font-body text-black/75">
-                      {item.content}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+              <div className="flex flex-col gap-4">
+                {accordionItems(product).map((item) => {
+                  const isOpen = openSection === item.stateKey;
+                  return (
+                    <div
+                      key={item.stateKey}
+                      className="overflow-hidden bg-white shadow-sm transition-shadow hover:shadow-md"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleSection(item.stateKey)}
+                        className="flex w-full items-center justify-between gap-3 px-6 py-4 text-left text-lg font-semibold transition hover:bg-black/2"
+                        aria-expanded={isOpen}
+                        aria-controls={`accordion-${item.stateKey}`}
+                      >
+                        <h6>{item.title}</h6>
+                        <CaretDownIcon
+                          className={`h-5 w-5 transition-transform duration-300 ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      <div
+                        id={`accordion-${item.stateKey}`}
+                        className={`grid transition-[grid-template-rows] duration-400 ease-in-out ${
+                          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div
+                            className={`border-t border-black/5 px-6 py-4 text-sm text-black/75 transition-opacity duration-400 ${
+                              isOpen ? "opacity-100" : "opacity-0"
+                            }`}
+                          >
+                            {item.content}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

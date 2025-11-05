@@ -8,18 +8,12 @@ import {
   PackageIcon,
   CaretLeftIcon,
   CaretRightIcon,
+  CaretDownIcon,
 } from "@phosphor-icons/react";
 
 import type { ApiOrder, OrderItem as ApiOrderItem } from "@/types/orders";
 import Loading from "@/components/common/Loading";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useToast } from "@/contexts/ToastContext";
-import { Badge } from "@/components/ui/badge";
 
 type UiOrderItem = Omit<ApiOrderItem, "images"> & { images: string[] };
 
@@ -203,43 +197,58 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
 
         {orders.length > 0 ? (
           <div className="space-y-4">
-            <Accordion
-              type="single"
-              collapsible
-              value={openOrderId ?? undefined}
-              onValueChange={(value) => setOpenOrderId(value ?? null)}
-              className="space-y-4"
-            >
-              {paginated.map((order) => {
-                const totalItems = itemCount(order.items);
-                return (
-                  <AccordionItem
-                    key={order.id}
-                    value={order.id}
-                    className="group overflow-hidden border border-black/10 bg-white"
+            {paginated.map((order) => {
+              const totalItems = itemCount(order.items);
+              const isOpen = openOrderId === order.id;
+              return (
+                <div key={order.id} className="overflow-hidden bg-white">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenOrderId((prev) =>
+                        prev === order.id ? null : order.id
+                      )
+                    }
+                    className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition hover:bg-black/2"
+                    aria-expanded={isOpen}
+                    aria-controls={`order-${order.id}`}
                   >
-                    <AccordionTrigger className="px-8 py-4 text-left">
-                      <div className="flex w-full items-center justify-between gap-4">
-                        <div className="min-w-0 flex-1 space-y-2">
-                          <div className="flex items-center gap-4">
-                            <span className="truncate text-black">
-                              #{order.id.slice(0, 12)}…
-                            </span>
-                            <Badge className="rounded-full bg-black/5 text-black/75 border-transparent">
-                              {totalItems} item{totalItems !== 1 ? "s" : ""}
-                            </Badge>{" "}
-                          </div>
-                          <small className="text-black/50">
-                            {fmtDate(order.date)}
-                          </small>
-                        </div>
-                        <span className="text-lg font-semibold">
-                          {fmtCHF(order.total)}
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="flex items-center gap-4">
+                        <span className="truncate text-sm">
+                          #{order.id.slice(0, 12)}…
                         </span>
+                        <small className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 font-normal text-black/75">
+                          {totalItems} item{totalItems !== 1 ? "s" : ""}
+                        </small>
                       </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="border-t border-black/10">
-                      <div className="space-y-4 p-8">
+                      <small className="text-black/50">
+                        {fmtDate(order.date)}
+                      </small>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-lg font-semibold">
+                        {fmtCHF(order.total)}
+                      </span>
+                      <CaretDownIcon
+                        className={`h-5 w-5 text-black/40 transition-transform ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </div>
+                  </button>
+                  <div
+                    id={`order-${order.id}`}
+                    className={`grid transition-[grid-template-rows] duration-400 ease-in-out ${
+                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+                  >
+                    <div
+                      className={`overflow-hidden border-t border-black/10 transition-opacity duration-400 ${
+                        isOpen ? "opacity-100" : "opacity-0"
+                      }`}
+                    >
+                      <div className="space-y-4 px-8 py-4">
                         <div className="space-y-4">
                           <h6>Items</h6>
                           {order.items.map((item, idx) => (
@@ -260,12 +269,12 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                                   <PackageIcon
                                     size={20}
                                     weight="light"
-                                    className="text-black/30"
+                                    className="text-black/25"
                                   />
                                 )}
                               </div>
-                              <div className="flex-1 space-y-1">
-                                <h6>{item.name}</h6>
+                              <div className="flex-1">
+                                <p className="font-medium!">{item.name}</p>
                                 <div className="flex flex-col">
                                   <small>
                                     {item.quantity} × {item.size || "—"}
@@ -286,14 +295,14 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
 
                         <div className="space-y-2">
                           <h6>Summary</h6>
-                          <div className="flex justify-between">
+                          <div className="flex justify-between text-sm font-normal">
                             <span className="text-black/75">
                               Subtotal ({totalItems} item
                               {totalItems !== 1 ? "s" : ""})
                             </span>
                             <span>{fmtCHF(order.subtotal)}</span>
                           </div>
-                          <div className="flex justify-between">
+                          <div className="flex justify-between text-sm font-normal">
                             <span className="text-black/75">Shipping</span>
                             <span>
                               {order.shipping === 0
@@ -309,11 +318,11 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                           </div>
                         </div>
                       </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                );
-              })}
-            </Accordion>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
 
             {totalPages > 1 && (
               <div className="flex items-center justify-between pt-2">
