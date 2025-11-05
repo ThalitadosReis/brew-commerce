@@ -9,18 +9,10 @@ import {
   PhoneIcon,
 } from "@phosphor-icons/react";
 import { useForm, type FieldErrors } from "react-hook-form";
+
 import Button from "../common/Button";
 import Section from "../common/Section";
 import { useToast } from "@/contexts/ToastContext";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
 
 type ContactItemType = {
   heading: string;
@@ -34,25 +26,25 @@ const contactItems: ContactItemType[] = [
     heading: "Email",
     info: "contact@brew.com",
     text: "We'll respond within one business day",
-    icon: <EnvelopeIcon size={32} />,
+    icon: <EnvelopeIcon size={28} />,
   },
   {
     heading: "Phone",
     info: "+14 76 123 45 67",
     text: "Our team is ready to chat about your coffee needs",
-    icon: <PhoneIcon size={32} />,
+    icon: <PhoneIcon size={28} />,
   },
   {
     heading: "Office",
     info: "123 Coffee St, Roastery City",
     text: "Visit our roastery and experience our coffee craft",
-    icon: <MapPinIcon size={32} />,
+    icon: <MapPinIcon size={28} />,
   },
   {
     heading: "Hours",
     info: "",
     text: "",
-    icon: <ClockIcon size={32} />,
+    icon: <ClockIcon size={28} />,
   },
 ];
 
@@ -65,7 +57,13 @@ type ContactFormValues = {
 
 export default function FormSection() {
   const { showToast } = useToast();
-  const form = useForm<ContactFormValues>({
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormValues>({
     defaultValues: {
       name: "",
       email: "",
@@ -73,8 +71,6 @@ export default function FormSection() {
       message: "",
     },
   });
-
-  const isSubmitting = form.formState.isSubmitting;
 
   const onSubmit = async (values: ContactFormValues) => {
     try {
@@ -93,7 +89,7 @@ export default function FormSection() {
           "Thank you! Your message has been sent successfully.",
           "success"
         );
-        form.reset();
+        reset();
       } else {
         showToast(
           data.error || "Failed to send message. Please try again.",
@@ -138,116 +134,78 @@ export default function FormSection() {
       />
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, handleError)}
-            className="space-y-4"
-            noValidate
-          >
-            <div className="grid md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                rules={{ required: "Please tell us your name." }}
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel className="block text-sm mb-2">Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Your name"
-                        aria-invalid={fieldState.invalid}
-                        className="h-auto px-4 py-4 bg-black/5 border border-transparent placeholder-black/25 focus:bg-white transition-all text-sm md:text-base aria-invalid=true:border-red-400"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+        <form
+          onSubmit={handleSubmit(onSubmit, handleError)}
+          className="space-y-4"
+          noValidate
+        >
+          <div className="grid md:grid-cols-2 gap-4">
+            <label className="text-sm text-black/75">
+              <span className="font-medium">Name</span>
+              <input
+                {...register("name", { required: "Please tell us your name." })}
+                placeholder="Your name"
+                aria-invalid={Boolean(errors.name)}
+                className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-white"
               />
-              <FormField
-                control={form.control}
-                name="email"
-                rules={{
+            </label>
+            <label className="text-sm text-black/75">
+              <span className="font-medium">Email</span>
+              <input
+                {...register("email", {
                   required: "We need your email to get back to you.",
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     message: "Please enter a valid email.",
                   },
-                }}
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel className="block text-sm mb-2">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="your@email.com"
-                        aria-invalid={fieldState.invalid}
-                        className="h-auto px-4 py-4 bg-black/5 border border-transparent placeholder-black/25 focus:bg-white transition-all text-sm md:text-base aria-invalid=true:border-red-400"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+                })}
+                type="email"
+                placeholder="Your email address"
+                aria-invalid={Boolean(errors.email)}
+                className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-white"
               />
-            </div>
+            </label>
+          </div>
 
-            <FormField
-              control={form.control}
-              name="subject"
-              rules={{ required: "Please provide a subject." }}
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel className="block text-sm mb-2">Subject</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="How can we help?"
-                      aria-invalid={fieldState.invalid}
-                      className="h-auto px-4 py-4 bg-black/5 border border-transparent placeholder-black/25 focus:bg-white transition-all text-sm md:text-base aria-invalid=true:border-red-400"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
+          <label className="block text-sm text-black/75">
+            <span className="font-medium">Subject</span>
+            <input
+              {...register("subject", {
+                required: "Please provide a subject.",
+              })}
+              placeholder="How can we help?"
+              aria-invalid={Boolean(errors.subject)}
+              className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-white"
             />
+          </label>
 
-            <FormField
-              control={form.control}
-              name="message"
-              rules={{ required: "Let us know how we can help." }}
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel className="block text-sm mb-2">Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      rows={6}
-                      placeholder="Tell us more about your inquiry..."
-                      aria-invalid={fieldState.invalid}
-                      className="h-auto px-4 py-4 bg-black/5 border border-transparent placeholder-black/25 focus:bg-white transition-all text-sm md:text-base aria-invalid=true:border-red-400"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
+          <label className="block text-sm text-black/75">
+            <span className="font-medium">Message</span>
+            <textarea
+              {...register("message", {
+                required: "Let us know how we can help.",
+              })}
+              rows={6}
+              placeholder="Tell us more about your inquiry..."
+              aria-invalid={Boolean(errors.message)}
+              className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-white"
             />
+          </label>
 
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isSubmitting}
-              className="w-full lg:w-fit flex items-center justify-center space-x-2"
-            >
-              {isSubmitting && (
-                <CircleNotchIcon
-                  className="w-5 h-5 animate-spin"
-                  weight="bold"
-                />
-              )}
-              <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-            </Button>
-          </form>
-        </Form>
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full lg:w-fit flex items-center justify-center space-x-2"
+            disabled={isSubmitting}
+          >
+            {isSubmitting && (
+              <CircleNotchIcon className="w-5 h-5 animate-spin" weight="bold" />
+            )}
+            <span>{isSubmitting ? "Sending..." : "Send message"}</span>
+          </Button>
+        </form>
 
-        {/* grid */}
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {contactItems.map((item, idx) => (
             <div
               key={idx}
@@ -255,7 +213,9 @@ export default function FormSection() {
             >
               <div>{item.icon}</div>
               <h5>{item.heading}</h5>
-              <p>{item.text}</p>
+              <span className="text-sm font-normal text-black/50">
+                {item.text}
+              </span>
 
               {item.heading === "Hours" ? (
                 <div>

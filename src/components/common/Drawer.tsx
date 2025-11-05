@@ -1,17 +1,10 @@
 "use client";
 
 import React from "react";
+import { createPortal } from "react-dom";
 import { XIcon } from "@phosphor-icons/react";
 
 import { cn } from "@/lib/utils";
-import {
-  Drawer as UiDrawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -38,53 +31,105 @@ export default function Drawer({
   ariaLabel = "Drawer",
   headerActions,
 }: DrawerProps) {
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      onClose();
-    }
-  };
+  const [mounted, setMounted] = React.useState(false);
+  const [shouldRender, setShouldRender] = React.useState(isOpen);
+  const [isVisible, setIsVisible] = React.useState(isOpen);
 
-  return (
-    <UiDrawer open={isOpen} onOpenChange={handleOpenChange} direction={side}>
-      <DrawerContent
-        aria-label={ariaLabel}
+  React.useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const raf = requestAnimationFrame(() => setIsVisible(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    setIsVisible(false);
+    const timeout = setTimeout(() => setShouldRender(false), 200);
+    return () => clearTimeout(timeout);
+  }, [isOpen]);
+
+  React.useEffect(() => {
+    if (!shouldRender) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [shouldRender, onClose]);
+
+  if (!mounted) return null;
+  if (!shouldRender) return null;
+
+  const portalTarget =
+    typeof document !== "undefined" ? document.body : null;
+  if (!portalTarget) return null;
+
+  const translateClosed =
+    side === "left" ? "-translate-x-full" : "translate-x-full";
+  const translateOpen = "translate-x-0";
+
+  const panelWidth = width;
+  const sideAlignment = side === "left" ? "mr-auto" : "ml-auto";
+
+  return createPortal(
+    <div
+      className={cn(
+        "fixed inset-0 z-9998 flex items-stretch",
+        isOpen ? "" : "pointer-events-none"
+      )}
+    >
+      <div
         className={cn(
-          "h-screen max-h-screen w-full sm:max-w-none bg-white p-0",
-          width
+          "absolute inset-0 bg-black/40 transition-opacity duration-200",
+          isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        aria-hidden
+        onClick={onClose}
+      />
+      <section
+        role="dialog"
+        aria-label={ariaLabel}
+        aria-modal="true"
+        className={cn(
+          "relative flex h-screen max-h-screen w-full max-w-full transform bg-white transition-transform duration-200 ease-out",
+          isVisible ? translateOpen : translateClosed,
+          panelWidth,
+          sideAlignment
         )}
       >
-        <div className="flex h-full flex-col">
+        <div className="flex h-full w-full flex-col">
           {showHeader && (
-            <DrawerHeader className="flex flex-row items-center justify-between gap-4 border-b border-black/10 p-8">
-              {title && (
-                <DrawerTitle className="text-lg! font-medium!">
-                  {title}
-                </DrawerTitle>
-              )}
+            <header className="flex items-center justify-between border-b border-black/5 p-8">
+              {title && <h6>{title}</h6>}
               <div className="flex items-center gap-4">
                 {headerActions}
-                <DrawerClose asChild>
-                  <button
-                    type="button"
-                    aria-label={`Close ${ariaLabel}`}
-                    className="text-black/60 transition hover:text-black"
-                  >
-                    <XIcon size={18} weight="light" />
-                  </button>
-                </DrawerClose>
+                <button
+                  type="button"
+                  aria-label={`Close ${ariaLabel}`}
+                  onClick={onClose}
+                  className="hover:text-black/50"
+                >
+                  <XIcon size={18} weight="light" />
+                </button>
               </div>
-            </DrawerHeader>
+            </header>
           )}
 
           <div className="flex-1 overflow-y-auto p-8">{children}</div>
 
           {footer && (
-            <DrawerFooter className="border-t border-black/10 p-8">
+            <footer className="border-t border-black/5 p-8">
               {footer}
-            </DrawerFooter>
+            </footer>
           )}
         </div>
-      </DrawerContent>
-    </UiDrawer>
+      </section>
+    </div>,
+    portalTarget
   );
 }

@@ -44,7 +44,7 @@ export function verifyPasswordResetToken(token: string): string {
     }
 
     return decoded.userId;
-  } catch (error) {
+  } catch {
     throw new Error("Invalid or expired reset token");
   }
 }

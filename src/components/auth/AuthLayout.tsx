@@ -53,10 +53,10 @@ export function AuthLayout({
     .join(" ");
 
   return (
-    <div className="min-h-screen bg-black/5 flex items-center py-24">
+    <div className="min-h-screen bg-black/5 flex items-center">
       <div className="mx-auto max-w-7xl">
-        <div className="grid lg:grid-cols-2 gap-8">
-          <div className="relative overflow-hidden h-[480px] md:h-[560px] lg:h-[720px]">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-0">
+          <div className="relative overflow-hidden h-[560px] lg:min-h-[860px]">
             <div
               className="absolute inset-0"
               style={{

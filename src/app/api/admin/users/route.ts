@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { withAdmin, AuthenticatedRequest } from "@/middleware/auth";
+import { withAdmin } from "@/middleware/auth";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 
 // Get all users
-async function getUsers(request: AuthenticatedRequest) {
+async function getUsers() {
   try {
     await connectDB();
 
