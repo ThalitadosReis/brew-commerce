@@ -26,14 +26,14 @@ export default function Footer() {
             <div key={href} className="flex items-center">
               <Link
                 href={href}
-                className="relative inline-block overflow-hidden group hover:text-foreground transition-colors"
+                className="relative inline-block overflow-hidden text-sm group hover:text-foreground transition-colors"
               >
-                <small className="block transition-transform duration-300 group-hover:-translate-y-full">
+                <span className="block transition-transform duration-300 group-hover:-translate-y-full">
                   {label}
-                </small>
-                <small className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
+                </span>
+                <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
                   {label}
-                </small>
+                </span>
               </Link>
               {i < links.length - 1 && (
                 <span className="mx-4 text-black/25">|</span>
@@ -44,7 +44,7 @@ export default function Footer() {
 
         <div className="border-t border-black/10" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between">
+        <div className="flex flex-col md:flex-row items-center justify-between font-normal text-black/75">
           <small>© 2025 brew. All rights reserved.</small>
           <small>Made with by Thalita dos Reis</small>
         </div>
