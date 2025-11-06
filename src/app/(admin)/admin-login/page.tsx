@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminLogin() {
+function AdminLoginRedirect() {
   const router = useRouter();
 
   useEffect(() => {
@@ -11,4 +11,12 @@ export default function AdminLogin() {
   }, [router]);
 
   return null;
+}
+
+export default function AdminLogin() {
+  return (
+    <Suspense fallback={null}>
+      <AdminLoginRedirect />
+    </Suspense>
+  );
 }
