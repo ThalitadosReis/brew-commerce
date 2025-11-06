@@ -33,7 +33,7 @@ export default function LocationSection() {
   const active = locations[activeIndex];
 
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         subtitle="brew."
         title="Our locations"
@@ -41,7 +41,7 @@ export default function LocationSection() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-[.5fr_1fr] gap-8">
-        <div className="grid items-start gap-y-8">
+        <div className="grid items-start gap-y-4">
           {locations.map((loc, index) => (
             <div
               key={loc.name}
@@ -52,15 +52,21 @@ export default function LocationSection() {
               }`}
               onClick={() => setActiveIndex(index)}
             >
-              <h4 className="font-light!">{loc.name}</h4>
-              <p>{loc.description}</p>
+              <h5 className="text-lg md:text-xl lg:text-2xl font-semibold">
+                {loc.name}
+              </h5>
+              <p className="text-sm lg:text-base">{loc.description}</p>
               <Button
                 as="a"
                 href={loc.mapLink}
                 variant="tertiary"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm"
+                className={
+                  activeIndex === index
+                    ? ""
+                    : "text-black/50 hover:text-black/75"
+                }
               >
                 {loc.linkText}
               </Button>
@@ -68,7 +74,7 @@ export default function LocationSection() {
           ))}
         </div>
 
-        <div className="relative w-full h-64 md:h-[400px] lg:h-[500px] overflow-hidden">
+        <div className="relative w-full h-64 md:h-96 lg:h-[500px] overflow-hidden">
           <Image
             key={active.image}
             src={active.image}

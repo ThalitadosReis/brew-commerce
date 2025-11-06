@@ -4,14 +4,14 @@ import { FEATURE_IMAGES } from "@/lib/images/home";
 
 export function FeaturesSection() {
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         subtitle="Our craft"
         title="Exceptional coffee experiences"
         description="Carefully sourced beans from sustainable farms worldwide"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="flex flex-col gap-8">
           <Card
             subtitle="Origin"

@@ -185,7 +185,7 @@ export default function AdminOverview({
 
   return (
     <section className="space-y-8">
-      <header className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+      <header className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="space-y-4">
             <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-1 tracking-[0.16em]">
@@ -202,7 +202,7 @@ export default function AdminOverview({
         </div>
       </header>
 
-      <div className="grid gap-8 md:grid-cols-[2fr_1fr]">
+      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
         <div className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <div className="space-y-4">
@@ -241,7 +241,7 @@ export default function AdminOverview({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+        <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -316,8 +316,8 @@ export default function AdminOverview({
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-1">
@@ -384,7 +384,7 @@ export default function AdminOverview({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+        <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-1">

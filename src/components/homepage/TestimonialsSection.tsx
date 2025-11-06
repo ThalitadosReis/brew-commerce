@@ -57,7 +57,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <div
         className="relative overflow-hidden group"
         role="region"
@@ -72,7 +72,7 @@ export default function TestimonialsSection() {
               key={i}
               role="group"
               aria-roledescription="slide"
-              className="shrink-0 basis-full mb-8"
+              className="shrink-0 basis-full mb-6"
             >
               <div className="flex flex-col items-center justify-center space-y-8">
                 <blockquote className="max-w-xl mx-auto text-lg lg:text-xl font-light text-center">
@@ -87,6 +87,7 @@ export default function TestimonialsSection() {
                       width={40}
                       height={40}
                       className="w-full rounded-full object-cover"
+                      unoptimized
                     />
                   </div>
                   <p className="font-semibold">{t.name}</p>

@@ -88,33 +88,32 @@ function CarouselThumbnails({
 
       {showControls && (
         <>
-          <button
-            type="button"
+          <Button
             onClick={handlePrevious}
-            className="absolute left-4 top-1/2 flex p-3 -translate-y-1/2 items-center justify-center bg-black/10 hover:bg-black/5 transition"
             aria-label="Previous image"
+            className="flex absolute! left-4 top-1/2 p-2! md:p-4! -translate-y-1/2 items-center justify-center bg-black/10 hover:bg-black/5 transition"
+            variant="secondary"
           >
-            <CaretLeftIcon size={16} />
-          </button>
-          <button
-            type="button"
+            <CaretLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
+          </Button>
+          <Button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 flex p-3 -translate-y-1/2 items-center justify-center  bg-black/10 hover:bg-black/5 transition"
             aria-label="Next image"
+            className="flex absolute! p-2! md:p-4! right-4 top-1/2 -translate-y-1/2 items-center justify-center bg-black/10 hover:bg-black/5 transition"
+            variant="secondary"
           >
-            <CaretRightIcon size={16} />
-          </button>
+            <CaretRightIcon className="w-4 h-4 md:w-5 md:h-5" />
+          </Button>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
-            <div className="pointer-events-auto flex gap-2 bg-white/95 p-2">
+          <div className="absolute inset-x-0 bottom-4 flex justify-center">
+            <div className="flex gap-2 bg-white/95 p-2">
               {images.map((img, index) => {
                 const isActive = activeIndex === index;
                 return (
                   <button
                     key={`${img}-${index}`}
-                    type="button"
                     onClick={() => onSelect(index)}
-                    className={`relative h-16 w-16 overflow-hidden bg-black/10 transition ${
+                    className={`relative h-16 w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 overflow-hidden bg-black/10 transition ${
                       isActive
                         ? "ring-2 ring-black/25"
                         : "opacity-75 hover:opacity-100"
@@ -148,7 +147,7 @@ function Breadcrumb({ productName }: { productName: string }) {
             Home
           </Link>
         </li>
-        <li aria-hidden className="text-black/40">
+        <li aria-hidden className="text-black/50">
           <CaretRightIcon size={12} />
         </li>
         <li>
@@ -159,7 +158,7 @@ function Breadcrumb({ productName }: { productName: string }) {
             Collection
           </Link>
         </li>
-        <li aria-hidden className="text-black/40">
+        <li aria-hidden className="text-black/50">
           <CaretRightIcon size={12} />
         </li>
         <li className="text-black underline">{productName}</li>
@@ -322,7 +321,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-8 pt-24">
+    <div className="max-w-7xl mx-auto px-6 pt-24">
       <div className="flex-1">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* image */}
@@ -348,12 +347,12 @@ export default function ProductSection({ product }: ProductSectionProps) {
 
           {/* content */}
           <div className="lg:order-1">
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="hidden lg:block">
                 <Breadcrumb productName={product.name} />
               </div>
 
-              <h3 className="font-bold!">
+              <h3 className="text-3xl md:text-3xl lg:text-3xl font-bold">
                 {product.name}{" "}
                 <span className="font-semibold text-black/25">
                   {product.country}
@@ -361,28 +360,34 @@ export default function ProductSection({ product }: ProductSectionProps) {
               </h3>
 
               <div className="flex items-center gap-4">
-                <h4>CHF {displayPrice.toFixed(2)}</h4>
+                <h6 className="text-lg md:text-xl lg:text-2xl font-semibold">
+                  CHF {displayPrice.toFixed(2)}
+                </h6>
 
                 <div className="w-px h-8 bg-black/25" />
 
-                <div className="flex items-center gap-1">
-                  <StarIcon size={16} weight="fill" />
-                  <StarIcon size={16} weight="fill" />
-                  <StarIcon size={16} weight="fill" />
-                  <StarIcon size={16} weight="fill" />
-                  <StarHalfIcon size={16} weight="fill" />
-                  <small className="ml-2">4.5 · 31 reviews</small>
+                <div className="flex flex-col items-center sm:flex-row gap-y-1">
+                  <div className="flex items-center">
+                    <StarIcon size={16} weight="fill" />
+                    <StarIcon size={16} weight="fill" />
+                    <StarIcon size={16} weight="fill" />
+                    <StarIcon size={16} weight="fill" />
+                    <StarHalfIcon size={16} weight="fill" />
+                  </div>
+                  <span className="text-xs md:text-sm ml-2">
+                    4.5 · 31 reviews
+                  </span>
                 </div>
               </div>
 
-              <p>{product.description}</p>
+              <p className="text-sm md:text-base">{product.description}</p>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <p>Size</p>
+                  <p className="text-sm md:text-base ">Size</p>
 
                   {selectedSize && selectedSizeOption && (
-                    <small className="flex items-center font-light">
+                    <small className="flex items-center text-black/50">
                       <span className="w-1.5 h-1.5 bg-black rounded-full inline-block mr-2" />
                       {availableStock} in Stock
                     </small>
@@ -400,7 +405,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                         key={sizeOption.size}
                         onClick={() => handleSizeSelect(sizeOption.size)}
                         disabled={sizeOutOfStock}
-                        className={`w-fit px-6 py-4 text-xs transition-colors ${
+                        className={`w-fit px-6 py-4 text-xs font-medium transition-colors ${
                           sizeOutOfStock
                             ? "border border-black/25 text-black/50 cursor-not-allowed"
                             : selectedSize === sizeOption.size
@@ -418,9 +423,10 @@ export default function ProductSection({ product }: ProductSectionProps) {
               <div className="text-center space-y-4">
                 <div className="flex flex-row gap-2">
                   <div className="flex gap-2">
-                    <button
+                    <Button
+                      variant="secondary"
                       onClick={handleQuantityDecrease}
-                      className={`p-4 transition-colors ${
+                      className={`p-4! transition-colors ${
                         quantity <= 1
                           ? "bg-black/10 opacity-50 cursor-not-allowed"
                           : "bg-black/10 hover:bg-black/5"
@@ -428,15 +434,16 @@ export default function ProductSection({ product }: ProductSectionProps) {
                       disabled={quantity <= 1}
                     >
                       <MinusIcon size={20} weight="light" />
-                    </button>
+                    </Button>
 
                     <span className="px-6 bg-white flex items-center">
                       {quantity}
                     </span>
 
-                    <button
+                    <Button
+                      variant="secondary"
                       onClick={handleQuantityIncrease}
-                      className={`p-4 transition-colors ${
+                      className={`p-4! transition-colors ${
                         !canIncreaseQuantity
                           ? "bg-black/10 opacity-50 cursor-not-allowed"
                           : "bg-black/10 hover:bg-black/5"
@@ -444,14 +451,14 @@ export default function ProductSection({ product }: ProductSectionProps) {
                       disabled={!canIncreaseQuantity}
                     >
                       <PlusIcon size={20} weight="light" />
-                    </button>
+                    </Button>
                   </div>
 
                   <Button
                     variant="primary"
                     onClick={handleAddToCart}
                     disabled={!selectedSize || isOutOfStock}
-                    className="w-full text-sm"
+                    className="w-full"
                   >
                     {!selectedSize
                       ? "Select size"
@@ -461,9 +468,9 @@ export default function ProductSection({ product }: ProductSectionProps) {
                   </Button>
                 </div>
 
-                <small className="block text-black/50">
+                <span className="block text-xs md:text-sm text-black/50">
                   Free Shipping over $50
-                </small>
+                </span>
               </div>
 
               <div className="flex flex-col gap-4">
@@ -481,7 +488,9 @@ export default function ProductSection({ product }: ProductSectionProps) {
                         aria-expanded={isOpen}
                         aria-controls={`accordion-${item.stateKey}`}
                       >
-                        <h6>{item.title}</h6>
+                        <h6 className="text-lg md:text-xl lg:text-2xl font-semibold">
+                          {item.title}
+                        </h6>
                         <CaretDownIcon
                           className={`h-5 w-5 transition-transform duration-300 ${
                             isOpen ? "rotate-180" : ""

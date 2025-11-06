@@ -125,7 +125,7 @@ export default function FormSection() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         className="ml-0 text-left"
         subtitle="Reach"
@@ -212,19 +212,19 @@ export default function FormSection() {
               className="flex flex-col items-center text-center space-y-2"
             >
               <div>{item.icon}</div>
-              <h5>{item.heading}</h5>
-              <span className="text-sm font-normal text-black/50">
+              <h5 className="text-lg md:text-xl lg:text-2xl font-semibold">{item.heading}</h5>
+              <p className="text-sm text-black/50">
                 {item.text}
-              </span>
+              </p>
 
               {item.heading === "Hours" ? (
-                <div>
+                <div className="text-sm text-black">
                   <p>Mon-Fri: 9:00-18:00</p>
                   <p>Saturday: 10:00-16:00</p>
                   <p>Sunday: Closed</p>
                 </div>
               ) : (
-                <>{item.info && <p>{item.info}</p>}</>
+                <>{item.info && <p className="text-sm text-black">{item.info}</p>}</>
               )}
             </div>
           ))}

@@ -29,10 +29,10 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 max-w-3xl text-center px-8 text-white">
-        <h1 className="leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight">
           Craft coffee that tells a story in every cup
         </h1>
-        <p>
+        <p className="text-sm md:text-base lg:text-lg">
           Discover exceptional coffee sourced sustainably from around the world.
         </p>
       </div>

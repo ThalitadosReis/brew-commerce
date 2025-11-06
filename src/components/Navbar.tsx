@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -137,8 +137,8 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
-  const [showNavbar, setShowNavbar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [navbarHeight, setNavbarHeight] = useState<number>(72);
+  const headerRef = useRef<HTMLDivElement | null>(null);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const pathname = usePathname();
@@ -204,7 +204,7 @@ export default function Navbar() {
     if (e.key === "Escape") setIsSearchOpen(false);
   };
 
-  // handle scroll hide/show
+  // update visual style when scrolling
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > lastScrollY) setShowNavbar(false);
@@ -243,9 +243,8 @@ export default function Navbar() {
   return (
     <div className="relative">
       <header
-        className={`fixed top-0 left-0 right-0 z-50 p-4 transition-transform duration-300 ${
-          showNavbar ? "translate-y-0" : "-translate-y-full"
-        }`}
+        ref={headerRef}
+        className="fixed inset-x-0 top-0 z-50 bg-white"
       >
         <div className="max-w-7xl mx-auto p-6 bg-white shadow-md">
           <div className="flex items-center justify-between">

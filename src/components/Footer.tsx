@@ -10,11 +10,11 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="max-w-7xl mx-auto px-8">
+    <footer className="max-w-7xl mx-auto px-6">
       <div className="space-y-8 py-12">
         <div className="space-y-2 text-center">
-          <h5>brew.</h5>
-          <p>
+          <h5 className="text-2xl md:text-3xl">brew.</h5>
+          <p className="text-sm lg:text-base text-black/75 font-light">
             Premium coffee delivered to your doorstep.
             <br />
             Ethically sourced, expertly roasted, and served with love.
@@ -44,7 +44,7 @@ export default function Footer() {
 
         <div className="border-t border-black/10" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between font-normal text-black/75">
+        <div className="flex flex-col md:flex-row items-center justify-between text-black/75">
           <small>© 2025 brew. All rights reserved.</small>
           <small>Made with by Thalita dos Reis</small>
         </div>

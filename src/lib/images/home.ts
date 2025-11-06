@@ -11,7 +11,7 @@ export const FEATURE_IMAGES = [
 
 // Benefits
 export const BENEFIT_IMAGE =
-  "https://images.pexels.com/photos/10433516/pexels-photo-10433516.jpeg";
+  "https://images.pexels.com/photos/8936829/pexels-photo-8936829.jpeg";
 
 // Craft
 export const CRAFT_IMAGES = [

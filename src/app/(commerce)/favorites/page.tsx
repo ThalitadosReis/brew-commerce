@@ -38,7 +38,7 @@ export default function FavoritesPage() {
         description="Your carefully selected coffee selection tells a story of taste and passion."
       />
 
-      <section className="max-w-7xl mx-auto px-8">
+      <section className="max-w-7xl mx-auto px-6">
         <div className="flex justify-end mb-2">
           <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
         </div>
@@ -73,7 +73,7 @@ export default function FavoritesPage() {
       </section>
 
       <ContentBlock
-        contentClassName="!p-0"
+        className="bg-white"
         title="Ready to brew your favorites?"
         text="Transform your saved selections into a delicious reality. Each coffee tells a story waiting to be savored."
         image={FAVORITES_CTA_IMAGE}

@@ -65,7 +65,7 @@ export function CraftSection() {
           image={item.image}
           buttons={item.buttons}
           imagePosition={index % 2 === 0 ? "right" : "left"}
-          className="py-8"
+          className="py-6"
           priority={false}
           sizes="(max-width: 768px) 100vw, 50vw"
         />

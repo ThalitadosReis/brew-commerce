@@ -75,9 +75,12 @@ export default function CombinedLogin() {
               const params = new URLSearchParams(searchParams.toString());
               params.set("tab", value);
               const nextSearch = params.toString();
-              router.replace(nextSearch ? `${pathname}?${nextSearch}` : pathname, {
-                scroll: false,
-              });
+              router.replace(
+                nextSearch ? `${pathname}?${nextSearch}` : pathname,
+                {
+                  scroll: false,
+                }
+              );
             }}
             className={`rounded-full px-6 py-2 text-sm font-medium transition ${
               isActive
@@ -110,8 +113,10 @@ export default function CombinedLogin() {
         {activeTab === "user-login" ? (
           <div className="w-full">
             <div className="mb-6 text-center">
-              <h3 className="font-semibold">Welcome back!</h3>
-              <p className="text-black/50">Sign in to continue</p>
+              <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
+                Welcome back!
+              </h4>
+              <p className="text-sm text-black/50">Sign in to continue</p>
             </div>
             {renderTabButtons()}
 
@@ -128,10 +133,12 @@ export default function CombinedLogin() {
             </div>
           </div>
         ) : (
-          <div className="w-full px-8">
+          <div className="w-full px-6">
             <div className="mb-6 text-center">
-              <h3 className="font-semibold">Admin access</h3>
-              <p className="text-black/50">Team accounts only</p>
+              <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
+                Admin access
+              </h4>
+              <p className="text-sm text-black/50">Team accounts only</p>
             </div>
             {renderTabButtons()}
 

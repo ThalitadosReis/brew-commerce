@@ -160,7 +160,7 @@ export default function Filter({
         aria-controls="filters-panel"
       >
         <div className="flex items-center gap-2">
-          <h6>Filters</h6>
+          <h6 className="text-lg lg:text-xl">Filters</h6>
           <CaretDownIcon
             size={12}
             weight="light"
@@ -189,7 +189,7 @@ export default function Filter({
       >
         {/* size */}
         <div className="my-4">
-          <p>Size</p>
+          <p className="text-sm">Size</p>
           <div className="w-full flex flex-col gap-2 mt-2">
             {sizes.map((size) => {
               const isSelected = selectedSizes.includes(size);
@@ -222,7 +222,7 @@ export default function Filter({
                       />
                     )}
                   </span>
-                  <span>{size}</span>
+                  <span className="text-xs">{size}</span>
                 </button>
               );
             })}
@@ -232,7 +232,7 @@ export default function Filter({
         {/* roast */}
         {availableRoasts.length > 0 && (
           <div className="my-4">
-            <p>Roast</p>
+            <p className="text-sm">Roast</p>
             <div className="w-full flex flex-col gap-2 mt-2">
               {availableRoasts.map((roast) => {
                 const isSelected = selectedRoasts.includes(roast);
@@ -265,7 +265,7 @@ export default function Filter({
                         />
                       )}
                     </span>
-                    <span>{roast}</span>
+                    <span className="text-xs">{roast}</span>
                   </button>
                 );
               })}
@@ -276,7 +276,7 @@ export default function Filter({
         {/* countries */}
         {availableCountries.length > 0 && (
           <div>
-            <p>Country</p>
+            <p className="text-sm">Country</p>
             <div className="w-full flex flex-col gap-2 mt-2">
               {availableCountries.map((country) => {
                 const isSelected = selectedCountries.includes(country);
@@ -309,7 +309,7 @@ export default function Filter({
                         />
                       )}
                     </span>
-                    <span>{country}</span>
+                    <span className="span-xs">{country}</span>
                   </button>
                 );
               })}

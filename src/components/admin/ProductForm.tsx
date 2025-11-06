@@ -381,7 +381,7 @@ export function ProductForm({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6 py-4"
       onClick={handleBackdropClick}
       role="presentation"
     >

@@ -111,7 +111,7 @@ export default function TeamSection() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         className="ml-0 text-left"
         subtitle="Team"
@@ -145,19 +145,24 @@ export default function TeamSection() {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
+                    unoptimized
                   />
                 </div>
                 <div className="mb-3 md:mb-4">
-                  <h5>{member.name}</h5>
-                  <p>{member.title}</p>
+                  <h6 className="text-lg md:text-xl font-semibold">
+                    {member.name}
+                  </h6>
+                  <p className="text-sm text-black/50">{member.title}</p>
                 </div>
-                <p>{member.description}</p>
+                <p className="text-xs md:text-sm text-black">
+                  {member.description}
+                </p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex items-end justify-end gap-2 md:gap-4 mt-8">
+        <div className="flex items-end justify-end gap-2 md:gap-4 mt-6">
           <button
             ref={prevButtonRef}
             onClick={scrollPrev}

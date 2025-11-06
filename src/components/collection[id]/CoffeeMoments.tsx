@@ -4,7 +4,7 @@ import { MOMENTS_IMAGES } from "@/lib/images/products";
 
 export default function CoffeeMoments() {
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         title="Coffee moments"
         description="Explore the beauty and craft behind our coffee."

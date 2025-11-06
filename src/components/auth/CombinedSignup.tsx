@@ -118,9 +118,9 @@ export default function CombinedSignup() {
         {activeTab === "user-signup" ? (
           <div className="w-full">
             <div className="mb-6 text-center">
-              <h3 className="font-semibold">
+              <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
                 Join the community
-              </h3>
+              </h4>
               <p className="text-sm text-black/50">
                 Create an account to unlock personalised recommendations.
               </p>
@@ -140,12 +140,12 @@ export default function CombinedSignup() {
             </div>
           </div>
         ) : (
-          <div className="w-full px-8">
+          <div className="w-full px-6">
             <div className="mb-6 text-center">
-              <h3 className="font-semibold leading-tight!">
+              <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
                 Create an admin account
-              </h3>
-              <p className="text-black/50">
+              </h4>
+              <p className="text-sm text-black/50">
                 Reserved for team members managing the store.
               </p>
             </div>

@@ -53,10 +53,12 @@ const timelineCards: TimelineCardType[] = [
 function TimelineCard({ card }: { card: TimelineCardType }) {
   return (
     <div className="w-full overflow-hidden bg-white">
-      <div className="p-8 space-y-4">
+      <div className="p-8 space-y-2">
         <small>{card.date}</small>
-        <h4>{card.heading}</h4>
-        <p>{card.text}</p>
+        <h4 className="text-lg md:text-xl lg:text-2xl font-semibold">
+          {card.heading}
+        </h4>
+        <p className="text-sm md:text-base">{card.text}</p>
       </div>
     </div>
   );
@@ -64,7 +66,7 @@ function TimelineCard({ card }: { card: TimelineCardType }) {
 
 export default function TimelineSection() {
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         subtitle="Our Coffee Journey"
         title="From Local Passion to Global Coffee Culture"

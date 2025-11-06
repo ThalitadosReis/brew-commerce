@@ -7,8 +7,6 @@ import { Product } from "@/types/product";
 import { HeartIcon } from "@phosphor-icons/react";
 import Button from "./Button";
 
-type ButtonVariant = "primary" | "secondary" | "tertiary" | "default";
-
 interface FavoriteToggleButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
   productId: string | number;
@@ -18,7 +16,6 @@ interface FavoriteToggleButtonProps
   stopPropagation?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onFavoriteToggle?: (isFavorite: boolean) => void;
-  variant?: ButtonVariant;
   className?: string;
 }
 

@@ -49,8 +49,12 @@ export default function CollectionContent({
 
       {filteredProducts.length === 0 ? (
         <div className="mx-auto text-center pt-24">
-          <h5>No products found</h5>
-          <p>Try adjusting your filters</p>
+          <h6 className="text-lg md:text-xl lg:text-2xl font-semibold">
+            No products found
+          </h6>
+          <p className="text-base lg:text-lg text-black/50">
+            Try adjusting your filters
+          </p>
         </div>
       ) : (
         <>

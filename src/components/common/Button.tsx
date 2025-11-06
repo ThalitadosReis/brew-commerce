@@ -41,21 +41,18 @@ export default function Button({
 }: ButtonProps) {
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
 
-  const primaryClasses = `relative overflow-hidden bg-black text-white font-medium px-8 py-4 group ${disabledClasses} ${className}`;
-  const secondaryClasses = `relative bg-black/10 hover:bg-black/5 font-medium px-8 py-4 ${disabledClasses} ${className}`;
-  const tertiaryClasses = `relative flex items-center gap-2 group font-medium transition-all duration-300 ease-out ${disabledClasses} ${className}`;
-  const defaultClasses = `${disabledClasses} ${className}`;
-
+  const baseClasses =
+    "inline-flex items-center justify-center transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 group text-sm sm:text-base";
   const getClasses = () => {
     switch (variant) {
       case "primary":
-        return primaryClasses;
+        return `${baseClasses} text-base relative overflow-hidden bg-black text-white font-medium px-6 py-3 ${disabledClasses} ${className}`;
       case "secondary":
-        return secondaryClasses;
+        return `${baseClasses} text-base relative bg-black/5 hover:bg-black/10 font-medium px-6 py-3 ${disabledClasses} ${className}`;
       case "tertiary":
-        return tertiaryClasses;
+        return `${baseClasses} text-base relative gap-2 font-medium text-black hover:text-black/75 ${disabledClasses} ${className}`;
       default:
-        return defaultClasses;
+        return `${baseClasses} ${disabledClasses} ${className}`;
     }
   };
 
@@ -64,7 +61,8 @@ export default function Button({
       {children}
       {variant === "tertiary" && !disabled && (
         <CaretRightIcon
-          size={16}
+          size={12}
+          weight="bold"
           className="transition-transform duration-300 ease-out group-hover:translate-x-1"
         />
       )}

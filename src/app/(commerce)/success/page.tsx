@@ -157,8 +157,8 @@ function SuccessPageContent() {
 
   return (
     <div className="min-h-screen bg-black/5 flex items-center justify-center">
-      <div className="px-8 text-center space-y-4">
-        <h3>
+      <div className="px-6 text-center space-y-4">
+        <h3 className="text-lg md:text-2xl lg:text-3xl font-semibold">
           Thanks, {userName}!
           <br />
           We received your order
@@ -166,16 +166,16 @@ function SuccessPageContent() {
 
         {sessionId && (
           <div className="bg-white p-8 space-y-2">
-            <p>Your order confirmation:</p>
+            <p className="text-sm">Your order confirmation:</p>
             <small className="text-xs font-mono break-all">{sessionId}</small>
           </div>
         )}
 
         {error && (
-          <div className="bg-white p-4 text-red-600 font-body">{error}</div>
+          <div className="bg-white p-8 text-red-600">{error}</div>
         )}
 
-        <p>
+        <p className="text-sm font-light">
           You will receive a confirmation email with tracking details as your
           items ship.
         </p>

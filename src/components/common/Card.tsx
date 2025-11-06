@@ -29,10 +29,20 @@ export default function Card({
       } border border-black/25 overflow-hidden ${className}`}
     >
       <div className="flex flex-col justify-center flex-1">
-        <div className="p-8 space-y-4">
-          {subtitle && <small>{subtitle}</small>}
-          <h5>{title}</h5>
-          <p>{description}</p>
+        <div className="p-6 space-y-4">
+          <div className="space-y-2">
+            {subtitle && (
+              <h6 className="text-sm lg:text-base text-black tracking-wide">
+                {subtitle}
+              </h6>
+            )}
+            <h4 className="text-xl lg:text-2xl font-semibold leading-tight">
+              {title}
+            </h4>
+            <p className="text-sm lg:text-base leading-6 text-black/75 font-light">
+              {description}
+            </p>
+          </div>
           {href && (
             <Button as="link" href={href} variant="tertiary">
               Learn more
@@ -44,8 +54,8 @@ export default function Card({
       <div
         className={`relative shrink-0 w-full ${
           imagePosition === "right"
-            ? "md:w-1/2 min-h-[300px]"
-            : "h-[300px] lg:h-full"
+            ? "md:w-1/2 min-h-64 lg:min-h-80"
+            : "h-64 lg:h-full"
         }`}
       >
         <Image
@@ -53,7 +63,9 @@ export default function Card({
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
+          className={`object-cover ${
+            imagePosition === "bottom" ? "object-[50%_40%]" : ""
+          }`}
         />
         <div className="absolute inset-0 bg-black/20" />
       </div>

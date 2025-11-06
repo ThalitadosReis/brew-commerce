@@ -4,14 +4,14 @@ import { ABOUT_IMAGES } from "@/lib/images/about";
 
 export default function AboutSection() {
   return (
-    <section className="max-w-7xl mx-auto px-8">
+    <section className="max-w-7xl mx-auto px-6">
       <Section
         subtitle="Pure"
         title="Why our coffee is different"
         description="Sustainable, ethical, and delicious coffee that makes a difference"
       />
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-6">
         <Card
           subtitle="Sustainable"
           title="Supporting farmers and protecting the environment with every cup"

@@ -38,9 +38,8 @@ export function AuthLayout({
           </span>
         </div>
         <blockquote className="space-y-2 text-white">
-          <p>
-            {quote.text} - <span className="font-medium!">{quote.author}</span>
-          </p>
+          <p className="text-sm md:text-base lg:text-lg">{quote.text}</p>
+          <span className="font-medium">{quote.author}</span>
         </blockquote>
       </>
     ) : null);
@@ -53,33 +52,35 @@ export function AuthLayout({
     .join(" ");
 
   return (
-    <div className="min-h-screen bg-black/5 flex items-center">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-0">
-          <div className="relative overflow-hidden h-[560px] lg:min-h-[860px]">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url('${imageUrl}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              aria-hidden="true"
-            />
-            <div className="absolute inset-0 bg-black/20" />
+    <div className="bg-black/5">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="py-24">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+            <div className="relative h-[520px] md:h-[640px] lg:h-[720px] overflow-hidden">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url('${imageUrl}')`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+                aria-hidden="true"
+              />
+              <div className="absolute inset-0 bg-black/20" />
 
-            {imageAlt ? <span className="sr-only">{imageAlt}</span> : null}
-            <div
-              className={`relative flex h-full flex-col justify-end p-8 ${
-                overlayWrapperClassName ?? ""
-              }`}
-            >
-              {overlayContent}
+              {imageAlt ? <span className="sr-only">{imageAlt}</span> : null}
+              <div
+                className={`relative flex h-full flex-col justify-end p-8 sm:p-10 ${
+                  overlayWrapperClassName ?? ""
+                }`}
+              >
+                {overlayContent}
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center justify-center">
-            <div className={wrapperClassName}>{children}</div>
+            <div className="flex justify-center lg:justify-center">
+              <div className={wrapperClassName}>{children}</div>
+            </div>
           </div>
         </div>
       </div>

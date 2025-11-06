@@ -39,12 +39,12 @@ function ConfirmDeleteModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6"
       onClick={onCancel}
       role="presentation"
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-black/10 bg-white p-8 text-black shadow-lg"
+        className="w-full max-w-sm rounded-2xl border border-black/10 bg-white p-6 text-black shadow-lg"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -378,7 +378,7 @@ export default function AdminProductsManager() {
   return (
     <React.Fragment>
       <section className="space-y-10">
-        <header className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+        <header className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="space-y-4">
               <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-1 tracking-[0.16em]">
@@ -403,7 +403,7 @@ export default function AdminProductsManager() {
           </div>
         </header>
 
-        <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+        <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h3 className="text-base font-semibold">Inventory</h3>

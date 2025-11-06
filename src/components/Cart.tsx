@@ -88,7 +88,7 @@ function CartItemComponent({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-black/50">
-              <PackageIcon size={32} weight="light" />
+              <PackageIcon size={28} />
             </div>
           )}
         </div>
@@ -170,10 +170,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
     // require login before checkout
     if (!user) {
-      const returnUrl = window.location.pathname + window.location.search;
-      sessionStorage.setItem("returnAfterLogin", returnUrl);
+    const returnUrl = window.location.href;
+    sessionStorage.setItem("returnAfterLogin", returnUrl);
 
-      router.push(`/sign-in?redirect_url=${encodeURIComponent(returnUrl)}`);
+    router.push(`/sign-in?redirect_url=${encodeURIComponent(returnUrl)}`);
       return;
     }
 

@@ -41,7 +41,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
 
-  const ordersPerPage = 9;
+  const ordersPerPage = 6;
 
   useEffect(() => {
     let cancelled = false;
@@ -166,7 +166,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
 
   return (
     <div className="bg-black/5 pt-48 pb-24 space-y-12">
-      <header className="max-w-7xl mx-auto px-8">
+      <header className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-black/25 bg-white">
             {imageUrl ? (
@@ -183,16 +183,16 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
             )}
           </div>
           <div>
-            <h5>{firstName}</h5>
-            {email && <p>{email}</p>}
+            <h5 className="text-lg md:text-xl lg:text-2xl">{firstName}</h5>
+            {email && <p className="text-sm text-black/75">{email}</p>}
           </div>
         </div>
       </header>
 
-      <section className="max-w-7xl mx-auto px-8">
+      <section className="max-w-7xl mx-auto px-6">
         <div className="mb-4">
-          <h5>Order history</h5>
-          <span>Tap a row to view details</span>
+          <h5 className="text-lg font-semibold">Order history</h5>
+          <p className="text-sm text-black/75">Tap a row to view details</p>
         </div>
 
         {orders.length > 0 ? (
@@ -213,25 +213,26 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                     aria-expanded={isOpen}
                     aria-controls={`order-${order.id}`}
                   >
-                    <div className="min-w-0 flex-1 space-y-2">
+                    <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-4">
-                        <span className="truncate text-sm">
-                          #{order.id.slice(0, 12)}…
+                        <span className="truncate text-sm font-medium">
+                          #{order.id.slice(0, 12)}
                         </span>
-                        <small className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 font-normal text-black/75">
+                        <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-black/75 font-medium">
                           {totalItems} item{totalItems !== 1 ? "s" : ""}
-                        </small>
+                        </span>
                       </div>
-                      <small className="text-black/50">
+                      <span className="text-xs text-black/50">
                         {fmtDate(order.date)}
-                      </small>
+                      </span>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="text-lg font-semibold">
+                      <span className="text-base lg:text-lg font-semibold">
                         {fmtCHF(order.total)}
                       </span>
                       <CaretDownIcon
-                        className={`h-5 w-5 text-black/40 transition-transform ${
+                        size={20}
+                        className={`text-black/50 transition-transform ${
                           isOpen ? "rotate-180" : ""
                         }`}
                       />
@@ -248,9 +249,9 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                         isOpen ? "opacity-100" : "opacity-0"
                       }`}
                     >
-                      <div className="space-y-4 px-8 py-4">
+                      <div className="space-y-4 px-6 py-4">
                         <div className="space-y-4">
-                          <h6>Items</h6>
+                          <h6 className="text-lg font-semibold">Items</h6>
                           {order.items.map((item, idx) => (
                             <div
                               key={`${item.productId ?? item.id ?? idx}-${idx}`}
@@ -268,25 +269,26 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                                 ) : (
                                   <PackageIcon
                                     size={20}
-                                    weight="light"
                                     className="text-black/25"
                                   />
                                 )}
                               </div>
                               <div className="flex-1">
-                                <p className="font-medium!">{item.name}</p>
+                                <p className="text-base md:text-lg font-semibold">
+                                  {item.name}
+                                </p>
                                 <div className="flex flex-col">
                                   <small>
                                     {item.quantity} × {item.size || "—"}
                                   </small>
                                   {item.quantity > 1 && (
-                                    <small className="text-black/75">
+                                    <small className="text-black/50">
                                       {fmtCHF(item.price)} each
                                     </small>
                                   )}
                                 </div>
                               </div>
-                              <div className="text-right">
+                              <div className="font-medium text-right">
                                 <p>{fmtCHF(item.price * item.quantity)}</p>
                               </div>
                             </div>
@@ -294,16 +296,16 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                          <h6>Summary</h6>
+                          <h6 className="text-lg font-semibold">Summary</h6>
                           <div className="flex justify-between text-sm font-normal">
-                            <span className="text-black/75">
+                            <span className="text-black/50">
                               Subtotal ({totalItems} item
                               {totalItems !== 1 ? "s" : ""})
                             </span>
                             <span>{fmtCHF(order.subtotal)}</span>
                           </div>
                           <div className="flex justify-between text-sm font-normal">
-                            <span className="text-black/75">Shipping</span>
+                            <span className="text-black/50">Shipping</span>
                             <span>
                               {order.shipping === 0
                                 ? "Free"
@@ -329,12 +331,12 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="inline-flex items-center gap-2 text-sm font-medium hover:text-black/75 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 text-xs md:text-sm font-medium hover:text-black/75 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <CaretLeftIcon size={16} />
+                  <CaretLeftIcon size={12} />
                   Previous
                 </button>
-                <span className="text-sm text-black/50">
+                <span className="text-xs text-black/50">
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
@@ -342,9 +344,9 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="inline-flex items-center gap-2 text-sm font-medium hover:text-black/75 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 text-xs md:text-sm font-medium hover:text-black/75 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Next <CaretRightIcon size={16} />
+                  Next <CaretRightIcon size={12} />
                 </button>
               </div>
             )}
@@ -354,8 +356,10 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
             <div className="mx-auto mb-4 grid h-20 w-20 place-items-center bg-black/5">
               <PackageIcon size={24} className="text-black/50" />
             </div>
-            <h6>No orders yet</h6>
-            <p>Start exploring our collection to place your first order.</p>
+            <h6 className="text-lg font-semibold">No orders yet</h6>
+            <p className="text-sm text-black/50">
+              Start exploring our collection to place your first order.
+            </p>
             <div className="flex justify-center mt-4">
               <Button as="link" href="/collection" variant="tertiary">
                 Start shopping

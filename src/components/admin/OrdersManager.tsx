@@ -164,7 +164,7 @@ export default function OrdersManager() {
 
   if (error) {
     return (
-      <div className="px-4 py-10 text-black lg:px-6">
+      <div className="py-10 text-black px-6">
         <div className="mx-auto max-w-md space-y-4 rounded-3xl border border-red-200 bg-white p-8 text-center shadow-lg shadow-black/10">
           <XCircleIcon size={48} className="mx-auto text-red-500" />
           <div className="space-y-2">
@@ -187,7 +187,7 @@ export default function OrdersManager() {
 
   return (
     <section className="space-y-10">
-      <header className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+      <header className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="space-y-4">
             <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-1 tracking-[0.16em]">
@@ -204,7 +204,7 @@ export default function OrdersManager() {
         </div>
       </header>
 
-      <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+      <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold">

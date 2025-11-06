@@ -45,17 +45,17 @@ export default function FlavourSection() {
   return (
     <section className="max-w-7xl mx-auto">
       <Section
-        className="px-8"
+        className="px-6"
         subtitle="Origin"
         title="Taste the difference"
         description="Our coffee represents more than a drink. It's a journey through Ethiopian landscapes and traditions."
       />
 
-      <div className="flex justify-center mb-8 gap-x-8">
+      <div className="flex justify-around md:justify-center mb-4 md:gap-x-8 px-6">
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            className={`text-sm md:text-base border-b-2 pb-1 ${
+            className={`text-xs md:text-sm lg:text-base border-b-2 pb-1 ${
               activeTab === tab.key
                 ? "border-black font-semibold"
                 : "border-transparent text-black/75"

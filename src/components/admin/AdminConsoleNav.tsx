@@ -66,7 +66,7 @@ export function AdminConsoleNav({
 
   return (
     <div className="relative flex min-h-svh flex-col bg-black/5">
-      <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-black/10 bg-white px-8">
+      <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-black/10 bg-white px-6">
         <div className="flex items-center gap-3 text-sm">
           <button
             type="button"
@@ -129,7 +129,7 @@ export function AdminConsoleNav({
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-8">{children}</div>
+      <div className="flex-1 overflow-y-auto p-6">{children}</div>
 
       <div
         className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-200 ${

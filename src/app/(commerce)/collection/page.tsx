@@ -56,7 +56,7 @@ export default function CollectionPage() {
 
       <div
         ref={collectionRef}
-        className="max-w-7xl mx-auto px-8 lg:flex lg:gap-12"
+        className="max-w-7xl mx-auto px-6 lg:flex lg:gap-12"
       >
         {/* filter */}
         <div className="lg:sticky lg:top-12 h-fit">

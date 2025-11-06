@@ -65,8 +65,7 @@ export default function Drawer({
   if (!mounted) return null;
   if (!shouldRender) return null;
 
-  const portalTarget =
-    typeof document !== "undefined" ? document.body : null;
+  const portalTarget = typeof document !== "undefined" ? document.body : null;
   if (!portalTarget) return null;
 
   const translateClosed =
@@ -104,8 +103,12 @@ export default function Drawer({
       >
         <div className="flex h-full w-full flex-col">
           {showHeader && (
-            <header className="flex items-center justify-between border-b border-black/5 p-8">
-              {title && <h6>{title}</h6>}
+            <header className="flex items-center justify-between border-b border-black/5 p-6">
+              {title && (
+                <h6 className="text-base md:text-lg lg:text-2xl text-black tracking-wide">
+                  {title}
+                </h6>
+              )}
               <div className="flex items-center gap-4">
                 {headerActions}
                 <button
@@ -114,18 +117,16 @@ export default function Drawer({
                   onClick={onClose}
                   className="hover:text-black/50"
                 >
-                  <XIcon size={18} weight="light" />
+                  <XIcon size={18} weight="bold" />
                 </button>
               </div>
             </header>
           )}
 
-          <div className="flex-1 overflow-y-auto p-8">{children}</div>
+          <div className="flex-1 overflow-y-auto p-6">{children}</div>
 
           {footer && (
-            <footer className="border-t border-black/5 p-8">
-              {footer}
-            </footer>
+            <footer className="border-t border-black/5 p-6">{footer}</footer>
           )}
         </div>
       </section>

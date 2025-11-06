@@ -46,10 +46,10 @@ export default function ImageCard({
       </div>
 
       <div className="text-center">
-        <h6 className="text-black/75">
+        <h6 className="text-lg lg:text-xl text-black/75">
           {name} / {country}
         </h6>
-        <p className="font-medium!">from CHF{price}</p>
+        <p className="text-sm lg:text-base font-semibold">from CHF{price}</p>
       </div>
     </div>
   );
