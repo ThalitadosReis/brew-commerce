@@ -17,10 +17,9 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
     totalProducts: 0,
     totalOrders: 0,
     totalRevenue: 0,
-    ordersThisWeek: 0,
-    ordersLastWeek: 0,
     avgOrderValue: 0,
     totalItemsSold: 0,
+    totalUnits: 0,
   });
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [loading, setLoading] = useState(true);

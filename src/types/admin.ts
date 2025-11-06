@@ -3,10 +3,9 @@ export interface DashboardMetrics {
   totalProducts: number;
   totalOrders: number;
   totalRevenue: number;
-  ordersThisWeek: number;
-  ordersLastWeek: number;
   avgOrderValue: number;
   totalItemsSold: number;
+  totalUnits: number;
 }
 
 export interface RecentOrderItem {
