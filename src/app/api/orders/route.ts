@@ -108,7 +108,9 @@ async function resolveShippingAddress(
     const stripe = getServerStripe();
     const session = (await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ["payment_intent", "payment_intent.shipping", "customer"],
-    })) as Stripe.Checkout.Session;
+    })) as Stripe.Checkout.Session & {
+      shipping_details?: Stripe.PaymentIntent.Shipping | null;
+    };
 
     const paymentIntent =
       typeof session.payment_intent === "object" && session.payment_intent
