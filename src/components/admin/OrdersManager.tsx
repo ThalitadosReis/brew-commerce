@@ -186,7 +186,7 @@ export default function OrdersManager() {
   const ordersCount = filteredOrders.length;
 
   return (
-    <section className="space-y-10 text-black">
+    <section className="space-y-10">
       <header className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="space-y-4">
@@ -194,7 +194,7 @@ export default function OrdersManager() {
               Management
             </small>
             <div className="space-y-2">
-              <h2 className="leading-tight!">Orders Overview</h2>
+              <h2 className="leading-tight!">Orders</h2>
               <p className="max-w-xl">
                 Track every customer order, spot priorities instantly, and keep
                 deliveries moving smoothly.
@@ -205,12 +205,12 @@ export default function OrdersManager() {
       </header>
 
       <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h3 className="text-base font-semibold text-black">
+            <h3 className="text-base font-semibold">
               Order history
             </h3>
-            <p className="text-xs text-black/60">
+            <p className="text-black/50">
               Complete list of customer orders with details.
             </p>
           </div>
@@ -236,16 +236,16 @@ export default function OrdersManager() {
               <thead className="bg-black/5 text-xs uppercase tracking-wide text-black/75">
                 <tr>
                   <th className="px-6 py-3 font-semibold">Order ID</th>
-                  <th className="hidden px-6 py- font-semibold sm:table-cell">
+                  <th className="hidden font-semibold sm:table-cell">
                     Date
                   </th>
-                  <th className="hidden px-6 py-3 font-semibold sm:table-cell">
+                  <th className="hidden font-semibold sm:table-cell">
                     Items
                   </th>
-                  <th className="hidden px-6 py-3 font-semibold sm:table-cell">
+                  <th className="hidden font-semibold sm:table-cell">
                     Total
                   </th>
-                  <th className="px-6 py-3 font-semibold" />
+                  <th className="px-6 font-semibold" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/10">
@@ -320,10 +320,16 @@ export default function OrdersManager() {
                         </td>
                       </tr>
 
-                      {isExpanded && (
-                        <tr>
-                          <td colSpan={5} className="bg-black/2 p-4">
-                            <div className="grid lg:grid-cols-2 gap-8">
+                      <tr aria-hidden={!isExpanded}>
+                        <td colSpan={5} className="bg-black/2 p-0">
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-in-out px-4 sm:px-6 ${
+                              isExpanded
+                                ? "max-h-[1200px] py-6 opacity-100"
+                                : "max-h-0 py-0 opacity-0"
+                            }`}
+                          >
+                            <div className="grid gap-8 lg:grid-cols-2">
                               <div className="space-y-4">
                                 <span className="flex items-center gap-2 font-semibold">
                                   <UserIcon
@@ -456,8 +462,9 @@ export default function OrdersManager() {
                                       </div>
                                     </div>
                                   ))}
+                                </div>
 
-                                  <div className="h-px bg-black/10" />
+                                <div className="space-y-3 rounded-lg border border-black/10 bg-white p-4 shadow-sm">
                                   <div className="space-y-2 text-sm">
                                     <div className="flex justify-between font-normal">
                                       <span className="text-black/50">
@@ -486,9 +493,9 @@ export default function OrdersManager() {
                                 </div>
                               </div>
                             </div>
-                          </td>
-                        </tr>
-                      )}
+                          </div>
+                        </td>
+                      </tr>
                     </Fragment>
                   );
                 })}
@@ -500,7 +507,7 @@ export default function OrdersManager() {
             <ReceiptIcon size={48} className="text-black/25" />
             <div className="space-y-1">
               <h5>No orders found</h5>
-              <p className="text-sm text-black/50">
+              <p className="text-black/50">
                 {searchTerm
                   ? "No orders match your search criteria."
                   : "Orders will appear here once customers complete their purchases."}

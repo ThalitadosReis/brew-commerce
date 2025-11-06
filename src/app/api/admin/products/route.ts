@@ -3,8 +3,13 @@ import { withAdmin, AuthenticatedRequest } from "@/middleware/auth";
 import connectDB from "@/lib/mongodb";
 import Product from "@/models/Product";
 
+const DEFAULT_IMAGE_PRIMARY =
+  "https://res.cloudinary.com/douen1dwv/image/upload/v1760905463/default/mockup-coffee_p93gic.png";
+const DEFAULT_IMAGE_SECONDARY =
+  "https://res.cloudinary.com/douen1dwv/image/upload/v1760956234/default/mockup-coffee2_pswggc.jpg";
+
 // get all products
-async function getProducts(request: AuthenticatedRequest) {
+async function getProducts() {
   try {
     await connectDB();
 
@@ -36,7 +41,7 @@ async function createProduct(request: AuthenticatedRequest) {
       sizes,
     } = body;
 
-    if (!name || !description || !image || !category || !country) {
+    if (!name || !description || !category || !country) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -52,12 +57,23 @@ async function createProduct(request: AuthenticatedRequest) {
 
     await connectDB();
 
+    const normalizedImages = [image || DEFAULT_IMAGE_PRIMARY];
+
+    if (Array.isArray(images) && images.length > 0) {
+      normalizedImages.push(
+        ...images.filter((img: string) => typeof img === "string" && img.trim())
+      );
+    }
+
+    if (normalizedImages.length === 1) {
+      normalizedImages.push(DEFAULT_IMAGE_SECONDARY);
+    }
+
     const product = await Product.create({
       name,
       description,
       price: price || 0,
-      image,
-      images: images || [],
+      images: normalizedImages,
       category,
       country,
       stock: stock || 0,
