@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import type { CartItem } from "@/types/product";
@@ -8,7 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import Loading from "@/components/common/Loading";
 import Button from "@/components/common/Button";
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const { user, isLoaded: userLoaded } = useUser();
@@ -187,5 +187,13 @@ export default function SuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<Loading message="Processing order..." />}>
+      <SuccessPageContent />
+    </Suspense>
   );
 }

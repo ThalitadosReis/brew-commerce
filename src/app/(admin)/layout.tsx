@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { ToastProvider } from "@/contexts/ToastContext";
@@ -11,7 +11,7 @@ type AdminLayoutProps = {
   children: ReactNode;
 };
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+function AdminLayoutContent({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -36,5 +36,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         )}
       </AuthProvider>
     </ToastProvider>
+  );
+}
+
+export default function AdminLayout(props: AdminLayoutProps) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black/5" />}>
+      <AdminLayoutContent {...props} />
+    </Suspense>
   );
 }
