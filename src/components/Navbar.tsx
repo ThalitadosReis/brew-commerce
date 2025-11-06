@@ -137,8 +137,8 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
-  const [navbarHeight, setNavbarHeight] = useState<number>(72);
-  const headerRef = useRef<HTMLDivElement | null>(null);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const lastScrollYRef = useRef(0);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const pathname = usePathname();
@@ -204,16 +204,30 @@ export default function Navbar() {
     if (e.key === "Escape") setIsSearchOpen(false);
   };
 
-  // update visual style when scrolling
+  // handle scroll hide/show
   useEffect(() => {
+    if (pathname !== "/") {
+      setShowNavbar(true);
+      lastScrollYRef.current = 0;
+      return;
+    }
+
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY) setShowNavbar(false);
-      else setShowNavbar(true);
-      setLastScrollY(window.scrollY);
+      const currentY = window.scrollY;
+      if (currentY < 2000) {
+        setShowNavbar(true);
+      } else if (currentY > lastScrollYRef.current) {
+        setShowNavbar(false);
+      } else {
+        setShowNavbar(true);
+      }
+      lastScrollYRef.current = currentY;
     };
-    window.addEventListener("scroll", handleScroll);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, [pathname]);
 
   // filter products for search
   useEffect(() => {
@@ -234,7 +248,7 @@ export default function Navbar() {
   }, [searchQuery, allProducts]);
 
   const links = [
-    { href: "/homepage", label: "Home" },
+    { href: "/", label: "Home" },
     { href: "/collection", label: "Collection" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
@@ -243,10 +257,11 @@ export default function Navbar() {
   return (
     <div className="relative">
       <header
-        ref={headerRef}
-        className="fixed inset-x-0 top-0 z-50 bg-white"
+        className={`fixed top-0 left-0 right-0 z-50 p-4 transition-transform duration-300 ${
+          showNavbar ? "translate-y-0" : "-translate-y-full"
+        }`}
       >
-        <div className="max-w-7xl mx-auto p-6 bg-white shadow-md">
+        <div className="max-w-7xl mx-auto p-4 bg-white shadow-md">
           <div className="flex items-center justify-between">
             {/* navigation links */}
             <div className="hidden lg:flex gap-6">
@@ -254,7 +269,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative inline-block overflow-hidden font-heading group"
+                  className="relative inline-block overflow-hidden text-sm group"
                 >
                   <span className="block transition-transform duration-300 group-hover:-translate-y-full">
                     {link.label}
@@ -266,7 +281,7 @@ export default function Navbar() {
               ))}
             </div>
 
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 px-4 lg:px-0">
               {/* mobile menu toggle */}
               <button
                 className="lg:hidden"
@@ -285,7 +300,7 @@ export default function Navbar() {
 
               {/* logo */}
               <Link
-                href="/homepage"
+                href="/"
                 className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl font-heading"
               >
                 brew.
@@ -357,9 +372,10 @@ export default function Navbar() {
                     appearance={{
                       elements: {
                         userButtonAvatarBox: "w-8 h-8",
+                        userButtonPopoverCard: "mt-6",
                       },
                     }}
-                    afterSignOutUrl="/homepage"
+                    afterSignOutUrl="/"
                   >
                     <UserButton.MenuItems>
                       <UserButton.Link

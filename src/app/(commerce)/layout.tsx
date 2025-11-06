@@ -51,7 +51,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   // detect page position
   useEffect(() => {
-    if (pathname === "/homepage") {
+    if (pathname === "/") {
       const heroEl =
         heroRef.current?.querySelector<HTMLElement>("[data-home-hero]") ??
         document.querySelector<HTMLElement>("[data-home-hero]");
@@ -90,7 +90,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
             ) : (
               <>
                 <Navbar />
-                {pathname === "/homepage" ? (
+                {pathname === "/" ? (
                   <div ref={heroRef}>{children}</div>
                 ) : (
                   children
@@ -128,7 +128,7 @@ export default function CommerceLayout({
     <ClerkProvider
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
-      afterSignOutUrl="/homepage"
+      afterSignOutUrl="/"
     >
       <LayoutContent>{children}</LayoutContent>
     </ClerkProvider>

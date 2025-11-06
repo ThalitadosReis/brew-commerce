@@ -143,7 +143,7 @@ function Breadcrumb({ productName }: { productName: string }) {
     <nav aria-label="Breadcrumb" className="font-body text-sm text-black/50">
       <ol className="flex items-center gap-2">
         <li>
-          <Link href="/homepage" className="transition-colors hover:text-black">
+          <Link href="/" className="transition-colors hover:text-black">
             Home
           </Link>
         </li>

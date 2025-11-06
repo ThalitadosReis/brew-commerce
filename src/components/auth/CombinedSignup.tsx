@@ -38,9 +38,9 @@ export default function CombinedSignup() {
     const direct = searchParams.get("redirect_url");
     if (direct) return direct;
     if (typeof window !== "undefined") {
-      return sessionStorage.getItem("returnAfterLogin") || "/homepage";
+      return sessionStorage.getItem("returnAfterLogin") || "/";
     }
-    return "/homepage";
+    return "/";
   }, [searchParams]);
 
   const [adminName, setAdminName] = React.useState("");

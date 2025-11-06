@@ -38,9 +38,9 @@ export default function CombinedLogin() {
     const direct = searchParams.get("redirect_url");
     if (direct) return direct;
     if (typeof window !== "undefined") {
-      return sessionStorage.getItem("returnAfterLogin") || "/homepage";
+      return sessionStorage.getItem("returnAfterLogin") || "/";
     }
-    return "/homepage";
+    return "/";
   }, [searchParams]);
 
   const [adminEmail, setAdminEmail] = React.useState("");
@@ -133,7 +133,7 @@ export default function CombinedLogin() {
             </div>
           </div>
         ) : (
-          <div className="w-full px-6">
+          <div className="w-full">
             <div className="mb-6 text-center">
               <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
                 Admin access
