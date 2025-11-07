@@ -101,7 +101,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
                   onClick={scrollToTop}
                   aria-label="Scroll to top"
                   variant="primary"
-                  className={`fixed! right-8 z-50 px-4! flex items-center justify-center transition-all duration-500 ease-out
+                  className={`fixed! right-8 z-50 px-3! flex items-center justify-center transition-all duration-500 ease-out
                     ${
                       showScroll && isScrolling
                         ? "bottom-6 opacity-100 translate-y-0"

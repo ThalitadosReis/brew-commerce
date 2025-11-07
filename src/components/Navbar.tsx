@@ -137,8 +137,7 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
-  const [showNavbar, setShowNavbar] = useState(true);
-  const lastScrollYRef = useRef(0);
+  const [showNavbar] = useState(true);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const pathname = usePathname();
@@ -204,31 +203,6 @@ export default function Navbar() {
     if (e.key === "Escape") setIsSearchOpen(false);
   };
 
-  // handle scroll hide/show
-  useEffect(() => {
-    if (pathname !== "/") {
-      setShowNavbar(true);
-      lastScrollYRef.current = 0;
-      return;
-    }
-
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY < 2000) {
-        setShowNavbar(true);
-      } else if (currentY > lastScrollYRef.current) {
-        setShowNavbar(false);
-      } else {
-        setShowNavbar(true);
-      }
-      lastScrollYRef.current = currentY;
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
-
   // filter products for search
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -257,11 +231,11 @@ export default function Navbar() {
   return (
     <div className="relative">
       <header
-        className={`fixed top-0 left-0 right-0 z-50 p-4 transition-transform duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 p-4 transition-transform duration-300 ${
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-7xl mx-auto p-4 bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 bg-white shadow-md">
           <div className="flex items-center justify-between">
             {/* navigation links */}
             <div className="hidden lg:flex gap-6">
@@ -281,7 +255,7 @@ export default function Navbar() {
               ))}
             </div>
 
-            <div className="flex items-center justify-center gap-4 px-4 lg:px-0">
+            <div className="flex items-center justify-center gap-2">
               {/* mobile menu toggle */}
               <button
                 className="lg:hidden"
@@ -301,7 +275,7 @@ export default function Navbar() {
               {/* logo */}
               <Link
                 href="/"
-                className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl font-heading"
+                className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl"
               >
                 brew.
               </Link>
@@ -415,7 +389,7 @@ export default function Navbar() {
       <div className="lg:hidden relative z-40">
         {isMenuOpen && (
           <div
-            className="fixed inset-0 bg-black/25 z-10"
+            className="fixed inset-0 bg-black/40 z-10"
             onClick={() => setIsMenuOpen(false)}
           />
         )}
@@ -425,7 +399,7 @@ export default function Navbar() {
           }`}
           style={{ top: "var(--navbar-height, 96px)" }}
         >
-          <nav className="px-8 py-4">
+          <nav className="px-6 py-4">
             {links.map((link, index) => (
               <Link
                 key={link.href}

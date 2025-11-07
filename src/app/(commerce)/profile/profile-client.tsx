@@ -165,7 +165,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
   if (loading) return <Loading message="Loading profile..." />;
 
   return (
-    <div className="bg-black/5 pt-48 pb-24 space-y-12">
+    <div className="bg-black/5 py-32 space-y-24">
       <header className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-black/25 bg-white">
@@ -183,7 +183,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
             )}
           </div>
           <div>
-            <h5 className="text-lg md:text-xl lg:text-2xl">{firstName}</h5>
+            <h5 className="text-xl md:text-2xl lg:text-3xl">{firstName}</h5>
             {email && <p className="text-sm text-black/75">{email}</p>}
           </div>
         </div>
@@ -192,7 +192,9 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
       <section className="max-w-7xl mx-auto px-6">
         <div className="mb-4">
           <h5 className="text-lg font-semibold">Order history</h5>
-          <p className="text-sm text-black/75">Tap a row to view details</p>
+          <p className="text-xs md:text-sm text-black/75">
+            Tap a row to view details
+          </p>
         </div>
 
         {orders.length > 0 ? (
@@ -215,7 +217,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                   >
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-4">
-                        <span className="truncate text-sm font-medium">
+                        <span className="truncate text-xs md:text-sm font-medium">
                           #{order.id.slice(0, 12)}
                         </span>
                         <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-black/75 font-medium">
@@ -226,12 +228,12 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                         {fmtDate(order.date)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                       <span className="text-base lg:text-lg font-semibold">
                         {fmtCHF(order.total)}
                       </span>
                       <CaretDownIcon
-                        size={20}
+                        size={16}
                         className={`text-black/50 transition-transform ${
                           isOpen ? "rotate-180" : ""
                         }`}
@@ -274,22 +276,26 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                                 )}
                               </div>
                               <div className="flex-1">
-                                <p className="text-base md:text-lg font-semibold">
-                                  {item.name}
-                                </p>
-                                <div className="flex flex-col">
-                                  <small>
-                                    {item.quantity} × {item.size || "—"}
-                                  </small>
-                                  {item.quantity > 1 && (
-                                    <small className="text-black/50">
-                                      {fmtCHF(item.price)} each
-                                    </small>
-                                  )}
+                                <div className="space-y-2">
+                                  <div className="flex-1 flex justify-between">
+                                    <p className="text-base md:text-lg font-semibold">
+                                      {item.name}
+                                    </p>
+                                    <p className="text-sm md:font-base font-medium">
+                                      {fmtCHF(item.price * item.quantity)}
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-col text-xs text-black/75">
+                                    <span>
+                                      {item.quantity} × {item.size || "—"}
+                                    </span>
+                                    {item.quantity > 1 && (
+                                      <span className="text-black/50">
+                                        {fmtCHF(item.price)} each
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="font-medium text-right">
-                                <p>{fmtCHF(item.price * item.quantity)}</p>
                               </div>
                             </div>
                           ))}

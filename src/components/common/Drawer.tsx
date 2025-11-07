@@ -95,7 +95,7 @@ export default function Drawer({
         aria-label={ariaLabel}
         aria-modal="true"
         className={cn(
-          "relative flex h-screen max-h-screen w-full max-w-full transform bg-white transition-transform duration-200 ease-out",
+          "relative flex h-screen w-full transform bg-white transition-transform duration-200 ease-out",
           isVisible ? translateOpen : translateClosed,
           panelWidth,
           sideAlignment

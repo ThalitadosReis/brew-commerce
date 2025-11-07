@@ -15,7 +15,7 @@ export default function PageHeader({
 }: PageHeaderProps) {
   return (
     <div className={`max-w-3xl mx-auto text-center px-6 ${className}`}>
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
         {title}
       </h1>
       {description && (

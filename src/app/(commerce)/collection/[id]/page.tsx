@@ -46,7 +46,7 @@ export default function ProductPage() {
   if (loading) return <Loading message="Loading..." />;
 
   return (
-    <div className="bg-black/5 py-24 space-y-24">
+    <div className="bg-black/5 pt-12 pb-32 space-y-24">
       <ProductSection product={product} />
       <CoffeeCraftSection />
       <FlavourSection />

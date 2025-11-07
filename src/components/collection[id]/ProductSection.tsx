@@ -54,6 +54,8 @@ function CarouselThumbnails({
   activeIndex: number;
   onSelect: (index: number) => void;
 }) {
+  const touchStartRef = React.useRef<number | null>(null);
+
   if (images.length === 0) {
     return (
       <div className="relative flex h-full items-center justify-center bg-black/5">
@@ -63,7 +65,6 @@ function CarouselThumbnails({
   }
 
   const activeImage = images[activeIndex] ?? images[0];
-
   const showControls = images.length > 1;
 
   const handlePrevious = () => {
@@ -76,65 +77,86 @@ function CarouselThumbnails({
     onSelect(nextIndex);
   };
 
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    touchStartRef.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartRef.current == null) return;
+    const deltaX = event.changedTouches[0]?.clientX - touchStartRef.current;
+    touchStartRef.current = null;
+    if (!deltaX || Math.abs(deltaX) < 40) return;
+    if (deltaX > 0) handlePrevious();
+    else handleNext();
+  };
+
   return (
-    <div className="relative aspect-square w-full overflow-hidden bg-black/5">
-      <Image
-        src={activeImage}
-        alt={productName}
-        fill
-        sizes="(min-width: 1024px) 600px, 100vw"
-        className="object-contain"
-      />
+    <>
+      <div
+        className="relative aspect-square w-full overflow-hidden bg-black/10"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <Image
+          src={activeImage}
+          alt={productName}
+          fill
+          sizes="(min-width: 1024px) 640px, 100vw"
+          className="object-contain"
+        />
+
+        {showControls && (
+          <>
+            <Button
+              onClick={handlePrevious}
+              aria-label="Previous image"
+              className="flex absolute! left-4 top-1/2 p-3! md:p-4! -translate-y-1/2 items-center justify-center transition"
+              variant="secondary"
+            >
+              <CaretLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
+            </Button>
+            <Button
+              onClick={handleNext}
+              aria-label="Next image"
+              className="flex absolute! right-4 top-1/2 p-3! md:p-4! -translate-y-1/2 items-center justify-center transition"
+              variant="secondary"
+            >
+              <CaretRightIcon className="w-4 h-4 md:w-5 md:h-5" />
+            </Button>
+          </>
+        )}
+      </div>
 
       {showControls && (
-        <>
-          <Button
-            onClick={handlePrevious}
-            aria-label="Previous image"
-            className="flex absolute! left-4 top-1/2 p-2! md:p-4! -translate-y-1/2 items-center justify-center bg-black/10 hover:bg-black/5 transition"
-            variant="secondary"
-          >
-            <CaretLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
-          </Button>
-          <Button
-            onClick={handleNext}
-            aria-label="Next image"
-            className="flex absolute! p-2! md:p-4! right-4 top-1/2 -translate-y-1/2 items-center justify-center bg-black/10 hover:bg-black/5 transition"
-            variant="secondary"
-          >
-            <CaretRightIcon className="w-4 h-4 md:w-5 md:h-5" />
-          </Button>
-
-          <div className="absolute inset-x-0 bottom-4 flex justify-center">
-            <div className="flex gap-2 bg-white/95 p-2">
-              {images.map((img, index) => {
-                const isActive = activeIndex === index;
-                return (
-                  <button
-                    key={`${img}-${index}`}
-                    onClick={() => onSelect(index)}
-                    className={`relative h-16 w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 overflow-hidden bg-black/10 transition ${
-                      isActive
-                        ? "ring-2 ring-black/25"
-                        : "opacity-75 hover:opacity-100"
-                    }`}
-                    aria-label={`View image ${index + 1}`}
-                  >
-                    <Image
-                      src={img}
-                      alt={`${productName} thumbnail ${index + 1}`}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
-                  </button>
-                );
-              })}
-            </div>
+        <div className="mt-2 bg-white px-3 py-2">
+          <div className="flex gap-2 overflow-x-auto">
+            {images.map((img, index) => {
+              const isActive = activeIndex === index;
+              return (
+                <button
+                  key={`${img}-${index}`}
+                  onClick={() => onSelect(index)}
+                  className={`relative h-16 w-16 md:w-20 md:h-20 lg:w-24 lg:h-24 overflow-hidden bg-black/10 transition ${
+                    isActive
+                      ? "border-2 border-black/25"
+                      : "opacity-70 hover:opacity-100 border-2 border-transparent"
+                  }`}
+                  aria-label={`View image ${index + 1}`}
+                >
+                  <Image
+                    src={img}
+                    alt={`${productName} thumbnail ${index + 1}`}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </button>
+              );
+            })}
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -352,7 +374,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 <Breadcrumb productName={product.name} />
               </div>
 
-              <h3 className="text-3xl md:text-3xl lg:text-3xl font-bold">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold">
                 {product.name}{" "}
                 <span className="font-semibold text-black/25">
                   {product.country}
@@ -366,7 +388,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
 
                 <div className="w-px h-8 bg-black/25" />
 
-                <div className="flex flex-col items-center sm:flex-row gap-y-1">
+                <div className="flex flex-row items-center">
                   <div className="flex items-center">
                     <StarIcon size={16} weight="fill" />
                     <StarIcon size={16} weight="fill" />
@@ -505,7 +527,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
                       >
                         <div className="overflow-hidden">
                           <div
-                            className={`border-t border-black/5 px-6 py-4 text-sm text-black/75 transition-opacity duration-400 ${
+                            className={`px-6 py-4 text-sm text-black/75 transition-opacity duration-400 ${
                               isOpen ? "opacity-100" : "opacity-0"
                             }`}
                           >

@@ -9,7 +9,7 @@ import StorySection from "@/components/about/StorySection";
 
 export default function AboutPage() {
   return (
-    <div className="bg-black/5 pt-48 pb-24 space-y-24">
+    <div className="bg-black/5 py-32 space-y-24">
       <PageHeader
         title="Our coffee story"
         description="We craft simple, honest coffee that connects people through pure, carefully selected beans from around the world."

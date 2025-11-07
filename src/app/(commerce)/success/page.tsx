@@ -158,7 +158,7 @@ function SuccessPageContent() {
   return (
     <div className="min-h-screen bg-black/5 flex items-center justify-center">
       <div className="px-6 text-center space-y-4">
-        <h3 className="text-lg md:text-2xl lg:text-3xl font-semibold">
+        <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
           Thanks, {userName}!
           <br />
           We received your order

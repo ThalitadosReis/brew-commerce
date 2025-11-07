@@ -16,18 +16,18 @@ export default function Section({
   className = "",
 }: SectionProps) {
   return (
-    <div className="mb-10 lg:mb-14">
+    <div className="mb-8 lg:mb-12">
       <div className={`max-w-xl mx-auto text-center space-y-2 ${className}`}>
         {subtitle && (
           <h6 className="text-base md:text-lg lg:text-2xl text-black tracking-wide">
             {subtitle}
           </h6>
         )}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-snug">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-snug">
           {title}
         </h2>
         {description && (
-          <p className="text-sm sm:text-base md:text-[1.05rem] lg:text-[1.1rem] leading-6 text-black/75">
+          <p className="text-sm md:text-base lg:text-text-lg leading-6 text-black/75">
             {description}
           </p>
         )}

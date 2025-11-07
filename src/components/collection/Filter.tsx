@@ -5,7 +5,6 @@ import { Product } from "@/types/product";
 import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
 
-const sizes = ["250g", "500g", "1kg"] as const;
 export type SortOption = "a-z" | "z-a" | "price-low" | "price-high";
 
 interface FilterProps {
@@ -15,8 +14,6 @@ interface FilterProps {
   setSelectedRoasts: (roasts: string[]) => void;
   selectedCountries: string[];
   setSelectedCountries: (countries: string[]) => void;
-  selectedSizes: string[];
-  setSelectedSizes: (sizes: string[]) => void;
   showFilters: boolean;
   onClose: () => void;
   products: Product[];
@@ -75,8 +72,6 @@ export default function Filter({
   setSelectedRoasts,
   selectedCountries,
   setSelectedCountries,
-  selectedSizes,
-  setSelectedSizes,
   products,
   onFilter,
 }: FilterProps) {
@@ -97,10 +92,8 @@ export default function Filter({
 
   const hasActiveFilters = useMemo(
     () =>
-      selectedRoasts.length > 0 ||
-      selectedCountries.length > 0 ||
-      selectedSizes.length > 0,
-    [selectedRoasts, selectedCountries, selectedSizes]
+      selectedRoasts.length > 0 || selectedCountries.length > 0,
+    [selectedRoasts, selectedCountries]
   );
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -109,7 +102,6 @@ export default function Filter({
   const resetFilters = () => {
     setSelectedRoasts([]);
     setSelectedCountries([]);
-    setSelectedSizes([]);
     setSortBy("a-z");
   };
 
@@ -125,11 +117,8 @@ export default function Filter({
         const matchesCountry =
           selectedCountries.length === 0 ||
           selectedCountries.includes(product.country);
-        const matchesSize =
-          selectedSizes.length === 0 ||
-          product.sizes.some((s) => selectedSizes.includes(s.size));
 
-        return matchesRoast && matchesCountry && matchesSize;
+        return matchesRoast && matchesCountry;
       });
 
       const sorted = [...filtered].sort((a, b) => {
@@ -147,7 +136,7 @@ export default function Filter({
 
       onFilter(sorted);
     },
-    [products, sortBy, selectedRoasts, selectedCountries, selectedSizes],
+    [products, sortBy, selectedRoasts, selectedCountries],
     { delay: 300 }
   );
 
@@ -187,47 +176,6 @@ export default function Filter({
         id="filters-panel"
         className={`px-6 lg:px-0 lg:block ${isFilterOpen ? "block" : "hidden"}`}
       >
-        {/* size */}
-        <div className="my-4">
-          <p className="text-sm">Size</p>
-          <div className="w-full flex flex-col gap-2 mt-2">
-            {sizes.map((size) => {
-              const isSelected = selectedSizes.includes(size);
-              return (
-                <button
-                  key={size}
-                  onClick={() =>
-                    isSelected
-                      ? setSelectedSizes(
-                          selectedSizes.filter((s) => s !== size)
-                        )
-                      : setSelectedSizes([...selectedSizes, size])
-                  }
-                  className="flex items-center gap-2 text-sm transition-colors"
-                  aria-pressed={isSelected}
-                  aria-label={`Toggle size ${size}`}
-                >
-                  <span
-                    className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
-                      isSelected
-                        ? "bg-black"
-                        : "border-black/25 hover:border-black/50"
-                    }`}
-                  >
-                    {isSelected && (
-                      <CheckIcon
-                        size={12}
-                        weight="bold"
-                        className="text-white"
-                      />
-                    )}
-                  </span>
-                  <span className="text-xs">{size}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* roast */}
         {availableRoasts.length > 0 && (

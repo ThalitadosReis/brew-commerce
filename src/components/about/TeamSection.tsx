@@ -127,7 +127,7 @@ export default function TeamSection() {
         <div
           ref={carouselRef}
           data-slot="carousel-content"
-          className="flex overflow-x-hidden scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="flex overflow-x-hidden snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {teamMembers.map((member, index) => (
             <div
@@ -135,7 +135,7 @@ export default function TeamSection() {
               role="group"
               aria-label={`${index + 1} of ${teamMembers.length}`}
               data-slot="carousel-item"
-              className="min-w-0 shrink-0 grow-0 basis-full sm:basis-1/1 md:basis-1/3 lg:basis-1/4 pr-6"
+              className="min-w-0 shrink-0 grow-0 basis-full sm:basis-1/1 md:basis-1/3 lg:basis-1/4 mr-4 last:mr-0 snap-start"
             >
               <div className="flex flex-col space-y-4">
                 <div className="relative aspect-square overflow-hidden">

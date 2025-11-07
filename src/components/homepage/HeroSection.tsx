@@ -28,8 +28,8 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
-      <div className="relative z-10 max-w-3xl text-center px-8 text-white">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight">
+      <div className="relative z-10 max-w-3xl text-center px-6 text-white">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
           Craft coffee that tells a story in every cup
         </h1>
         <p className="text-sm md:text-base lg:text-lg">

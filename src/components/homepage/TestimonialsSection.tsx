@@ -80,7 +80,7 @@ export default function TestimonialsSection() {
                 </blockquote>
 
                 <div className="flex flex-col items-center">
-                  <div className="mb-2">
+                  <div className="mb-2 w-16 h-16">
                     <Image
                       src={t.image}
                       alt={`${t.name} avatar`}

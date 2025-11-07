@@ -31,7 +31,7 @@ export default function StorySection() {
   return (
     <section className="max-w-7xl mx-auto">
       <Section
-        className="px-8"
+        className="px-6"
         subtitle="Roots"
         title="A journey of passion and precision in coffee"
         description="Born from a deep love of coffee and commitment to craft, our small business began in a tiny kitchen with a single mission."
@@ -39,13 +39,13 @@ export default function StorySection() {
 
       <div
         ref={scrollRef}
-        className="w-full overflow-x-auto hide-scrollbar scroll-container"
+        className="w-full overflow-x-auto hide-scrollbar scroll-container touch-pan-x"
       >
         <div className="flex gap-4">
           {[...STORY_IMAGES, ...STORY_IMAGES].map((src, idx) => (
             <div
               key={idx}
-              className="relative w-[70vw] sm:w-[40vw] lg:w-[30vw] flex-none"
+              className="relative w-[70vw] sm:w-[40vw] lg:w-[30vw] flex-none snap-start scroll-mr-4"
             >
               <Image
                 src={src}

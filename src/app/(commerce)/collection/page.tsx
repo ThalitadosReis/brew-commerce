@@ -21,7 +21,6 @@ export default function CollectionPage() {
   const [sortBy, setSortBy] = useState<SortOption>("a-z");
   const [selectedRoasts, setSelectedRoasts] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -48,7 +47,7 @@ export default function CollectionPage() {
   if (loading) return <Loading message="Loading..." />;
 
   return (
-    <div className="bg-black/5 pt-48 pb-24 space-y-24">
+    <div className="bg-black/5 py-32 space-y-24">
       <PageHeader
         title="Craft coffee selection"
         description="Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions."
@@ -69,8 +68,6 @@ export default function CollectionPage() {
             setSelectedRoasts={setSelectedRoasts}
             selectedCountries={selectedCountries}
             setSelectedCountries={setSelectedCountries}
-            selectedSizes={selectedSizes}
-            setSelectedSizes={setSelectedSizes}
             products={products}
             onFilter={setFilteredProducts}
           />
