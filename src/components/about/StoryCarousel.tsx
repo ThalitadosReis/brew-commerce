@@ -15,15 +15,17 @@ export default function StoryCarousel() {
 
     const speed = 0.5;
     let rafId: number;
+    let scrollPosition = container.scrollLeft;
 
     const loop = () => {
-      if (!isDragging.current) {
-        container.scrollLeft += speed;
-        const maxScroll = Math.max(container.scrollWidth / 2, container.clientWidth);
-        if (container.scrollLeft >= maxScroll) {
-          container.scrollLeft = 0;
-        }
+      const loopWidth = container.scrollWidth / 2;
+      if (!isDragging.current && loopWidth > 0) {
+        scrollPosition = (scrollPosition + speed) % loopWidth;
+        container.scrollLeft = scrollPosition;
+      } else if (isDragging.current) {
+        scrollPosition = container.scrollLeft;
       }
+
       rafId = requestAnimationFrame(loop);
     };
 

@@ -59,7 +59,7 @@ export default function Card({
         className={`relative shrink-0 w-full ${
           isBottom
             ? "h-64 md:w-1/2 lg:w-full lg:h-full"
-            : "h-64 md:w-1/2 lg:h-80"
+            : "h-64 md:w-1/2 lg:h-full"
         }`}
       >
         <Image
@@ -67,7 +67,7 @@ export default function Card({
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className={`object-cover ${isBottom ? "object-[50%_40%]" : ""}`}
+          className={`object-cover ${isBottom ? "object-[40%_50%]" : ""}`}
         />
         <div className="absolute inset-0 bg-black/30" />
       </div>

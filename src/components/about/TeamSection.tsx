@@ -185,7 +185,7 @@ export default function TeamSection() {
                     </h6>
                     <p className="text-sm text-black/50">{member.title}</p>
                   </div>
-                  <p className="text-xs md:text-sm text-black/75">
+                  <p className="text-sm md:text-base text-black/75">
                     {member.description}
                   </p>
                 </div>

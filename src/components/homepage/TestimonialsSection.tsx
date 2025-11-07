@@ -104,7 +104,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="bg-white/90 py-12 lg:py-24">
+    <section className="bg-white/90 px-4 lg:px-6 py-12 lg:py-24">
       <Section
         subtitle="Voices"
         title="Stories poured from every cup"
@@ -126,7 +126,7 @@ export default function TestimonialsSection() {
               key={i}
               role="group"
               aria-roledescription="slide"
-              className="shrink-0 basis-full mb-4 px-6"
+              className="shrink-0 basis-full mb-4"
             >
               <div className="flex flex-col items-center justify-center text-center space-y-4">
                 <blockquote className="max-w-lg mx-auto text-base lg:text-lg font-light">
