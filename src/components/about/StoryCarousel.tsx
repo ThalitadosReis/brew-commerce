@@ -19,7 +19,7 @@ export default function StoryCarousel() {
     const loop = () => {
       if (!isDragging.current) {
         container.scrollLeft += speed;
-        const maxScroll = container.scrollWidth / 2;
+        const maxScroll = Math.max(container.scrollWidth / 2, container.clientWidth);
         if (container.scrollLeft >= maxScroll) {
           container.scrollLeft = 0;
         }
