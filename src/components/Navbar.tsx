@@ -394,10 +394,10 @@ export default function Navbar() {
           />
         )}
         <div
-          className={`lg:hidden fixed left-4 right-4 bg-white transition-transform duration-300 z-40 ${
+          className={`lg:hidden fixed left-4 right-4 md:left-6 md:right-6 bg-white transition-transform duration-300 z-40 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+6rem)]"
           }`}
-          style={{ top: "var(--navbar-height, 96px)" }}
+          style={{ top: "var(--navbar-height, 72px)" }}
         >
           <nav className="px-6 py-4">
             {links.map((link, index) => (

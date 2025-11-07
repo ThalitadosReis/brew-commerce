@@ -6,71 +6,61 @@ import { STORY_IMAGES } from "@/lib/images/about";
 export default function StoryCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
-  const lastX = useRef<number | null>(null);
+  const startX = useRef(0);
+  const startScroll = useRef(0);
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
-    let scrollPos = container.scrollLeft;
+    container.style.scrollBehavior = "auto";
     const speed = 0.5;
-    let animationFrame: number;
+    let rafId: number;
 
-    const step = () => {
+    const loop = () => {
       if (!isDragging.current) {
-        scrollPos += speed;
-        container.scrollLeft = scrollPos;
+        container.scrollLeft += speed;
+        const maxScroll = container.scrollWidth / 2;
+        if (container.scrollLeft >= maxScroll) {
+          container.scrollLeft = 0;
+        }
       }
-
-      if (scrollPos >= container.scrollWidth / 2) {
-        scrollPos = 0;
-        container.scrollLeft = 0;
-      }
-
-      animationFrame = requestAnimationFrame(step);
+      rafId = requestAnimationFrame(loop);
     };
 
     const handlePointerDown = (event: PointerEvent) => {
       isDragging.current = true;
-      lastX.current = event.clientX;
-      scrollPos = container.scrollLeft;
-      try {
-        container.setPointerCapture(event.pointerId);
-      } catch {}
+      startX.current = event.clientX;
+      startScroll.current = container.scrollLeft;
+      container.setPointerCapture?.(event.pointerId);
     };
 
     const handlePointerMove = (event: PointerEvent) => {
-      if (!isDragging.current || lastX.current == null) return;
-      const deltaX = event.clientX - lastX.current;
-      lastX.current = event.clientX;
-      container.scrollLeft -= deltaX;
-      scrollPos = container.scrollLeft;
+      if (!isDragging.current) return;
+      const delta = event.clientX - startX.current;
+      container.scrollLeft = startScroll.current - delta;
     };
 
     const handlePointerUp = (event?: PointerEvent) => {
       isDragging.current = false;
-      lastX.current = null;
-      scrollPos = container.scrollLeft;
-      if (event) {
-        try {
-          container.releasePointerCapture(event.pointerId);
-        } catch {}
-      }
+      if (event) container.releasePointerCapture?.(event.pointerId);
     };
 
     container.addEventListener("pointerdown", handlePointerDown);
     container.addEventListener("pointermove", handlePointerMove);
     container.addEventListener("pointerup", handlePointerUp);
     container.addEventListener("pointerleave", handlePointerUp);
+    container.addEventListener("pointercancel", handlePointerUp);
 
-    animationFrame = requestAnimationFrame(step);
+    rafId = requestAnimationFrame(loop);
 
     return () => {
       container.removeEventListener("pointerdown", handlePointerDown);
       container.removeEventListener("pointermove", handlePointerMove);
       container.removeEventListener("pointerup", handlePointerUp);
       container.removeEventListener("pointerleave", handlePointerUp);
-      cancelAnimationFrame(animationFrame);
+      container.removeEventListener("pointercancel", handlePointerUp);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 

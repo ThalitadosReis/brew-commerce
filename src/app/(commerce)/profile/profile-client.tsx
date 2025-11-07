@@ -277,7 +277,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
                               </div>
                               <div className="flex-1">
                                 <div className="space-y-2">
-                                  <div className="flex-1 flex justify-between">
+                                  <div className="flex-1 flex items-center justify-between">
                                     <p className="text-base md:text-lg font-semibold">
                                       {item.name}
                                     </p>

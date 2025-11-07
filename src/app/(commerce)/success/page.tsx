@@ -156,8 +156,8 @@ function SuccessPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-black/5 flex items-center justify-center">
-      <div className="px-6 text-center space-y-4">
+    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-12">
+      <div className="px-4 md:px-6 text-center space-y-4">
         <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
           Thanks, {userName}!
           <br />
@@ -171,9 +171,7 @@ function SuccessPageContent() {
           </div>
         )}
 
-        {error && (
-          <div className="bg-white p-8 text-red-600">{error}</div>
-        )}
+        {error && <div className="bg-white p-8 text-red-600">{error}</div>}
 
         <p className="text-sm font-light">
           You will receive a confirmation email with tracking details as your
@@ -181,7 +179,7 @@ function SuccessPageContent() {
         </p>
 
         <div className="flex justify-center">
-          <Button as="link" href="/collection" variant="tertiary">
+          <Button as="link" href="/collection" variant="primary">
             Continue shopping
           </Button>
         </div>

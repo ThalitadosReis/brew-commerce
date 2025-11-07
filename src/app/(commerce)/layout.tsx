@@ -21,6 +21,11 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const heroRef = useRef<HTMLDivElement | null>(null);
 
+  const relaxedPaddingPaths = useMemo(
+    () => ["/success", "/sign-in", "/sign-up"],
+    []
+  );
+
   const hideLayout = useMemo(() => {
     if (!pathname) return false;
     const hiddenPrefixes = ["/user-profile"];
@@ -32,6 +37,11 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     () => (pathname ?? "").startsWith("/admin"),
     [pathname]
   );
+
+  const needsStandardPadding = useMemo(() => {
+    if (!pathname || pathname === "/") return false;
+    return !relaxedPaddingPaths.some((route) => pathname.startsWith(route));
+  }, [pathname, relaxedPaddingPaths]);
 
   // track active scrolling
   useEffect(() => {
@@ -93,7 +103,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
                 <div
                   ref={pathname === "/" ? heroRef : undefined}
                   className={`bg-black/5 min-h-screen ${
-                    pathname === "/" ? "" : "pt-32"
+                    pathname === "/" ? "" : needsStandardPadding ? "pt-32" : ""
                   }`}
                 >
                   {children}

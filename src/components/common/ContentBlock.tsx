@@ -55,9 +55,9 @@ const ContentBlock = ({
           <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
             {title}
           </h4>
-          <p className="text-sm md:text-base lg:text-lg leading-6 text-black/75 font-light">
+          <div className="text-sm md:text-base lg:text-lg leading-6 text-black/75 font-light">
             {text}
-          </p>
+          </div>
         </div>
 
         {buttons.length > 0 && (

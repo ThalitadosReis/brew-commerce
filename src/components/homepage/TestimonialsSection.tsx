@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Button from "@/components/common/Button";
@@ -45,6 +45,9 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   const [active, setActive] = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const isDragging = useRef(false);
 
   const nextSlide = () => setActive((prev) => (prev + 1) % testimonials.length);
   const prevSlide = () =>
@@ -57,8 +60,51 @@ export default function TestimonialsSection() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      isDragging.current = true;
+      touchStartX.current = event.clientX;
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!isDragging.current || touchStartX.current == null) return;
+      const deltaX = event.clientX - touchStartX.current;
+      if (Math.abs(deltaX) > 40) {
+        if (deltaX > 0) {
+          prevSlide();
+        } else {
+          nextSlide();
+        }
+        touchStartX.current = null;
+        isDragging.current = false;
+      }
+    };
+
+    const handlePointerUp = () => {
+      isDragging.current = false;
+      touchStartX.current = null;
+    };
+
+    container.addEventListener("pointerdown", handlePointerDown);
+    container.addEventListener("pointermove", handlePointerMove);
+    container.addEventListener("pointerup", handlePointerUp);
+    container.addEventListener("pointerleave", handlePointerUp);
+    container.addEventListener("pointercancel", handlePointerUp);
+
+    return () => {
+      container.removeEventListener("pointerdown", handlePointerDown);
+      container.removeEventListener("pointermove", handlePointerMove);
+      container.removeEventListener("pointerup", handlePointerUp);
+      container.removeEventListener("pointerleave", handlePointerUp);
+      container.removeEventListener("pointercancel", handlePointerUp);
+    };
+  }, []);
+
   return (
-    <section className="bg-white/90 px-4 md:px-6 py-12 lg:py-24">
+    <section className="bg-white/90 py-12 lg:py-24">
       <Section
         subtitle="Voices"
         title="Stories poured from every cup"
@@ -66,7 +112,8 @@ export default function TestimonialsSection() {
       />
 
       <div
-        className="relative overflow-hidden group"
+        ref={containerRef}
+        className="relative overflow-hidden group cursor-grab active:cursor-grabbing"
         role="region"
         aria-roledescription="carousel"
       >
@@ -79,7 +126,7 @@ export default function TestimonialsSection() {
               key={i}
               role="group"
               aria-roledescription="slide"
-              className="shrink-0 basis-full mb-4"
+              className="shrink-0 basis-full mb-4 px-6"
             >
               <div className="flex flex-col items-center justify-center text-center space-y-4">
                 <blockquote className="max-w-lg mx-auto text-base lg:text-lg font-light">
@@ -106,7 +153,7 @@ export default function TestimonialsSection() {
         </div>
 
         <Button
-          className="flex p-3! absolute! left-0 top-1/2 -translate-y-1/2 items-center opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
+          className="hidden lg:flex p-3! absolute! left-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 lg:group-hover:opacity-100"
           onClick={prevSlide}
           aria-label="Previous slide"
           variant="secondary"
@@ -114,7 +161,7 @@ export default function TestimonialsSection() {
           <CaretLeftIcon size={24} weight="light" />
         </Button>
         <Button
-          className="flex p-3! absolute! right-0 top-1/2 -translate-y-1/2 items-center opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
+          className="hidden lg:flex p-3! absolute! right-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 lg:group-hover:opacity-100"
           onClick={nextSlide}
           aria-label="Next slide"
           variant="secondary"

@@ -170,10 +170,21 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
     // require login before checkout
     if (!user) {
-    const returnUrl = window.location.href;
-    sessionStorage.setItem("returnAfterLogin", returnUrl);
+      if (typeof window !== "undefined") {
+        const isAuthPage = window.location.pathname.startsWith("/sign-in");
+        const storedReturn = sessionStorage.getItem("returnAfterLogin") || "/";
+        const currentUrl = isAuthPage ? storedReturn : window.location.href;
 
-    router.push(`/sign-in?redirect_url=${encodeURIComponent(returnUrl)}`);
+        if (!isAuthPage) {
+          sessionStorage.setItem("returnAfterLogin", currentUrl);
+        }
+
+        router.push(
+          `/sign-in?redirect_url=${encodeURIComponent(currentUrl || "/")}`
+        );
+      } else {
+        router.push("/sign-in");
+      }
       return;
     }
 

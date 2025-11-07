@@ -2,9 +2,8 @@
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { XIcon } from "@phosphor-icons/react";
-
 import { cn } from "@/lib/utils";
+import { XIcon } from "@phosphor-icons/react";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -103,7 +102,7 @@ export default function Drawer({
       >
         <div className="flex h-full w-full flex-col">
           {showHeader && (
-            <header className="flex items-center justify-between border-b border-black/5 p-6">
+            <header className="flex items-center justify-between border-b border-black/10 p-6">
               {title && (
                 <h6 className="text-base md:text-lg lg:text-2xl text-black tracking-wide">
                   {title}
@@ -123,10 +122,19 @@ export default function Drawer({
             </header>
           )}
 
-          <div className="flex-1 overflow-y-auto p-6">{children}</div>
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto p-6",
+              footer ? "pb-32" : undefined
+            )}
+          >
+            {children}
+          </div>
 
           {footer && (
-            <footer className="border-t border-black/5 p-6">{footer}</footer>
+            <footer className="sticky bottom-0 border-t border-black/10 p-6">
+              {footer}
+            </footer>
           )}
         </div>
       </section>

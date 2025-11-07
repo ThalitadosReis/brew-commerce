@@ -353,7 +353,7 @@ export function AuthProvider({
     } finally {
       setLoading(false);
       clearSession();
-      router.push("/admin-login");
+      router.push("/");
     }
   }, [clearSession, router, isDev]);
 

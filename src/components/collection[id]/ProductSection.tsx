@@ -58,8 +58,8 @@ function CarouselThumbnails({
 
   if (images.length === 0) {
     return (
-      <div className="relative flex h-full items-center justify-center bg-black/5">
-        <PackageIcon size={32} className="text-black/40" />
+      <div className="relative flex h-full items-center justify-center bg-black/10">
+        <PackageIcon size={32} className="text-black/50" />
       </div>
     );
   }
