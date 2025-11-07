@@ -4,36 +4,36 @@ import Section from "@/components/common/Section";
 import Button from "@/components/common/Button";
 import { CONTACT_LOCATION_IMAGES } from "@/lib/images/contact";
 
-export default function LocationSection() {
-  const locations = [
-    {
-      name: "Amsterdam",
-      description: "Our home base in the heart of Amsterdam's coffee culture.",
-      image: CONTACT_LOCATION_IMAGES[0],
-      linkText: "View office",
-      mapLink: "https://www.google.com/maps/place/Amsterdam,+Netherlands",
-    },
-    {
-      name: "Barcelona",
-      description: "Bringing coffee craft to the bustling streets.",
-      image: CONTACT_LOCATION_IMAGES[1],
-      linkText: "View office",
-      mapLink: "https://www.google.com/maps/place/Barcelona,+Spain",
-    },
-    {
-      name: "Zürich",
-      description: "Sharing our coffee story in Zürich's vibrant scene.",
-      image: CONTACT_LOCATION_IMAGES[2],
-      linkText: "View office",
-      mapLink: "https://www.google.com/maps/place/Z%C3%BCrich,+Switzerland",
-    },
-  ];
+const locations = [
+  {
+    name: "Amsterdam",
+    description: "Our home base in the heart of Amsterdam's coffee culture.",
+    image: CONTACT_LOCATION_IMAGES[0],
+    linkText: "View office",
+    mapLink: "https://www.google.com/maps/place/Amsterdam,+Netherlands",
+  },
+  {
+    name: "Barcelona",
+    description: "Bringing coffee craft to the bustling streets.",
+    image: CONTACT_LOCATION_IMAGES[1],
+    linkText: "View office",
+    mapLink: "https://www.google.com/maps/place/Barcelona,+Spain",
+  },
+  {
+    name: "Zürich",
+    description: "Sharing our coffee story in Zürich's vibrant scene.",
+    image: CONTACT_LOCATION_IMAGES[2],
+    linkText: "View office",
+    mapLink: "https://www.google.com/maps/place/Z%C3%BCrich,+Switzerland",
+  },
+];
 
+export default function LocationSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = locations[activeIndex];
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
       <Section
         subtitle="brew."
         title="Our locations"
@@ -52,7 +52,7 @@ export default function LocationSection() {
               }`}
               onClick={() => setActiveIndex(index)}
             >
-              <h5 className="text-lg md:text-xl lg:text-2xl font-semibold">
+              <h5 className="text-xl md:text-2xl lg:text-3xl font-semibold">
                 {loc.name}
               </h5>
               <p className="text-sm lg:text-base">{loc.description}</p>

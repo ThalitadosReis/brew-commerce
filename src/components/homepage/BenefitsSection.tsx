@@ -7,7 +7,7 @@ import {
 import Section from "@/components/common/Section";
 
 export function BenefitsSection() {
-  const iconClasses = "h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9";
+  const iconClasses = "h-7 w-7 lg:h-8 lg:w-8";
   const benefits = [
     {
       title: "Why choose our coffee",
