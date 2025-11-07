@@ -13,7 +13,6 @@ export default function StoryCarousel() {
     const container = scrollRef.current;
     if (!container) return;
 
-    container.style.scrollBehavior = "auto";
     const speed = 0.5;
     let rafId: number;
 
@@ -62,6 +61,9 @@ export default function StoryCarousel() {
       container.removeEventListener("pointercancel", handlePointerUp);
       cancelAnimationFrame(rafId);
     };
+    if (container) {
+      container.style.touchAction = "pan-y";
+    }
   }, []);
 
   return (
