@@ -4,7 +4,7 @@ import { FEATURE_IMAGES } from "@/lib/images/home";
 
 export function FeaturesSection() {
   return (
-    <section className="bg-white/90 py-24 px-4 md:px-6">
+    <section className="bg-white/90 px-4 md:px-6 py-12 lg:py-24">
       <Section
         subtitle="Craft to cup"
         title="Every step tailored for flavor"
@@ -26,7 +26,6 @@ export function FeaturesSection() {
             image={FEATURE_IMAGES[1]}
           />
         </div>
-
         <Card
           subtitle="Contact"
           title="Reach out to us for brewing guidance"

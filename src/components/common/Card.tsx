@@ -24,10 +24,12 @@ export default function Card({
   imagePosition = "right",
   ctaLabel = "Learn more",
 }: CardProps) {
+  const isBottom = imagePosition === "bottom";
+
   return (
     <div
       className={`flex flex-col ${
-        imagePosition === "right" ? "md:flex-row" : "md:flex-col"
+        isBottom ? "md:flex-row lg:flex-col" : "md:flex-row"
       } border border-black/25 overflow-hidden ${className}`}
     >
       <div className="flex flex-col justify-center flex-1">
@@ -55,9 +57,9 @@ export default function Card({
 
       <div
         className={`relative shrink-0 w-full ${
-          imagePosition === "right"
-            ? "md:w-1/2 min-h-64 lg:min-h-80"
-            : "h-64 lg:h-full"
+          isBottom
+            ? "h-64 md:w-1/2 lg:w-full lg:h-full"
+            : "h-64 md:w-1/2 lg:h-80"
         }`}
       >
         <Image
@@ -65,9 +67,7 @@ export default function Card({
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className={`object-cover ${
-            imagePosition === "bottom" ? "object-[50%_40%]" : ""
-          }`}
+          className={`object-cover ${isBottom ? "object-[50%_40%]" : ""}`}
         />
         <div className="absolute inset-0 bg-black/30" />
       </div>

@@ -90,11 +90,14 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
             ) : (
               <>
                 <Navbar />
-                {pathname === "/" ? (
-                  <div ref={heroRef}>{children}</div>
-                ) : (
-                  children
-                )}
+                <div
+                  ref={pathname === "/" ? heroRef : undefined}
+                  className={`bg-black/5 min-h-screen ${
+                    pathname === "/" ? "" : "pt-32"
+                  }`}
+                >
+                  {children}
+                </div>
                 <Footer />
 
                 <Button

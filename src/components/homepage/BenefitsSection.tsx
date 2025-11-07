@@ -32,7 +32,7 @@ export function BenefitsSection() {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
       <Section
         subtitle="Benefits"
         title="Highest grade Arabica beans"

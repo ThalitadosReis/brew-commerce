@@ -58,7 +58,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="bg-black/10 py-24 px-4 md:px-6">
+    <section className="bg-white/90 px-4 md:px-6 py-12 lg:py-24">
       <Section
         subtitle="Voices"
         title="Stories poured from every cup"
@@ -106,7 +106,7 @@ export default function TestimonialsSection() {
         </div>
 
         <Button
-          className="hidden md:flex p-3! absolute! left-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="flex p-3! absolute! left-0 top-1/2 -translate-y-1/2 items-center opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
           onClick={prevSlide}
           aria-label="Previous slide"
           variant="secondary"
@@ -114,7 +114,7 @@ export default function TestimonialsSection() {
           <CaretLeftIcon size={24} weight="light" />
         </Button>
         <Button
-          className="hidden md:flex p-3! absolute! right-0 top-1/2 -translate-y-1/2 items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="flex p-3! absolute! right-0 top-1/2 -translate-y-1/2 items-center opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
           onClick={nextSlide}
           aria-label="Next slide"
           variant="secondary"

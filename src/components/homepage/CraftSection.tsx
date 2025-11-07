@@ -34,7 +34,7 @@ export function CraftSection() {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
       {crafts.map((item, index) => (
         <ContentBlock
           key={index}
