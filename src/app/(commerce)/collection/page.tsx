@@ -47,7 +47,7 @@ export default function CollectionPage() {
   if (loading) return <Loading message="Loading..." />;
 
   return (
-    <div className="bg-black/5 py-32 space-y-24">
+    <>
       <PageHeader
         title="Craft coffee selection"
         description="Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions."
@@ -55,7 +55,7 @@ export default function CollectionPage() {
 
       <div
         ref={collectionRef}
-        className="max-w-7xl mx-auto px-6 lg:flex lg:gap-12"
+        className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:pb-24 lg:flex lg:gap-12"
       >
         {/* filter */}
         <div className="lg:sticky lg:top-12 h-fit">
@@ -82,16 +82,17 @@ export default function CollectionPage() {
       </div>
 
       <QualitySection />
+      
       <ContentBlock
-        className="bg-white"
+        className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0 py-12 lg:py-24"
+        contentClassName="!p-0"
         title="Brew your perfect moment"
         text="Discover a world of flavor with fresh coffee delivered directly to your doorstep."
         image={COLLECTION_CONTACT_IMAGE}
         buttons={[
           { label: "Contact us", href: "/contact", variant: "primary" },
-          { label: "Learn more", href: "/about", variant: "secondary" },
         ]}
       />
-    </div>
+    </>
   );
 }

@@ -343,7 +343,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 pt-24">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 pb-12 lg:pb-24">
       <div className="flex-1">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* image */}

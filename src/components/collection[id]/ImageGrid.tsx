@@ -2,9 +2,9 @@ import Image from "next/image";
 import Section from "@/components/common/Section";
 import { MOMENTS_IMAGES } from "@/lib/images/products";
 
-export default function CoffeeMoments() {
+export default function ImageGrid() {
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0 py-12 lg:py-24">
       <Section
         title="Coffee moments"
         description="Explore the beauty and craft behind our coffee."
@@ -27,7 +27,7 @@ export default function CoffeeMoments() {
               height={400}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 bg-black/30" />
           </div>
         ))}
       </div>

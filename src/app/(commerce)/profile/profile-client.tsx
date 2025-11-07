@@ -165,8 +165,8 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
   if (loading) return <Loading message="Loading profile..." />;
 
   return (
-    <div className="bg-black/5 py-32 space-y-24">
-      <header className="max-w-7xl mx-auto px-6">
+    <div className="space-y-12">
+      <header>
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-black/25 bg-white">
             {imageUrl ? (
@@ -189,7 +189,7 @@ export default function ProfileClient({ firstName, email, imageUrl }: Props) {
         </div>
       </header>
 
-      <section className="max-w-7xl mx-auto px-6">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 pb-12 lg:pb-24">
         <div className="mb-4">
           <h5 className="text-lg font-semibold">Order history</h5>
           <p className="text-xs md:text-sm text-black/75">

@@ -32,13 +32,13 @@ export default function FavoritesPage() {
   if (loading) return <Loading message="Loading favorites..." />;
 
   return (
-    <div className="bg-black/5 pt-48 pb-24 space-y-24">
+    <>
       <PageHeader
         title="Favourites"
         description="Your carefully selected coffee selection tells a story of taste and passion."
       />
 
-      <section className="max-w-7xl mx-auto px-6">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 pb-12 lg:pb-24">
         <div className="flex justify-end mb-2">
           <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
         </div>
@@ -71,20 +71,6 @@ export default function FavoritesPage() {
           </div>
         )}
       </section>
-
-      <ContentBlock
-        className="bg-white"
-        title="Ready to brew your favorites?"
-        text="Transform your saved selections into a delicious reality. Each coffee tells a story waiting to be savored."
-        image={FAVORITES_CTA_IMAGE}
-        buttons={[
-          {
-            label: "Explore more",
-            href: "/collection",
-            variant: "secondary",
-          },
-        ]}
-      />
-    </div>
+    </>
   );
 }

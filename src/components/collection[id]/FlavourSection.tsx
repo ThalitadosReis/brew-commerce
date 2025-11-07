@@ -43,9 +43,8 @@ export default function FlavourSection() {
   const active = tabContent[activeTab];
 
   return (
-    <section className="max-w-7xl mx-auto">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0 py-12 lg:py-24">
       <Section
-        className="px-6"
         subtitle="Origin"
         title="Taste the difference"
         description="Our coffee represents more than a drink. It's a journey through Ethiopian landscapes and traditions."

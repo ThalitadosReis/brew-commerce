@@ -30,47 +30,51 @@ export default function QualitySection() {
   const active = TABS.find((t) => t.key === activeTab) ?? TABS[0];
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
-      <Section
-        subtitle="Quality"
-        title="Beyond the perfect cup"
-        description="Our commitment extends from farm to cup. We ensure quality at every step of our coffee's journey."
-      />
+    <section className="bg-white/90">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
+        <Section
+          subtitle="Quality"
+          title="Beyond the perfect cup"
+          description="Our commitment extends from farm to cup. We ensure quality at every step of our coffee's journey."
+        />
 
-      <div className="grid md:grid-cols-2 gap-x-12">
-        <div className="flex flex-col mb-8 md:mb-0 order-1 md:order-2">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              className={`text-left py-4 border-b border-black/75 space-y-2 ${
-                activeTab === tab.key ? "text-black" : "text-black opacity-50"
-              }`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold">{tab.title}</h4>
-              <p
-                className={`text-sm md:text-base font-light transition-all duration-300 ${
-                  activeTab === tab.key
-                    ? "opacity-100"
-                    : "opacity-0 h-0 overflow-hidden"
+        <div className="grid md:grid-cols-2 gap-x-12">
+          <div className="flex flex-col mb-8 md:mb-0 order-1 md:order-2">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                className={`text-left py-4 border-b border-black/75 space-y-2 ${
+                  activeTab === tab.key ? "text-black" : "text-black opacity-50"
                 }`}
+                onClick={() => setActiveTab(tab.key)}
               >
-                {tab.text}
-              </p>
-            </button>
-          ))}
-        </div>
+                <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold">
+                  {tab.title}
+                </h4>
+                <p
+                  className={`text-sm md:text-base font-light transition-all duration-300 ${
+                    activeTab === tab.key
+                      ? "opacity-100"
+                      : "opacity-0 h-0 overflow-hidden"
+                  }`}
+                >
+                  {tab.text}
+                </p>
+              </button>
+            ))}
+          </div>
 
-        <div className="flex justify-center items-center order-2 md:order-1">
-          <div className="relative aspect-square w-full md:h-full">
-            <Image
-              src={active.image}
-              alt={active.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20" />
+          <div className="flex justify-center items-center order-2 md:order-1">
+            <div className="relative aspect-square w-full md:h-full">
+              <Image
+                src={active.image}
+                alt={active.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/20" />
+            </div>
           </div>
         </div>
       </div>
