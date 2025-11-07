@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Button from "@/components/common/Button";
+import Section from "@/components/common/Section";
 import { TESTIMONIALS_AVATARS } from "@/lib/images/home";
 
 const testimonials = [
@@ -57,7 +58,13 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="bg-black/10 py-24 px-4 md:px-6">
+      <Section
+        subtitle="Voices"
+        title="Stories poured from every cup"
+        description="Guests, roasters, and cafe partners share how Brew Commerce fits into their daily ritual."
+      />
+
       <div
         className="relative overflow-hidden group"
         role="region"
@@ -72,26 +79,26 @@ export default function TestimonialsSection() {
               key={i}
               role="group"
               aria-roledescription="slide"
-              className="shrink-0 basis-full mb-6"
+              className="shrink-0 basis-full mb-4"
             >
-              <div className="flex flex-col items-center justify-center space-y-8">
-                <blockquote className="max-w-xl mx-auto text-lg lg:text-xl font-light text-center">
+              <div className="flex flex-col items-center justify-center text-center space-y-4">
+                <blockquote className="max-w-lg mx-auto text-base lg:text-lg font-light">
                   “{t.quote}”
                 </blockquote>
 
-                <div className="flex flex-col items-center">
-                  <div className="mb-2 w-16 h-16">
-                    <Image
-                      src={t.image}
-                      alt={`${t.name} avatar`}
-                      width={40}
-                      height={40}
-                      className="w-full rounded-full object-cover"
-                      unoptimized
-                    />
+                <div className="flex flex-col items-center space-y-2">
+                  <Image
+                    src={t.image}
+                    alt={`${t.name} avatar`}
+                    width={40}
+                    height={40}
+                    className="w-16 h-16 rounded-full object-cover"
+                    unoptimized
+                  />
+                  <div>
+                    <p className="font-semibold">{t.name}</p>
+                    <small>{t.role}</small>
                   </div>
-                  <p className="font-semibold">{t.name}</p>
-                  <small>{t.role}</small>
                 </div>
               </div>
             </div>

@@ -8,53 +8,33 @@ export function CraftSection() {
       title: "Roasted with intention, brewed with care",
       text: "Every bean roasted to highlight its unique flavor profile.",
       image: CRAFT_IMAGES[0],
-      buttons: [
-        { label: "Our Story", href: "/about", variant: "secondary" as const },
-        { label: "Explore", href: "/about", variant: "tertiary" as const },
-      ],
+      href: "/about",
     },
     {
       subtitle: "Passion",
       title: "Connecting coffee lovers with global traditions",
       text: "Bringing communities together through shared experiences.",
       image: CRAFT_IMAGES[1],
-      buttons: [
-        {
-          label: "Our Collection",
-          href: "/collection",
-          variant: "secondary" as const,
-        },
-        { label: "Explore", href: "/collection", variant: "tertiary" as const },
-      ],
+      href: "/collection",
     },
     {
       subtitle: "Heritage",
       title: "Sustainable practices that support communities",
       text: "Ethical sourcing that ensures fairness and sustainability.",
       image: CRAFT_IMAGES[2],
-      buttons: [
-        { label: "Learn More", href: "/about", variant: "secondary" as const },
-        { label: "Explore", href: "/about", variant: "tertiary" as const },
-      ],
+      href: "/about",
     },
     {
       subtitle: "Innovation",
       title: "Reimagining coffee through modern techniques",
       text: "Combining craftsmanship with technology for consistency.",
       image: CRAFT_IMAGES[3],
-      buttons: [
-        {
-          label: "Get in Touch",
-          href: "/contact",
-          variant: "secondary" as const,
-        },
-        { label: "Explore", href: "/contact", variant: "tertiary" as const },
-      ],
+      href: "/contact",
     },
   ];
 
   return (
-    <div>
+    <section className="max-w-7xl mx-auto px-4 md:px-6">
       {crafts.map((item, index) => (
         <ContentBlock
           key={index}
@@ -63,13 +43,17 @@ export function CraftSection() {
           title={item.title}
           text={item.text}
           image={item.image}
-          buttons={item.buttons}
+          buttons={
+            item.href
+              ? [{ label: "Discover", href: item.href, variant: "secondary" }]
+              : undefined
+          }
           imagePosition={index % 2 === 0 ? "right" : "left"}
           className="py-6"
           priority={false}
           sizes="(max-width: 768px) 100vw, 50vw"
         />
       ))}
-    </div>
+    </section>
   );
 }

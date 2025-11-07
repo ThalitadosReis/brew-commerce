@@ -25,14 +25,14 @@ export function HeroSection() {
           priority
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      <div className="relative z-10 max-w-3xl text-center px-6 text-white">
+      <div className="relative z-10 max-w-3xl text-center px-6 text-white space-y-2">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
           Craft coffee that tells a story in every cup
         </h1>
-        <p className="text-sm md:text-base lg:text-lg">
+        <p className="text-sm md:text-base lg:text-lg font-light">
           Discover exceptional coffee sourced sustainably from around the world.
         </p>
       </div>

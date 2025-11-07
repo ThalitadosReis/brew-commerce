@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -231,7 +231,7 @@ export default function Navbar() {
   return (
     <div className="relative">
       <header
-        className={`fixed inset-x-0 top-0 z-50 p-4 transition-transform duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 py-4 px-4 md:px-6 transition-transform duration-300 ${
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >

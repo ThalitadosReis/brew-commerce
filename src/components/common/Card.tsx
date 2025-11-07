@@ -8,6 +8,7 @@ interface CardProps {
   subtitle?: string;
   description: string;
   href?: string;
+  ctaLabel?: string;
   image: string;
   className?: string;
   imagePosition?: "right" | "bottom";
@@ -21,6 +22,7 @@ export default function Card({
   image,
   className = "",
   imagePosition = "right",
+  ctaLabel = "Learn more",
 }: CardProps) {
   return (
     <div
@@ -32,7 +34,7 @@ export default function Card({
         <div className="p-6 space-y-4">
           <div className="space-y-2">
             {subtitle && (
-              <h6 className="text-sm lg:text-base text-black tracking-wide">
+              <h6 className="text-sm md:text-base lg:text-lg text-black tracking-wide">
                 {subtitle}
               </h6>
             )}
@@ -45,7 +47,7 @@ export default function Card({
           </div>
           {href && (
             <Button as="link" href={href} variant="tertiary">
-              Learn more
+              {ctaLabel}
             </Button>
           )}
         </div>
@@ -67,7 +69,7 @@ export default function Card({
             imagePosition === "bottom" ? "object-[50%_40%]" : ""
           }`}
         />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/30" />
       </div>
     </div>
   );
