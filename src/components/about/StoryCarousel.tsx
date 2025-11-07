@@ -45,6 +45,9 @@ export default function StoryCarousel() {
       if (event) container.releasePointerCapture?.(event.pointerId);
     };
 
+    const previousTouchAction = container.style.touchAction;
+    container.style.touchAction = "pan-y";
+
     container.addEventListener("pointerdown", handlePointerDown);
     container.addEventListener("pointermove", handlePointerMove);
     container.addEventListener("pointerup", handlePointerUp);
@@ -59,11 +62,9 @@ export default function StoryCarousel() {
       container.removeEventListener("pointerup", handlePointerUp);
       container.removeEventListener("pointerleave", handlePointerUp);
       container.removeEventListener("pointercancel", handlePointerUp);
+      container.style.touchAction = previousTouchAction;
       cancelAnimationFrame(rafId);
     };
-    if (container) {
-      container.style.touchAction = "pan-y";
-    }
   }, []);
 
   return (

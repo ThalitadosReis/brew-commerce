@@ -6,9 +6,7 @@ import { SortDropdown, SortOption } from "@/components/collection/Filter";
 import Loading from "@/components/common/Loading";
 import ImageCard from "@/components/collection/ImageCard";
 import PageHeader from "@/components/common/PageHeader";
-import ContentBlock from "@/components/common/ContentBlock";
 import Button from "@/components/common/Button";
-import { FAVORITES_CTA_IMAGE } from "@/lib/images/favorites";
 
 export default function FavoritesPage() {
   const { favorites, loading } = useFavorites();
