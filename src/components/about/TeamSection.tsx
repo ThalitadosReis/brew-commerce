@@ -1,12 +1,15 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import Image from "next/image";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import Section from "../common/Section";
 import { TEAM_AVATARS } from "@/lib/images/about";
+import Button from "../common/Button";
 
 export default function TeamSection() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const prevButtonRef = useRef<HTMLButtonElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const [isAtStart, setIsAtStart] = useState(true);
 
   const teamMembers = [
     {
@@ -53,15 +56,18 @@ export default function TeamSection() {
     },
   ];
 
-  const updatePrev = () => {
-    if (!carouselRef.current || !prevButtonRef.current) return;
-    const isAtStart = carouselRef.current.scrollLeft <= 0;
-    prevButtonRef.current.disabled = isAtStart;
-    prevButtonRef.current.classList.toggle("opacity-40", isAtStart);
-    prevButtonRef.current.classList.toggle("cursor-not-allowed", isAtStart);
-  };
+  const updatePrev = useCallback(() => {
+    if (!carouselRef.current) return;
+    const atStart = carouselRef.current.scrollLeft <= 0;
+    setIsAtStart(atStart);
 
-  const scrollNext = () => {
+    if (!prevButtonRef.current) return;
+    prevButtonRef.current.disabled = atStart;
+    prevButtonRef.current.classList.toggle("opacity-40", atStart);
+    prevButtonRef.current.classList.toggle("cursor-not-allowed", atStart);
+  }, []);
+
+  const scrollNext = useCallback(() => {
     if (!carouselRef.current) return;
     const container = carouselRef.current;
     const card = container.querySelector(
@@ -69,8 +75,9 @@ export default function TeamSection() {
     ) as HTMLElement;
     if (!card) return;
 
-    const cardWidth =
-      card.clientWidth + parseInt(getComputedStyle(card).marginRight || "0");
+    const styles = getComputedStyle(container);
+    const gap = parseInt(styles.columnGap || "0");
+    const cardWidth = card.clientWidth + gap;
 
     if (
       container.scrollLeft + container.clientWidth >=
@@ -82,9 +89,9 @@ export default function TeamSection() {
     }
 
     setTimeout(updatePrev, 300);
-  };
+  }, [updatePrev]);
 
-  const scrollPrev = () => {
+  const scrollPrev = useCallback(() => {
     if (!carouselRef.current) return;
     const container = carouselRef.current;
     const card = container.querySelector(
@@ -92,92 +99,119 @@ export default function TeamSection() {
     ) as HTMLElement;
     if (!card) return;
 
-    const cardWidth =
-      card.clientWidth + parseInt(getComputedStyle(card).marginRight || "0");
+    const styles = getComputedStyle(container);
+    const gap = parseInt(styles.columnGap || "0");
+    const cardWidth = card.clientWidth + gap;
 
     if (container.scrollLeft > 0) {
       container.scrollBy({ left: -cardWidth, behavior: "smooth" });
     }
 
     setTimeout(updatePrev, 300);
-  };
+  }, [updatePrev]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
     updatePrev();
     carousel.addEventListener("scroll", updatePrev);
-    return () => carousel.removeEventListener("scroll", updatePrev);
-  }, []);
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartX.current = event.touches[0]?.clientX ?? null;
+    };
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      if (touchStartX.current == null) return;
+      const deltaX = event.changedTouches[0]?.clientX - touchStartX.current;
+      touchStartX.current = null;
+      if (Math.abs(deltaX) < 40) return;
+      if (deltaX > 0) scrollPrev();
+      else scrollNext();
+    };
+
+    carousel.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    carousel.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      carousel.removeEventListener("scroll", updatePrev);
+      carousel.removeEventListener("touchstart", handleTouchStart);
+      carousel.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [scrollNext, scrollPrev, updatePrev]);
 
   return (
-    <section className="max-w-7xl mx-auto px-6">
-      <Section
-        className="ml-0 text-left"
-        subtitle="Team"
-        title="Our team"
-        description="The passionate people behind every cup of your carefully crafted coffee."
-      />
+    <section className="bg-white/90">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
+        <Section
+          className="ml-0 text-left"
+          subtitle="Team"
+          title="Our team"
+          description="The passionate people behind every cup of your carefully crafted coffee."
+        />
 
-      <div
-        className="relative space-y-12"
-        role="region"
-        aria-label="Team members carousel"
-      >
         <div
-          ref={carouselRef}
-          data-slot="carousel-content"
-          className="flex overflow-x-hidden snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="relative"
+          role="region"
+          aria-label="Team members carousel"
         >
-          {teamMembers.map((member, index) => (
-            <div
-              key={member.name}
-              role="group"
-              aria-label={`${index + 1} of ${teamMembers.length}`}
-              data-slot="carousel-item"
-              className="min-w-0 shrink-0 grow-0 basis-full sm:basis-1/1 md:basis-1/3 lg:basis-1/4 mr-4 last:mr-0 snap-start"
-            >
-              <div className="flex flex-col space-y-4">
-                <div className="relative aspect-square overflow-hidden">
-                  <Image
-                    src={member.image}
-                    alt={`${member.name}, ${member.title}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover"
-                    unoptimized
-                  />
+          <div
+            ref={carouselRef}
+            data-slot="carousel-content"
+            className="grid grid-flow-col gap-4 overflow-x-hidden snap-x snap-mandatory scroll-smooth auto-cols-[minmax(100%,1fr)] sm:auto-cols-[min(100%,1fr)] md:auto-cols-[calc((100%-2rem)/3)] lg:lg:auto-cols-[calc((100%-3rem)/4)]"
+          >
+            {teamMembers.map((member, index) => (
+              <div
+                key={member.name}
+                role="group"
+                aria-label={`${index + 1} of ${teamMembers.length}`}
+                data-slot="carousel-item"
+                className="snap-start w-full"
+              >
+                <div className="flex flex-col space-y-4">
+                  <div className="relative aspect-square overflow-hidden">
+                    <Image
+                      src={member.image}
+                      alt={`${member.name}, ${member.title}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                  <div>
+                    <h6 className="text-lg md:text-xl font-semibold">
+                      {member.name}
+                    </h6>
+                    <p className="text-sm text-black/50">{member.title}</p>
+                  </div>
+                  <p className="text-xs md:text-sm text-black/75">
+                    {member.description}
+                  </p>
                 </div>
-                <div className="mb-3 md:mb-4">
-                  <h6 className="text-lg md:text-xl font-semibold">
-                    {member.name}
-                  </h6>
-                  <p className="text-sm text-black/50">{member.title}</p>
-                </div>
-                <p className="text-xs md:text-sm text-black">
-                  {member.description}
-                </p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div className="flex items-end justify-end gap-2 md:gap-4 mt-6">
-          <button
-            ref={prevButtonRef}
-            onClick={scrollPrev}
-            aria-label="Previous team member"
-            className="inline-flex items-center justify-center p-4 border border-black/10 text-black/75 transition-opacity"
-          >
-            <CaretLeftIcon size={20} />
-          </button>
-          <button
-            onClick={scrollNext}
-            aria-label="Next team member"
-            className="inline-flex items-center justify-center p-4 border border-black/10 text-black/75"
-          >
-            <CaretRightIcon size={20} />
-          </button>
+          <div className="mt-6 flex items-center justify-end gap-2 lg:gap-4">
+            <Button
+              onClick={scrollPrev}
+              aria-label="Previous team member"
+              variant="secondary"
+              className="p-4!"
+              disabled={isAtStart}
+            >
+              <CaretLeftIcon size={20} weight="bold" />
+            </Button>
+            <Button
+              onClick={scrollNext}
+              aria-label="Next team member"
+              variant="secondary"
+              className="p-4!"
+            >
+              <CaretRightIcon size={20} weight="bold" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>

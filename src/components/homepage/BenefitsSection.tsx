@@ -49,7 +49,7 @@ export function BenefitsSection() {
             <h5 className="text-lg font-semibold text-black">
               {benefit.title}
             </h5>
-            <p className="text-sm text-black/60">{benefit.text}</p>
+            <p className="text-sm text-black/50">{benefit.text}</p>
           </article>
         ))}
       </div>

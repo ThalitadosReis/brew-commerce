@@ -4,7 +4,7 @@ import { ABOUT_IMAGES } from "@/lib/images/about";
 
 export default function AboutSection() {
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
       <Section
         subtitle="Pure"
         title="Why our coffee is different"
@@ -15,13 +15,13 @@ export default function AboutSection() {
         <Card
           subtitle="Sustainable"
           title="Supporting farmers and protecting the environment with every cup"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+          description="We partner with small estates that prioritize regenerative farming, shade-grown crops, and responsible water use so each roast leaves a lighter footprint."
           image={ABOUT_IMAGES[0]}
         />
         <Card
           subtitle="Ethical"
           title="Fair trade practices that support coffee-growing communities"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."
+          description="Every purchase reinvests in the people who harvest our beans through transparent pricing, education programs, and tools that help families thrive."
           image={ABOUT_IMAGES[1]}
         />
       </div>

@@ -66,7 +66,7 @@ function TimelineCard({ card }: { card: TimelineCardType }) {
 
 export default function TimelineSection() {
   return (
-    <section className="max-w-7xl mx-auto px-6">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
       <Section
         subtitle="Our Coffee Journey"
         title="From Local Passion to Global Coffee Culture"
