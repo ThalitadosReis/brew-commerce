@@ -1,6 +1,6 @@
 # Brew Commerce
 
-Modern coffee storefront built with Next.js App Router, Clerk auth, and MongoDB. The app ships a polished marketing site, customer shopping experience (collection, product, checkout, profile), and an admin console for orders, products, and analytics.
+Modern coffee storefront built with Next.js App Router, Clerk auth, and MongoDB. The app ships a polished marketing site, a customer shopping experience (including collection, product, checkout, and profile), and an admin console for managing orders, products, and analytics.
 
 ## Demo
 - Production: https://brew-commerce.vercel.app/
