@@ -186,20 +186,20 @@ export default function OrdersManager() {
   const ordersCount = filteredOrders.length;
 
   return (
-    <section className="space-y-10">
+    <section className="space-y-4 md:space-y-6 lg:space-y-8">
       <header className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div className="space-y-4">
-            <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-1 tracking-[0.16em]">
-              Management
-            </small>
-            <div className="space-y-2">
-              <h2 className="leading-tight!">Orders</h2>
-              <p className="max-w-xl">
-                Track every customer order, spot priorities instantly, and keep
-                deliveries moving smoothly.
-              </p>
-            </div>
+        <div className="space-y-2">
+          <small className="inline-flex uppercase text-black/75 rounded-full bg-black/5 px-4 py-2 tracking-[0.16em]">
+            Track
+          </small>
+          <div className="space-y-2">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl leading-tight">
+              Orders Management
+            </h2>
+            <p className="text-sm md:text-base lg:text-lg text-black/75">
+              Track every customer order, spot priorities instantly, and keep
+              deliveries moving smoothly.
+            </p>
           </div>
         </div>
       </header>
@@ -207,10 +207,8 @@ export default function OrdersManager() {
       <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h3 className="text-base font-semibold">
-              Order history
-            </h3>
-            <p className="text-black/50">
+            <h4 className="text-2xl lg:text-3xl">Order history</h4>
+            <p className="text-sm lg:text-base text-black/75">
               Complete list of customer orders with details.
             </p>
           </div>
@@ -231,24 +229,18 @@ export default function OrdersManager() {
         </div>
 
         {ordersCount > 0 ? (
-          <div className="mt-8 overflow-x-auto">
+          <div className="mt-6 lg:mt-8 overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="bg-black/5 text-xs uppercase tracking-wide text-black/75">
                 <tr>
                   <th className="px-6 py-3 font-semibold">Order ID</th>
-                  <th className="hidden font-semibold sm:table-cell">
-                    Date
-                  </th>
-                  <th className="hidden font-semibold sm:table-cell">
-                    Items
-                  </th>
-                  <th className="hidden font-semibold sm:table-cell">
-                    Total
-                  </th>
+                  <th className="hidden font-semibold sm:table-cell">Date</th>
+                  <th className="hidden font-semibold sm:table-cell">Items</th>
+                  <th className="hidden font-semibold sm:table-cell">Total</th>
                   <th className="px-6 font-semibold" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-black/10">
+              <tbody className="divide-y divide-black/5">
                 {filteredOrders.map((order) => {
                   const isExpanded = expandedOrder === order.id;
                   const shipping = order.shippingAddress;
@@ -275,18 +267,18 @@ export default function OrdersManager() {
                         onClick={() => toggleOrderExpanded(order.id)}
                       >
                         <td className="p-4">
-                          <small className="inline-flex rounded-full bg-black/5 px-4 py-1 font-mono font-normal">
+                          <span className="inline-flex rounded-full text-sm font-medium bg-black/5 px-3 py-1">
                             #{order.id.slice(0, 12)}
-                          </small>
+                          </span>
                         </td>
                         <td className="hidden sm:table-cell">
-                          <div className="flex items-center gap-1 text-sm text-black/75 font-normal">
+                          <div className="flex items-center gap-1 text-sm text-black/75 ">
                             <CalendarIcon size={16} />
                             {formattedDate}
                           </div>
                         </td>
                         <td className="hidden sm:table-cell">
-                          <div className="flex items-center gap-1 text-sm text-black/75 font-normal">
+                          <div className="flex items-center gap-1 text-sm text-black/75 ">
                             <PackageIcon size={16} />
                             {totalItems} items
                           </div>
@@ -331,9 +323,9 @@ export default function OrdersManager() {
                           >
                             <div className="grid gap-8 lg:grid-cols-2">
                               <div className="space-y-4">
-                                <span className="flex items-center gap-2 font-semibold">
+                                <span className="flex items-center gap-2 text-base lg:text-lg font-semibold">
                                   <UserIcon
-                                    size={16}
+                                    size={20}
                                     weight="bold"
                                     className="text-black/50"
                                   />
@@ -342,13 +334,13 @@ export default function OrdersManager() {
 
                                 <div className="space-y-4 rounded-lg border border-black/10 bg-white p-4 shadow-sm">
                                   <div>
-                                    <div className="flex items-center gap-2 text-xs text-black/50 font-normal">
+                                    <div className="flex items-center gap-2 text-xs text-black/50 ">
                                       <EnvelopeIcon size={16} />
                                       <span className="uppercase tracking-wide">
                                         Email
                                       </span>
                                     </div>
-                                    <span className="wrap-break-word text-sm font-normal">
+                                    <span className="wrap-break-word text-sm">
                                       {order.customerEmail || "Unknown"}
                                     </span>
                                   </div>
@@ -356,13 +348,13 @@ export default function OrdersManager() {
                                   <div className="h-px bg-black/10" />
 
                                   <div>
-                                    <div className="flex items-center gap-2 text-xs text-black/50 font-normal">
+                                    <div className="flex items-center gap-2 text-xs text-black/50 ">
                                       <UserIcon size={16} />
                                       <span className="uppercase tracking-wide">
                                         Recipient
                                       </span>
                                     </div>
-                                    <span className="wrap-break-word text-sm font-normal">
+                                    <span className="wrap-break-word text-sm">
                                       {shipping?.name || "Not provided"}
                                     </span>
                                   </div>
@@ -370,14 +362,14 @@ export default function OrdersManager() {
                                   <div className="h-px bg-black/10" />
 
                                   <div>
-                                    <div className="flex items-center gap-2 text-xs text-black/50 font-normal">
+                                    <div className="flex items-center gap-2 text-xs text-black/50 ">
                                       <MapPinIcon size={16} />
                                       <span className="uppercase tracking-wide">
                                         Shipping address
                                       </span>
                                     </div>
                                     {hasShippingAddress && shipping ? (
-                                      <div className="flex flex-col text-sm font-normal">
+                                      <div className="flex flex-col text-sm ">
                                         {[shipping.line1, shipping.line2]
                                           .filter(Boolean)
                                           .map((line, index) => (
@@ -397,7 +389,7 @@ export default function OrdersManager() {
                                         )}
                                       </div>
                                     ) : (
-                                      <span className="wrap-break-word text-sm font-normal">
+                                      <span className="wrap-break-word text-sm">
                                         No shipping address provided.
                                       </span>
                                     )}
@@ -407,9 +399,9 @@ export default function OrdersManager() {
 
                               <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-sm font-semibold text-black">
-                                  <span className="flex items-center gap-2 font-semibold">
+                                  <span className="flex items-center gap-2 text-base lg:text-lg font-semibold">
                                     <ReceiptIcon
-                                      size={16}
+                                      size={20}
                                       weight="bold"
                                       className="text-black/50"
                                     />
@@ -466,7 +458,7 @@ export default function OrdersManager() {
 
                                 <div className="space-y-3 rounded-lg border border-black/10 bg-white p-4 shadow-sm">
                                   <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between font-normal">
+                                    <div className="flex justify-between ">
                                       <span className="text-black/50">
                                         Subtotal
                                       </span>
@@ -474,7 +466,7 @@ export default function OrdersManager() {
                                         CHF {order.subtotal.toFixed(2)}
                                       </span>
                                     </div>
-                                    <div className="flex justify-between font-normal">
+                                    <div className="flex justify-between ">
                                       <span className="text-black/50">
                                         Shipping
                                       </span>

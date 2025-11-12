@@ -66,15 +66,15 @@ export function AdminConsoleNav({
 
   return (
     <div className="relative flex min-h-svh flex-col bg-black/5">
-      <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-black/10 bg-white px-6">
-        <div className="flex items-center gap-3 text-sm">
+      <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-black/10 bg-white px-4 md:px-6">
+        <div className="flex items-center gap-2 md:gap-4 text-sm">
           <button
             type="button"
             onClick={toggleDrawer}
             className="flex items-center justify-center transition hover:bg-black/5 rounded-md p-2"
             aria-label="Toggle navigation"
           >
-          <PanelLeft size={20} />
+            <PanelLeft size={20} />
           </button>
           <span className="h-6 w-px bg-black/10" />
           <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export function AdminConsoleNav({
               ref={profileMenuRef}
               className="absolute right-0 mt-2 w-60 rounded-lg border border-black/10 bg-white shadow-sm"
             >
-              <div className=" p-4 flex flex-col">
+              <div className="p-4 flex flex-col">
                 <span className="text-sm font-semibold text-black">
                   {user?.name ?? "Administrator"}
                 </span>
@@ -113,13 +113,12 @@ export function AdminConsoleNav({
                 </span>
               </div>
 
-              {/* Divider */}
               <div className="h-px w-full bg-black/10" />
 
               <button
                 type="button"
                 onClick={handleLogout}
-                className=" p-4 flex w-full items-center gap-2 text-left text-sm transition hover:bg-black/5"
+                className="p-4 flex w-full items-center gap-2 text-left text-sm transition hover:bg-black/5"
               >
                 <SignOutIcon size={18} weight="bold" />
                 <span>Log out</span>
@@ -129,7 +128,7 @@ export function AdminConsoleNav({
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-6">{children}</div>
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">{children}</div>
 
       <div
         className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-200 ${

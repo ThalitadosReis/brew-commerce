@@ -50,11 +50,11 @@ function ConfirmDeleteModal({
         aria-modal="true"
       >
         <div className="space-y-2">
-          <h5>Delete product?</h5>
-          <span className="text-sm text-black/75 font-normal">
+          <h4 className="text-2xl lg:text-3xl">Delete product?</h4>
+          <p className="text-sm lg:text-base text-black/75">
             This action cannot be undone. The product will be removed from the
             catalog immediately.
-          </span>
+          </p>
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <button
@@ -123,7 +123,7 @@ function ProductRow({ product, onEdit, onDelete }: ProductRowProps) {
             <div className="truncate text-sm font-semibold text-black">
               {product.name}
             </div>
-            <div className="max-w-sm line-clamp-2 text-xs font-normal text-black/75">
+            <div className="max-w-sm line-clamp-2 text-xs text-black/75">
               {product.description}
             </div>
           </div>
@@ -131,20 +131,20 @@ function ProductRow({ product, onEdit, onDelete }: ProductRowProps) {
       </td>
       <td className="hidden p-4 align-top md:table-cell">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-sm font-normal">
+          <div className="flex items-center gap-2 text-sm ">
             <TagIcon size={16} />
             <span>{product.category}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm font-normal">
+          <div className="flex items-center gap-2 text-sm ">
             <GlobeHemisphereWestIcon size={16} />
             <span>{product.country}</span>
           </div>
         </div>
       </td>
-      <td className="hidden p-4 align-top text-sm font-normal md:table-cell">
+      <td className="hidden p-4 align-top text-sm md:table-cell">
         CHF {minPrice.toFixed(2)} – {maxPrice.toFixed(2)}
       </td>
-      <td className="hidden p-4 align-top text-sm font-normal md:table-cell">
+      <td className="hidden p-4 align-top text-sm md:table-cell">
         <div className="flex items-center gap-2">
           <span className={`font-medium ${stockIndicatorClass}`}>
             {isOutOfStock ? "Out of stock" : totalStock}
@@ -377,16 +377,18 @@ export default function AdminProductsManager() {
 
   return (
     <React.Fragment>
-      <section className="space-y-10">
+      <section className="space-y-4 md:space-y-6 lg:space-y-8">
         <header className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="space-y-4">
-              <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-1 tracking-[0.16em]">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+            <div className="flex-1 space-y-2">
+              <small className="inline-flex uppercase text-black/75 rounded-full bg-black/5 px-4 py-2 tracking-[0.16em]">
                 Catalog
               </small>
               <div className="space-y-2">
-                <h2 className="leading-tight!">Product manager</h2>
-                <p className="max-w-xl">
+                <h2 className="text-2xl md:text-3xl lg:text-5xl leading-tight">
+                  Product Management
+                </h2>
+                <p className="text-sm md:text-base lg:text-lg text-black/75">
                   Maintain listings, imagery, and inventory levels with clarity
                   across your entire assortment.
                 </p>
@@ -395,7 +397,7 @@ export default function AdminProductsManager() {
             <button
               type="button"
               onClick={() => openModal()}
-              className="inline-flex items-center gap-2 rounded-full bg-black/5 hover:bg-black/10 px-4 py-2 text-sm font-semibold transition"
+              className="w-fit flex items-center gap-2 rounded-full bg-black/5 hover:bg-black/10 px-4 py-2 text-sm font-medium transition"
             >
               <PlusIcon size={16} />
               New product
@@ -406,8 +408,8 @@ export default function AdminProductsManager() {
         <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h3 className="text-base font-semibold">Inventory</h3>
-              <p className="text-black/50">
+              <h4 className="text-2xl lg:text-3xl">Inventory</h4>
+              <p className="text-sm lg:text-base text-black/75">
                 Complete list of products with pricing and stock levels.
               </p>
             </div>
@@ -428,7 +430,7 @@ export default function AdminProductsManager() {
             </div>
           </div>
 
-          <div className="mt-8 overflow-x-auto">
+          <div className="mt-6 lg:mt-8 overflow-x-auto">
             {productCount > 0 ? (
               <table className="w-full text-sm text-left">
                 <thead className="bg-black/5 text-xs uppercase tracking-wide text-black/75">

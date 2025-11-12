@@ -128,7 +128,7 @@ function CarouselThumbnails({
       </div>
 
       {showControls && (
-        <div className="mt-2 bg-white px-3 py-2">
+        <div className="bg-white px-4 py-2">
           <div className="flex gap-2 overflow-x-auto">
             {images.map((img, index) => {
               const isActive = activeIndex === index;
@@ -369,7 +369,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
 
           {/* content */}
           <div className="lg:order-1">
-            <div className="space-y-2">
+            <div className="space-y-4">
               <div className="hidden lg:block">
                 <Breadcrumb productName={product.name} />
               </div>

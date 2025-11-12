@@ -235,7 +235,7 @@ export default function Navbar() {
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 bg-white shadow-md">
+        <div className="max-w-7xl mx-auto p-4 lg:p-6 bg-white shadow-md">
           <div className="flex items-center justify-between">
             {/* navigation links */}
             <div className="hidden lg:flex gap-6">
@@ -243,7 +243,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative inline-block overflow-hidden text-sm group"
+                  className="relative inline-block overflow-hidden text-sm lg:text-base group"
                 >
                   <span className="block transition-transform duration-300 group-hover:-translate-y-full">
                     {link.label}
@@ -275,7 +275,7 @@ export default function Navbar() {
               {/* logo */}
               <Link
                 href="/"
-                className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-2xl"
+                className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-lg lg:text-2xl"
               >
                 brew.
               </Link>
@@ -294,7 +294,7 @@ export default function Navbar() {
                 <MagnifyingGlassIcon
                   size={24}
                   weight="light"
-                  className="hover:scale-90 transition-transform duration-300 ease-in-out"
+                  className="lg:w-7 lg:h-7 hover:scale-90 transition-transform duration-300 ease-in-out"
                 />
               </button>
 
@@ -308,7 +308,7 @@ export default function Navbar() {
                   <HeartIcon
                     size={24}
                     weight="light"
-                    className="hover:scale-90 transition-transform duration-300 ease-in-out"
+                    className="lg:w-7 lg:h-7 hover:scale-90 transition-transform duration-300 ease-in-out"
                   />
                   {getTotalFavorites() > 0 && (
                     <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-[10px] font-semibold text-white bg-black rounded-full flex items-center justify-center">
@@ -328,7 +328,7 @@ export default function Navbar() {
                   <ShoppingBagIcon
                     size={24}
                     weight="light"
-                    className="hover:scale-90 transition-transform duration-300 ease-in-out"
+                    className="lg:w-7 lg:h-7 hover:scale-90 transition-transform duration-300 ease-in-out"
                   />
                   {getTotalItems() > 0 && (
                     <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-[10px] font-semibold text-white bg-black rounded-full flex items-center justify-center">
@@ -342,23 +342,24 @@ export default function Navbar() {
               {/* profile */}
               <div className="relative flex items-center justify-end group">
                 {isSignedIn ? (
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: "w-8 h-8",
-                        userButtonPopoverCard: "mt-6",
-                      },
-                    }}
-                    afterSignOutUrl="/"
-                  >
-                    <UserButton.MenuItems>
-                      <UserButton.Link
-                        label="Orders"
-                        labelIcon={<PackageIcon size={16} weight="bold" />}
-                        href="/profile"
-                      />
-                    </UserButton.MenuItems>
-                  </UserButton>
+                  <div>
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          userButtonPopoverCard: "mt-6 lg:mt-8",
+                        },
+                      }}
+                      afterSignOutUrl="/"
+                    >
+                      <UserButton.MenuItems>
+                        <UserButton.Link
+                          label="Orders"
+                          labelIcon={<PackageIcon size={16} weight="bold" />}
+                          href="/profile"
+                        />
+                      </UserButton.MenuItems>
+                    </UserButton>
+                  </div>
                 ) : (
                   <Link href="/sign-in">
                     <UserCirclePlusIcon

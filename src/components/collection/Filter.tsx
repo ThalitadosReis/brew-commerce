@@ -91,8 +91,7 @@ export default function Filter({
   }, [products]);
 
   const hasActiveFilters = useMemo(
-    () =>
-      selectedRoasts.length > 0 || selectedCountries.length > 0,
+    () => selectedRoasts.length > 0 || selectedCountries.length > 0,
     [selectedRoasts, selectedCountries]
   );
 
@@ -176,11 +175,10 @@ export default function Filter({
         id="filters-panel"
         className={`px-6 lg:px-0 lg:block ${isFilterOpen ? "block" : "hidden"}`}
       >
-
         {/* roast */}
         {availableRoasts.length > 0 && (
           <div className="my-4">
-            <p className="text-sm">Roast</p>
+            <p>Roast</p>
             <div className="w-full flex flex-col gap-2 mt-2">
               {availableRoasts.map((roast) => {
                 const isSelected = selectedRoasts.includes(roast);
@@ -213,7 +211,7 @@ export default function Filter({
                         />
                       )}
                     </span>
-                    <span className="text-xs">{roast}</span>
+                    <span className="text-sm">{roast}</span>
                   </button>
                 );
               })}
@@ -224,7 +222,7 @@ export default function Filter({
         {/* countries */}
         {availableCountries.length > 0 && (
           <div>
-            <p className="text-sm">Country</p>
+            <p>Country</p>
             <div className="w-full flex flex-col gap-2 mt-2">
               {availableCountries.map((country) => {
                 const isSelected = selectedCountries.includes(country);
@@ -257,7 +255,7 @@ export default function Filter({
                         />
                       )}
                     </span>
-                    <span className="span-xs">{country}</span>
+                    <span className="text-sm">{country}</span>
                   </button>
                 );
               })}

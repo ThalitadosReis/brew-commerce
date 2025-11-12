@@ -103,7 +103,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
                 <div
                   ref={pathname === "/" ? heroRef : undefined}
                   className={`bg-black/5 min-h-screen ${
-                    pathname === "/" ? "" : needsStandardPadding ? "pt-32" : ""
+                    pathname === "/" ? "" : needsStandardPadding ? "pt-40" : ""
                   }`}
                 >
                   {children}

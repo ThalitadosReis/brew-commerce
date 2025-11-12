@@ -66,19 +66,15 @@ export function AdminNavigationDrawer({
       aria-label="Admin navigation"
       aria-hidden={!isOpen}
     >
-      <div
-        ref={panelRef}
-        tabIndex={-1}
-        className="flex h-full flex-col"
-      >
-        <div className="flex items-center justify-between px-4 py-4">
+      <div ref={panelRef} tabIndex={-1} className="flex h-full flex-col">
+        <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center p-2 rounded-lg bg-black/10">
               <CardsThreeIcon size={24} />
             </div>
-            <div className="leading-tight">
-              <div className="text-sm font-semibold">brew.</div>
-              <div className="text-xs text-black/75">Commerce</div>
+            <div className="-space-y-1">
+              <div className=" font-semibold">brew.</div>
+              <div className="text-sm text-black/75">Commerce</div>
             </div>
           </div>
         </div>
@@ -118,8 +114,8 @@ export function AdminNavigationDrawer({
 
         {(userName || userEmail || userInitials) && (
           <div className="border-t border-black/10 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-black/5 text-sm font-semibold ">
+            <div className="flex items-center gap-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-black/10 text-sm font-semibold">
                 {userInitials?.slice(0, 2) ?? "A"}
               </div>
               <div className="leading-tight">

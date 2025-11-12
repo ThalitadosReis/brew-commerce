@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type ReactElement } from "react";
 import Link from "next/link";
 import type { DashboardMetrics, RecentOrder } from "@/types/admin";
 
@@ -150,6 +150,58 @@ export default function AdminOverview({
       ? `Monthly revenue for ${new Date().getFullYear()}`
       : "Weekly revenue for the last 12 weeks";
 
+  const renderRevenueTick = useCallback(
+    ({
+      x = 0,
+      y = 0,
+      payload,
+    }: {
+      x?: number;
+      y?: number;
+      payload?: { value: number };
+    }): ReactElement<SVGElement> => {
+      if (typeof payload?.value !== "number") return <g />;
+
+      const formatted = moneyFormatter.format(payload.value);
+      const parts = moneyFormatter.formatToParts(payload.value);
+
+      const currencyPart =
+        parts.find((part) => part.type === "currency")?.value ?? "";
+      const amountPart =
+        parts
+          .filter((part) => part.type !== "currency")
+          .map((part) => part.value)
+          .join("")
+          .trim() || formatted;
+
+      const lines = currencyPart
+        ? [currencyPart, amountPart]
+        : formatted.split(/\s+/);
+
+      return (
+        <g transform={`translate(${x + 8}, ${y})`}>
+          <text
+            textAnchor="end"
+            fill="#6B7280"
+            fontSize={12}
+            dominantBaseline="middle"
+          >
+            {lines.map((line, index) => (
+              <tspan
+                key={`${line}-${index}`}
+                x="0"
+                dy={index === 0 ? "-0.2em" : "1.2em"}
+              >
+                {line}
+              </tspan>
+            ))}
+          </text>
+        </g>
+      );
+    },
+    [moneyFormatter]
+  );
+
   const CustomTooltip = ({
     active,
     payload,
@@ -184,37 +236,37 @@ export default function AdminOverview({
   };
 
   return (
-    <section className="space-y-8">
+    <section className="space-y-4 md:space-y-6 lg:space-y-8">
       <header className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div className="space-y-4">
-            <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-1 tracking-[0.16em]">
-              Dashboard
-            </small>
-            <div className="space-y-2">
-              <h2 className="leading-tight!">Welcome back!</h2>
-              <p className="max-w-xl">
-                Monitor revenue, orders, and customer activity from an
-                at-a-glance console designed for calm clarity.
-              </p>
-            </div>
+        <div className="space-y-2">
+          <small className="inline-flex uppercase text-black/75 font-normal rounded-full bg-black/5 px-4 py-2 tracking-[0.16em]">
+            Dashboard
+          </small>
+          <div className="space-y-2">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl leading-tight">
+              Welcome back!
+            </h2>
+            <p className="text-sm md:text-base lg:text-lg text-black/75">
+              Monitor revenue, orders, and customer activity from an at-a-glance
+              console designed for calm clarity.
+            </p>
           </div>
         </div>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
-        <div className="rounded-2xl border border-black/10 bg-white p-8 shadow-lg shadow-black/10">
+      <div className="grid md:grid-cols-[2fr_1fr] gap-4 md:gap-6 lg:gap-8">
+        <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-1">
-                <ChartBarIcon size={20} />
+              <div className="inline-flex items-center gap-2 text-sm font-semibold text-black/75 rounded-full bg-black/5 px-4 py-2">
+                <ChartBarIcon size={20} weight="bold" />
                 Snapshot
               </div>
               <div>
-                <p className="font-semibold!">
+                <p className="text-base lg:text-lg font-semibold">
                   {moneyFormatter.format(stats.totalRevenue)}
                 </p>
-                <span className="text-sm text-black/75">
+                <span className="text-sm lg:text-base text-black/50">
                   Across {integerFormatter.format(stats.totalOrders)} fulfilled
                   orders
                 </span>
@@ -222,18 +274,18 @@ export default function AdminOverview({
             </div>
             <div className="grid gap-4 text-right text-sm">
               <div className="rounded-xl border border-black/10 bg-black/5 px-4 py-2 shadow-sm">
-                <span className="text-xs uppercase tracking-widest text-black/50">
+                <span className="text-sm uppercase tracking-widest text-black/50">
                   Items sold
                 </span>
-                <p className="mt-2 font-semibold!">
+                <p className="mt-2 text-sm lg:text-base font-semibold">
                   {integerFormatter.format(stats.totalItemsSold)}
                 </p>
               </div>
               <div className="rounded-xl border border-black/10 bg-black/5 px-4 py-2 shadow-sm">
-                <span className="text-xs uppercase tracking-widest text-black/50">
+                <span className="text-sm uppercase tracking-widest text-black/50">
                   Avg. order
                 </span>
-                <p className="mt-2 font-semibold!">
+                <p className="mt-2 text-sm lg:text-base font-semibold">
                   {moneyFormatter.format(stats.avgOrderValue)}
                 </p>
               </div>
@@ -242,7 +294,7 @@ export default function AdminOverview({
         </div>
 
         <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="rounded-lg bg-black/10 p-2">
@@ -252,13 +304,11 @@ export default function AdminOverview({
                     className="text-black/50"
                   />
                 </div>
-                <span className="text-sm font-normal text-black/75">
-                  Orders
-                </span>
+                <span className="text-sm text-black/75">Orders</span>
               </div>
-              <span className="text-lg font-bold">
+              <p className="font-semibold">
                 {integerFormatter.format(stats.totalOrders)}
-              </span>
+              </p>
             </div>
 
             <div className="flex items-center justify-between">
@@ -270,11 +320,11 @@ export default function AdminOverview({
                     className="text-black/50"
                   />
                 </div>
-                <span className="text-sm font-normal text-black/75">Users</span>
+                <span className="text-sm text-black/75">Users</span>
               </div>
-              <span className="text-lg font-bold">
+              <p className="font-semibold">
                 {integerFormatter.format(stats.totalUsers)}
-              </span>
+              </p>
             </div>
 
             <div className="flex items-center justify-between">
@@ -286,13 +336,11 @@ export default function AdminOverview({
                     className="text-black/50"
                   />
                 </div>
-                <span className="text-sm font-normal text-black/75">
-                  Products
-                </span>
+                <span className="text-sm text-black/75">Products</span>
               </div>
-              <span className="text-lg font-bold">
+              <p className="font-semibold">
                 {integerFormatter.format(stats.totalProducts)}
-              </span>
+              </p>
             </div>
 
             <div className="flex items-center justify-between">
@@ -304,61 +352,62 @@ export default function AdminOverview({
                     className="text-black/50"
                   />
                 </div>
-                <span className="text-sm font-normal text-black/75">
-                  Total units
-                </span>
+                <span className="text-sm text-black/75">Total units</span>
               </div>
-              <span className="text-lg font-bold">
+              <p className="font-semibold">
                 {integerFormatter.format(stats.totalUnits)}
-              </span>
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
         <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-1">
-                <ChartBarIcon size={20} />
-                Revenue
+          <div className="flex flex-wrap items-end justify-between">
+            <div className="space-y-4 w-full">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-2">
+                  <ChartBarIcon size={20} weight="bold" />
+                  Revenue
+                </div>
+
+                <div className="rounded-full bg-black/5 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setRevenueView("monthly")}
+                    className={`rounded-full px-4 py-2 text-xs font-medium transition ${
+                      revenueView === "monthly"
+                        ? "bg-white shadow-sm"
+                        : "text-black/50"
+                    }`}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRevenueView("weekly")}
+                    className={`rounded-full px-4 py-2 text-xs font-medium transition ${
+                      revenueView === "weekly"
+                        ? "bg-white shadow-sm"
+                        : "text-black/50"
+                    }`}
+                  >
+                    Weekly
+                  </button>
+                </div>
               </div>
               <div>
-                <h4>Revenue overview</h4>
-                <span className="text-sm text-black/75">
+                <h4 className="text-2xl lg:text-3xl">Revenue overview</h4>
+                <span className="text-sm lg:text-base text-black/75">
                   {revenueDescription}
                 </span>
               </div>
             </div>
-            <div className="inline-flex gap-2 rounded-full bg-black/5 p-1">
-              <button
-                type="button"
-                onClick={() => setRevenueView("monthly")}
-                className={`rounded-full px-4 py-1 text-xs font-medium transition ${
-                  revenueView === "monthly"
-                    ? "bg-white shadow-sm"
-                    : "text-black/50"
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                onClick={() => setRevenueView("weekly")}
-                className={`rounded-full px-4 py-1 text-xs font-medium transition ${
-                  revenueView === "weekly"
-                    ? "bg-white shadow-sm"
-                    : "text-black/50"
-                }`}
-              >
-                Weekly
-              </button>
-            </div>
           </div>
-          <div className="mt-8">
+          <div className="mt-6 lg:mt-8">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
+              <BarChart data={chartData} margin={{ left: 24, right: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis
                   dataKey="label"
@@ -366,9 +415,10 @@ export default function AdminOverview({
                   stroke="#D1D5DB"
                 />
                 <YAxis
-                  tick={{ fill: "#6B7280", fontSize: 12 }}
-                  tickFormatter={(value) => moneyFormatter.format(value)}
+                  tick={renderRevenueTick}
                   stroke="#D1D5DB"
+                  tickMargin={8}
+                  width={24}
                 />
                 <Tooltip
                   content={<CustomTooltip />}
@@ -385,53 +435,52 @@ export default function AdminOverview({
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-lg shadow-black/10">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-1">
-                <ReceiptIcon size={20} />
-                Orders
+          <div className="flex flex-wrap items-end justify-between">
+            <div className="space-y-4 w-full">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2 text-sm font-medium text-black/75 rounded-full bg-black/5 px-4 py-2">
+                  <ReceiptIcon size={20} />
+                  Orders
+                </div>
+                <Link
+                  href="/admin?tab=orders"
+                  className="flex items-center text-sm font-medium rounded-full bg-black/5 hover:bg-black/10 px-4 py-2 transition"
+                >
+                  View all
+                </Link>
               </div>
               <div>
-                <h4>Recent orders</h4>
-                <span className="text-sm text-black/75">
+                <h4 className="text-2xl lg:text-3xl">Recent orders</h4>
+                <span className="text-sm lg:text-base text-black/75">
                   Latest customer purchases and totals.
                 </span>
               </div>
             </div>
-            <Link
-              href="/admin?tab=orders"
-              className="inline-flex items-center rounded-full bg-black/5 px-4 py-2 text-xs font-medium transition hover:bg-black/10"
-            >
-              View all
-            </Link>
           </div>
-          <div className="mt-8">
+          <div className="mt-6 lg:mt-8">
             {loadingActivity ? null : recentOrders.length ? (
-              <div className="divide-y divide-black/10">
+              <div className="divide-y divide-black/5">
                 {recentOrders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="flex items-center justify-between py-2"
-                  >
-                    <div className="flex-1 space-y-1">
+                  <div key={order.id} className="flex justify-between py-2">
+                    <div className="flex-1 space-y-2">
                       <div className="flex items-start">
-                        <small className="inline-flex rounded-full bg-black/5 px-3 py-1 font-mono font-normal">
+                        <span className="inline-flex rounded-full text-sm font-medium bg-black/5 px-3 py-1">
                           #{order.id.slice(0, 12)}
-                        </small>
+                        </span>
                       </div>
-                      <small className="truncate text-black/50 font-normal">
+                      <p className="truncate text-sm text-black/50">
                         {order.items[0]?.name}
                         {order.items[0]?.size && ` (${order.items[0].size})`}
                         {order.items.length > 1 &&
                           ` +${order.items.length - 1} more`}
-                      </small>
+                      </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-semibold tabular-nums">
+                      <span className="text-sm font-medium tabular-nums">
                         {moneyFormatter.format(order.total)}
                       </span>
-                      <small className="flex items-center justify-end gap-1 text-xs text-black/50 font-normal">
-                        <ClockIcon size={12} />
+                      <small className="flex items-center justify-end gap-1 text-sm text-black/50">
+                        <ClockIcon size={14} />
                         {getTimeAgo(order.date)}
                       </small>
                     </div>
@@ -440,7 +489,7 @@ export default function AdminOverview({
               </div>
             ) : (
               <div className="py-16 text-center">
-                <ReceiptIcon size={48} className="mx-auto mb-3 text-black/25" />
+                <ReceiptIcon size={48} className="mx-auto mb-4 text-black/25" />
                 <p className="text-sm text-black/50">No recent orders yet.</p>
               </div>
             )}

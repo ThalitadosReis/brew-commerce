@@ -392,7 +392,7 @@ export function ProductForm({
         aria-modal="true"
       >
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
-          <h5 className="text-lg font-semibold">
+          <h5 className="text-lg md:text-xl lg:text-2xl font-semibold">
             {product ? "Edit product" : "New product"}
           </h5>
           <button
@@ -505,7 +505,7 @@ export function ProductForm({
 
             <section className="space-y-6">
               <div>
-                <h6 className="font-semibold!">Product images</h6>
+                <h6 className="font-semibold">Product images</h6>
                 <span className="text-xs text-black/75">
                   Pick the hero image that appears on product cards and detail
                   pages.
@@ -619,7 +619,7 @@ export function ProductForm({
               <div className="space-y-2">
                 <div className="flex items-start justify-between gap-4">
                   <div className="w-full flex-1 space-y-1">
-                    <h6 className="font-semibold!">Size-specific pricing</h6>
+                    <h6 className="font-semibold">Size-specific pricing</h6>
                     <span className="text-xs text-black/75">
                       Customize price and stock for individual bag sizes.
                     </span>
