@@ -2,8 +2,8 @@
 
 Modern coffee storefront built with Next.js App Router, Clerk auth, and MongoDB. The app ships a polished marketing site, a customer shopping experience (including collection, product, checkout, and profile), and an admin console for managing orders, products, and analytics.
 
-## Demo
-- Production: https://brew-commerce.vercel.app/
+## [Live Preview ](https://brew-commerce.vercel.app/)
+![Website Preview](https://res.cloudinary.com/douen1dwv/image/upload/v1767795335/default/Brew_Commerce_3.15pm_01-07_xhvnpu.jpg)
 
 ## Tech Stack
 - Next.js 15 · React · TypeScript
