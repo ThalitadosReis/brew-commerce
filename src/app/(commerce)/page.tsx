@@ -4,7 +4,6 @@ import ContentBlock from "@/components/common/ContentBlock";
 import { HeroSection } from "@/components/homepage/HeroSection";
 import { FeaturesSection } from "@/components/homepage/FeaturesSection";
 import { BenefitsSection } from "@/components/homepage/BenefitsSection";
-import { CraftSection } from "@/components/homepage/CraftSection";
 import { TestimonialsSection } from "@/components/homepage/TestimonialsSection";
 import { FINAL_CTA_IMAGE } from "@/lib/images/home";
 
@@ -14,7 +13,6 @@ export default function HomepagePage() {
       <HeroSection />
       <BenefitsSection />
       <FeaturesSection />
-      <CraftSection />
       <TestimonialsSection />
 
       <ContentBlock

@@ -104,7 +104,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="bg-white/90 px-4 lg:px-6 py-12 lg:py-24">
+    <section className="bg-black/5 px-4 lg:px-6 py-12 lg:py-24">
       <Section
         subtitle="Voices"
         title="Stories poured from every cup"

@@ -12,7 +12,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative h-96 md:h-[750px] flex items-center justify-center overflow-hidden">
       <div
         className="absolute inset-0 -z-10"
         style={{ transform: `translateY(${scrollY * 0.5}px)` }}
@@ -28,7 +28,7 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      <div className="relative z-10 max-w-3xl text-center px-6 text-white space-y-2">
+      <div className="relative z-10 max-w-3xl text-center px-6 text-white space-y-2 mt-10 md:mt-20">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
           Craft coffee that tells a story in every cup
         </h1>

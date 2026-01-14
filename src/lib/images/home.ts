@@ -9,14 +9,6 @@ export const FEATURE_IMAGES = [
   "https://images.pexels.com/photos/7175997/pexels-photo-7175997.jpeg",
 ];
 
-// Craft
-export const CRAFT_IMAGES = [
-  "https://images.pexels.com/photos/7175974/pexels-photo-7175974.jpeg",
-  "https://images.pexels.com/photos/6205781/pexels-photo-6205781.jpeg",
-  "https://images.pexels.com/photos/7125537/pexels-photo-7125537.jpeg",
-  "https://images.pexels.com/photos/6280321/pexels-photo-6280321.jpeg",
-];
-
 // Testimonials (avatars)
 export const TESTIMONIALS_AVATARS = [
   "https://randomuser.me/api/portraits/women/68.jpg",
@@ -33,7 +25,6 @@ export const FINAL_CTA_IMAGE =
 export const HOMEPAGE_IMAGES = [
   HERO_IMAGE,
   ...FEATURE_IMAGES,
-  ...CRAFT_IMAGES,
   ...TESTIMONIALS_AVATARS,
   FINAL_CTA_IMAGE,
 ];
