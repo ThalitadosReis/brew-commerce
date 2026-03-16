@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
+import { ArrowDownIcon } from "@phosphor-icons/react";
 import { HERO_IMAGE } from "@/lib/images/home";
 
 export function HeroSection() {
@@ -12,7 +14,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-96 md:h-[750px] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div
         className="absolute inset-0 -z-10"
         style={{ transform: `translateY(${scrollY * 0.5}px)` }}
@@ -28,7 +30,7 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      <div className="relative z-10 max-w-3xl text-center px-6 text-white space-y-2 mt-10 md:mt-20">
+      <div className="relative z-10 max-w-3xl text-center px-6 text-white space-y-2">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
           Craft coffee that tells a story in every cup
         </h1>
@@ -36,6 +38,21 @@ export function HeroSection() {
           Discover exceptional coffee sourced sustainably from around the world.
         </p>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-white"
+      >
+        <span className="text-[9px] tracking-[0.3em] uppercase">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        >
+          <ArrowDownIcon size={14} weight="regular" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

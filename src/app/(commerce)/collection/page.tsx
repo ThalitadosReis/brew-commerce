@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Reveal from "@/components/Reveal";
 import { Product } from "@/types/product";
 import Filter, { SortOption } from "@/components/collection/Filter";
 
@@ -48,51 +49,59 @@ export default function CollectionPage() {
 
   return (
     <>
-      <PageHeader
-        title="Craft coffee selection"
-        description="Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions."
-      />
+      <Reveal>
+        <PageHeader
+          title="Craft coffee selection"
+          description="Discover our carefully curated collection of premium coffee beans sourced from the world's finest growing regions."
+        />
+      </Reveal>
 
-      <div
-        ref={collectionRef}
-        className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:pb-24 lg:flex lg:gap-12"
-      >
-        {/* filter */}
-        <div className="lg:sticky lg:top-12 h-fit">
-          <Filter
-            showFilters={showFilters}
-            onClose={() => setShowFilters(false)}
+      <Reveal delay={0.08}>
+        <div
+          ref={collectionRef}
+          className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:pb-24 lg:flex lg:gap-12"
+        >
+          {/* filter */}
+          <div className="lg:sticky lg:top-12 h-fit">
+            <Filter
+              showFilters={showFilters}
+              onClose={() => setShowFilters(false)}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              selectedRoasts={selectedRoasts}
+              setSelectedRoasts={setSelectedRoasts}
+              selectedCountries={selectedCountries}
+              setSelectedCountries={setSelectedCountries}
+              products={products}
+              onFilter={setFilteredProducts}
+            />
+          </div>
+
+          <CollectionContent
+            filteredProducts={filteredProducts}
             sortBy={sortBy}
             setSortBy={setSortBy}
-            selectedRoasts={selectedRoasts}
-            setSelectedRoasts={setSelectedRoasts}
-            selectedCountries={selectedCountries}
-            setSelectedCountries={setSelectedCountries}
-            products={products}
-            onFilter={setFilteredProducts}
+            loading={loading}
           />
         </div>
+      </Reveal>
 
-        <CollectionContent
-          filteredProducts={filteredProducts}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          loading={loading}
+      <Reveal direction="right" delay={0.12}>
+        <QualitySection />
+      </Reveal>
+
+      <Reveal direction="left" delay={0.16}>
+        <ContentBlock
+          className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0 py-12 lg:py-24"
+          contentClassName="!p-0"
+          title="Brew your perfect moment"
+          text="Discover a world of flavor with fresh coffee delivered directly to your doorstep."
+          image={COLLECTION_CONTACT_IMAGE}
+          buttons={[
+            { label: "Contact us", href: "/contact", variant: "primary" },
+          ]}
         />
-      </div>
-
-      <QualitySection />
-      
-      <ContentBlock
-        className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0 py-12 lg:py-24"
-        contentClassName="!p-0"
-        title="Brew your perfect moment"
-        text="Discover a world of flavor with fresh coffee delivered directly to your doorstep."
-        image={COLLECTION_CONTACT_IMAGE}
-        buttons={[
-          { label: "Contact us", href: "/contact", variant: "primary" },
-        ]}
-      />
+      </Reveal>
     </>
   );
 }
