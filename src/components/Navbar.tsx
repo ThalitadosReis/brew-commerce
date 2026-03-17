@@ -1,135 +1,82 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useUser, UserButton } from "@clerk/nextjs";
+import { AnimatePresence, motion } from "motion/react";
 
 import { useCart } from "@/contexts/CartContext";
-import { useFavorites } from "@/contexts/FavoritesContext";
 import { Product } from "@/types/product";
 import Cart from "./Cart";
-import Drawer from "./common/Drawer";
+import SearchDrawer from "./common/SearchDrawer";
 
 import {
-  HeartIcon,
+  ArrowRightIcon,
   ListIcon,
   MagnifyingGlassIcon,
-  PackageIcon,
   ShoppingBagIcon,
-  UserCirclePlusIcon,
   XIcon,
 } from "@phosphor-icons/react";
+import Button from "./common/Button";
 
-interface SearchBarProps {
-  searchQuery: string;
-  onQueryChange: (query: string) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  searchResults: Product[];
-  onResultClick: () => void;
-  isSearchOpen: boolean;
-  onClose: () => void;
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/collection", label: "Collection" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+] as const;
+
+interface CountBadgeProps {
+  count: number;
+  className: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  searchQuery,
-  onQueryChange,
-  onKeyDown,
-  searchResults,
-  isSearchOpen,
-  onClose,
-}) => {
-  const searchContent = (
-    <>
-      <div className="relative">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => onQueryChange(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder="Search coffee..."
-          className="w-full text-sm pl-12 py-4 bg-black/10 focus:outline-none"
-          autoFocus
-        />
+interface BrandLinkProps {
+  className: string;
+}
 
-        <MagnifyingGlassIcon
-          size={20}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2"
-        />
-
-        {searchQuery && (
-          <button
-            onClick={() => onQueryChange("")}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs underline hover:opacity-75"
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
-      {/* results */}
-      {searchResults.length > 0 ? (
-        <div className="mt-4 space-y-4">
-          {searchResults.map((product) => (
-            <Link
-              key={product._id}
-              href={`/collection/${product._id}`}
-              onClick={onClose}
-              className="flex items-center gap-4 transform transition-transform duration-200 hover:scale-105"
-            >
-              <div className="bg-black/5">
-                {product.images?.[0] ? (
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    width={80}
-                    height={100}
-                    className="object-contain"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-black/5">
-                    <PackageIcon
-                      size={20}
-                      weight="light"
-                      className="text-black/30"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <h6>{product.name}</h6>
-                <small>from CHF{product.price}</small>
-              </div>
-            </Link>
-          ))}
-        </div>
-      ) : searchQuery.trim() ? (
-        <div className="py-24 text-center text-black/50">
-          <p>No products found</p>
-          <p>Try adjusting your search</p>
-        </div>
-      ) : (
-        <div className="py-24 text-center text-black/50">
-          <MagnifyingGlassIcon size={48} className="mx-auto mb-2" />
-          <p>Start typing to search</p>
-        </div>
-      )}
-    </>
-  );
+function CountBadge({ count, className }: CountBadgeProps) {
+  if (count <= 0) return null;
 
   return (
-    <Drawer
-      isOpen={isSearchOpen}
-      onClose={onClose}
-      title="Search"
-      ariaLabel="Search products"
-      showHeader={true}
+    <span
+      className={`absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold ${className}`}
     >
-      {searchContent}
-    </Drawer>
+      {count > 99 ? "99+" : count}
+    </span>
   );
-};
+}
+
+function BrandLink({ className }: BrandLinkProps) {
+  return (
+    <Link href="/" className={className}>
+      brew<span className="text-amber-700">.</span>
+    </Link>
+  );
+}
+
+function mapProductForSearch(p: {
+  _id: string;
+  name: string;
+  price: number;
+  images: string[];
+  description: string;
+  country: string;
+  category: string;
+  stock: number;
+}): Product {
+  return {
+    _id: p._id,
+    name: p.name,
+    price: p.price,
+    images: p.images || [],
+    description: p.description,
+    country: p.country,
+    category: p.category,
+    stock: p.stock,
+    sizes: [],
+  };
+}
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -137,14 +84,33 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
-  const [showNavbar] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const pathname = usePathname();
   const router = useRouter();
   const { getTotalItems } = useCart();
-  const { getTotalFavorites } = useFavorites();
-  const { isSignedIn } = useUser();
+  const cartCount = getTotalItems();
+  const navSurface = scrolled || isMenuOpen || isSearchOpen;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 30);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setIsSearchOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   // fetch products on mount
   useEffect(() => {
@@ -153,28 +119,7 @@ export default function Navbar() {
         const response = await fetch("/api/products");
         if (response.ok) {
           const dbProducts = await response.json();
-          const products: Product[] = dbProducts.map(
-            (p: {
-              _id: string;
-              name: string;
-              price: number;
-              images: string[];
-              description: string;
-              country: string;
-              category: string;
-              stock: number;
-            }) => ({
-              _id: p._id,
-              name: p.name,
-              price: p.price,
-              images: p.images || [],
-              description: p.description,
-              country: p.country,
-              category: p.category,
-              stock: p.stock,
-              sizes: ["250g", "500g", "1kg"],
-            })
-          );
+          const products: Product[] = dbProducts.map(mapProductForSearch);
           setAllProducts(products);
         }
       } catch (error) {
@@ -189,7 +134,7 @@ export default function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(
-        `/collection?search=${encodeURIComponent(searchQuery.trim())}`
+        `/collection?search=${encodeURIComponent(searchQuery.trim())}`,
       );
     }
   };
@@ -203,223 +148,211 @@ export default function Navbar() {
     if (e.key === "Escape") setIsSearchOpen(false);
   };
 
+  const toggleSearch = () => {
+    setIsSearchOpen((open) => !open);
+    setIsMenuOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen((open) => !open);
+    setIsSearchOpen(false);
+  };
+
+  const navTextClass = navSurface ? "text-neutral-900" : "text-white";
+  const navMutedTextClass = navSurface
+    ? "text-neutral-600 hover:text-neutral-900"
+    : "text-white/70 hover:text-white";
+  const navIconClass = navSurface
+    ? "text-neutral-700 hover:text-neutral-900"
+    : "text-white";
+  const navIconMotionClass =
+    "transition-all duration-300 ease-in-out hover:scale-90";
+  const navBadgeClass = navSurface
+    ? "bg-black text-white"
+    : "bg-white text-black";
+
   // filter products for search
   useEffect(() => {
-    if (searchQuery.trim()) {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    if (normalizedQuery) {
       const filtered = allProducts
         .filter(
           (product) =>
-            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            product.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.category.toLowerCase().includes(searchQuery.toLowerCase())
+            product.name.toLowerCase().includes(normalizedQuery) ||
+            product.description.toLowerCase().includes(normalizedQuery) ||
+            product.country.toLowerCase().includes(normalizedQuery) ||
+            product.category.toLowerCase().includes(normalizedQuery),
         )
         .slice(0, 5);
       setSearchResults(filtered);
     } else setSearchResults([]);
   }, [searchQuery, allProducts]);
 
-  const links = [
-    { href: "/", label: "Home" },
-    { href: "/collection", label: "Collection" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
-  ];
-
   return (
     <div className="relative">
       <header
-        className={`fixed inset-x-0 top-0 z-50 py-4 px-4 md:px-6 transition-transform duration-300 ${
-          showNavbar ? "translate-y-0" : "-translate-y-full"
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          navSurface ? "bg-white" : "bg-transparent text-white"
         }`}
       >
-        <div className="max-w-7xl mx-auto p-4 lg:p-6 bg-white shadow-md">
-          <div className="flex items-center justify-between">
-            {/* navigation links */}
-            <div className="hidden lg:flex gap-6">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="relative inline-block overflow-hidden text-sm lg:text-base group"
-                >
-                  <span className="block transition-transform duration-300 group-hover:-translate-y-full">
-                    {link.label}
-                  </span>
-                  <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
-                    {link.label}
-                  </span>
-                </Link>
-              ))}
-            </div>
+        <div className="mx-auto grid h-20 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-6 px-4 md:px-6">
+          <BrandLink
+            className={`hidden text-xl uppercase tracking-[0.16em] transition-colors duration-300 md:block ${
+              navTextClass
+            }`}
+          />
 
-            <div className="flex items-center justify-center gap-2">
-              {/* mobile menu toggle */}
+          <div className="hidden items-center justify-center gap-8 md:flex">
+            {NAV_LINKS.map(({ href, label }) => (
+              <Button
+                key={href}
+                as="link"
+                href={href}
+                variant="link"
+                className={navTextClass}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+
+          <BrandLink className="text-lg uppercase tracking-[0.16em] md:hidden" />
+
+          <div className="relative flex items-center justify-end gap-4">
+            <button onClick={toggleSearch} title="Search">
+              <MagnifyingGlassIcon
+                size={24}
+                weight="light"
+                className={`${navIconMotionClass} ${navIconClass}`}
+              />
+            </button>
+
+            <div className="relative">
               <button
-                className="lg:hidden"
-                onClick={() => {
-                  setIsMenuOpen(!isMenuOpen);
-                  setIsSearchOpen(false);
-                }}
-                title="Menu"
+                onClick={() => setCartOpen(true)}
+                className="relative flex items-center justify-center"
+                title={`Cart (${cartCount} items)`}
               >
-                {isMenuOpen ? (
-                  <XIcon weight="light" size={20} />
-                ) : (
-                  <ListIcon weight="light" size={20} />
-                )}
-              </button>
-
-              {/* logo */}
-              <Link
-                href="/"
-                className="lg:absolute lg:left-1/2 transform lg:-translate-x-1/2 text-lg lg:text-2xl"
-              >
-                brew.
-              </Link>
-            </div>
-
-            {/* right section */}
-            <div className="flex items-center gap-2 relative justify-end">
-              {/* search button */}
-              <button
-                onClick={() => {
-                  setIsSearchOpen(!isSearchOpen);
-                  setIsMenuOpen(false);
-                }}
-                title="Search"
-              >
-                <MagnifyingGlassIcon
+                <ShoppingBagIcon
                   size={24}
                   weight="light"
-                  className="lg:w-7 lg:h-7 hover:scale-90 transition-transform duration-300 ease-in-out"
+                  className={`${navIconMotionClass} ${navIconClass}`}
                 />
+                <CountBadge count={cartCount} className={navBadgeClass} />
               </button>
+              <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+            </div>
 
-              {/* favorites */}
-              <div className="relative">
-                <Link
-                  href="/favorites"
-                  className="relative flex items-center"
-                  title={`Favorites (${getTotalFavorites()} items)`}
-                >
-                  <HeartIcon
-                    size={24}
-                    weight="light"
-                    className="lg:w-7 lg:h-7 hover:scale-90 transition-transform duration-300 ease-in-out"
-                  />
-                  {getTotalFavorites() > 0 && (
-                    <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-[10px] font-semibold text-white bg-black rounded-full flex items-center justify-center">
-                      {getTotalFavorites() > 99 ? "99+" : getTotalFavorites()}
-                    </span>
-                  )}
-                </Link>
-              </div>
+            <span
+              className={`text-sm md:hidden ${navSurface ? "text-black/20" : "text-white/45"}`}
+            >
+              |
+            </span>
 
-              {/* cart */}
-              <div className="relative">
-                <button
-                  onClick={() => setCartOpen(true)}
-                  className="relative flex items-center justify-center"
-                  title={`Cart (${getTotalItems()} items)`}
-                >
-                  <ShoppingBagIcon
-                    size={24}
-                    weight="light"
-                    className="lg:w-7 lg:h-7 hover:scale-90 transition-transform duration-300 ease-in-out"
-                  />
-                  {getTotalItems() > 0 && (
-                    <span className="absolute top-1 -right-3 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-[10px] font-semibold text-white bg-black rounded-full flex items-center justify-center">
-                      {getTotalItems() > 99 ? "99+" : getTotalItems()}
-                    </span>
-                  )}
-                </button>
-                <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-              </div>
-
-              {/* profile */}
-              <div className="relative flex items-center justify-end group">
-                {isSignedIn ? (
-                  <div>
-                    <UserButton
-                      appearance={{
-                        elements: {
-                          userButtonPopoverCard: "mt-6 lg:mt-8",
-                        },
-                      }}
-                      afterSignOutUrl="/"
-                    >
-                      <UserButton.MenuItems>
-                        <UserButton.Link
-                          label="Orders"
-                          labelIcon={<PackageIcon size={16} weight="bold" />}
-                          href="/profile"
-                        />
-                      </UserButton.MenuItems>
-                    </UserButton>
-                  </div>
-                ) : (
-                  <Link href="/sign-in">
-                    <UserCirclePlusIcon
-                      size={24}
-                      weight="light"
-                      className="hover:scale-90 transition-transform duration-300 ease-in-out"
-                    />
-                  </Link>
-                )}
-              </div>
+            <div className="flex items-center ml-2 md:hidden">
+              <button
+                className={`transition-colors duration-300 ${navIconClass}`}
+                onClick={toggleMenu}
+                title="Menu"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMenuOpen ? <XIcon size={22} /> : <ListIcon size={22} />}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* search bar */}
-        <SearchBar
+        <SearchDrawer
           searchQuery={searchQuery}
           onQueryChange={setSearchQuery}
           onKeyDown={handleSearchKeyDown}
           searchResults={searchResults}
-          onResultClick={() => setIsSearchOpen(false)}
-          isSearchOpen={isSearchOpen}
+          isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
         />
       </header>
 
-      {/* mobile menu */}
-      <div className="lg:hidden relative z-40">
+      <AnimatePresence>
         {isMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black/40 z-10"
-            onClick={() => setIsMenuOpen(false)}
-          />
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-neutral-900/45 backdrop-blur-sm md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setIsMenuOpen(false)}
+            />
+
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-0 z-50 flex flex-col bg-neutral-50 md:hidden"
+            >
+              <div className="flex h-20 items-center justify-between border-b border-neutral-200 px-6">
+                <div className="flex flex-col leading-none">
+                  <span className="text-lg font-medium tracking-[0.15em] uppercase">
+                    brew<span className="text-amber-700">.</span>
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-neutral-500 transition-colors duration-300 hover:text-neutral-900"
+                  aria-label="Close menu"
+                >
+                  <XIcon size={22} weight="light" />
+                </button>
+              </div>
+
+              <nav className="flex flex-1 flex-col justify-center px-6">
+                {NAV_LINKS.map((link, i) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: 0.08 + i * 0.07,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`group flex items-center justify-between border-b border-neutral-200 py-5 ${
+                        pathname === link.href
+                          ? "text-neutral-900"
+                          : "text-neutral-700 hover:text-neutral-900"
+                      }`}
+                    >
+                      <span className="text-xl font-light">{link.label}</span>
+                      <ArrowRightIcon
+                        size={18}
+                        className="text-neutral-500 transition-transform duration-300 group-hover:translate-x-1"
+                      />
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              <div className="border-t border-neutral-200 px-6 py-6">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-amber-700">
+                  Get in touch
+                </p>
+                <a
+                  href="mailto:hello@brewcommerce.com"
+                  className="text-sm text-neutral-900/75 transition-colors duration-300 hover:text-neutral-900"
+                >
+                  hello@brewcommerce.com
+                </a>
+              </div>
+            </motion.aside>
+          </>
         )}
-        <div
-          className={`lg:hidden fixed left-4 right-4 md:left-6 md:right-6 bg-white transition-transform duration-300 z-40 ${
-            isMenuOpen ? "translate-y-0" : "-translate-y-[calc(100%+6rem)]"
-          }`}
-          style={{ top: "var(--navbar-height, 72px)" }}
-        >
-          <nav className="px-6 py-4">
-            {links.map((link, index) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm flex items-center py-2 ${
-                  pathname === link.href ? "font-medium" : "hover:text-black/75"
-                } ${
-                  index < links.length - 1
-                    ? "border-b border-black/10 py-2"
-                    : ""
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span>{link.label}</span>
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

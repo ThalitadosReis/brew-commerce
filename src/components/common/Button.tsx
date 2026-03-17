@@ -1,81 +1,102 @@
 "use client";
-
-import React from "react";
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 import Link from "next/link";
-import { CaretRightIcon } from "@phosphor-icons/react";
+
+const baseClasses =
+  "group inline-flex w-fit items-center justify-center gap-3 px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 overflow-hidden";
+
+const linkBaseClasses =
+  "group inline-flex w-fit text-[11px] font-medium uppercase tracking-[0.2em] focus:outline-none";
+
+const variantClasses = {
+  primary: "border border-transparent bg-black text-white hover:bg-black/80",
+  secondary:
+    "border border-neutral-200 bg-white text-neutral-900 hover:bg-white/80",
+  outline: "border border-white bg-transparent text-white hover:bg-white/10",
+  link: "text-left text-neutral-900",
+} as const;
 
 type BaseProps = {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "tertiary" | "default";
+  children: ReactNode;
+  variant?: keyof typeof variantClasses;
   className?: string;
   disabled?: boolean;
 };
 
 type ButtonAsButton = BaseProps &
-  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  ButtonHTMLAttributes<HTMLButtonElement> & {
     as?: "button";
     href?: never;
   };
 
 type ButtonAsLink = BaseProps &
-  Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
     as: "link";
     href: string;
   };
 
 type ButtonAsAnchor = BaseProps &
-  Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
     as: "a";
     href: string;
   };
 
 type ButtonProps = ButtonAsButton | ButtonAsLink | ButtonAsAnchor;
 
+function RollingContent({
+  children,
+  isLink,
+}: {
+  children: ReactNode;
+  isLink: boolean;
+}) {
+  if (isLink) {
+    return (
+      <span className="relative">
+        {children}
+        <span className="absolute bottom-0 left-0 h-px w-full origin-right scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:origin-left group-hover:scale-x-100" />
+      </span>
+    );
+  }
+
+  return (
+    <span className="relative overflow-hidden">
+      <span className="block transition-transform duration-300 group-hover:-translate-y-full">
+        {children}
+      </span>
+      <span className="absolute left-0 top-full block transition-transform duration-300 group-hover:-translate-y-full">
+        {children}
+      </span>
+    </span>
+  );
+}
+
 export default function Button({
   children,
-  variant = "default",
+  variant = "primary",
   className = "",
   disabled = false,
   as = "button",
   ...props
 }: ButtonProps) {
+  const isLink = variant === "link";
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
-
-  const baseClasses =
-    "inline-flex items-center justify-center transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 group text-sm sm:text-base";
-  const getClasses = () => {
-    switch (variant) {
-      case "primary":
-        return `${baseClasses} text-base relative overflow-hidden bg-black text-white font-medium px-6 py-3 ${disabledClasses} ${className}`;
-      case "secondary":
-        return `${baseClasses} text-base relative bg-black/5 hover:bg-black/10 font-medium px-6 py-3 ${disabledClasses} ${className}`;
-      case "tertiary":
-        return `${baseClasses} text-base relative gap-2 font-medium text-black hover:text-black/75 ${disabledClasses} ${className}`;
-      default:
-        return `${baseClasses} ${disabledClasses} ${className}`;
-    }
-  };
+  const buttonClasses = isLink
+    ? `${linkBaseClasses} ${variantClasses.link} ${disabledClasses} ${className}`.trim()
+    : `${baseClasses} ${variantClasses[variant]} ${disabledClasses} ${className}`.trim();
 
   const renderContent = () => (
-    <>
-      {children}
-      {variant === "tertiary" && !disabled && (
-        <CaretRightIcon
-          size={12}
-          weight="bold"
-          className="transition-transform duration-300 ease-out group-hover:translate-x-1"
-        />
-      )}
-      {variant === "primary" && !disabled && (
-        <span className="pointer-events-none absolute top-[-50px] left-[-75px] w-[50px] h-[155px] bg-white opacity-25 rotate-35 transition-all duration-550 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:left-[120%]" />
-      )}
-    </>
+    <RollingContent isLink={isLink}>{children}</RollingContent>
   );
 
   if (as === "link") {
     const { href, ...rest } = props as ButtonAsLink;
     return (
-      <Link href={href} className={getClasses()} {...rest}>
+      <Link href={href} className={buttonClasses} {...rest}>
         {renderContent()}
       </Link>
     );
@@ -84,16 +105,15 @@ export default function Button({
   if (as === "a") {
     const { href, ...rest } = props as ButtonAsAnchor;
     return (
-      <a href={href} className={getClasses()} {...rest}>
+      <a href={href} className={buttonClasses} {...rest}>
         {renderContent()}
       </a>
     );
   }
 
-  // default: render as button
   return (
     <button
-      className={getClasses()}
+      className={buttonClasses}
       disabled={disabled}
       {...(props as ButtonAsButton)}
     >

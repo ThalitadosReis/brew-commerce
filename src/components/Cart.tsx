@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
-import { useToast } from "@/contexts/ToastContext";
 import type { CartItem } from "@/types/product";
 import {
   MinusIcon,
   PlusIcon,
+  ArrowRightIcon,
+  ShoppingBagIcon,
   TrashSimpleIcon,
   PackageIcon,
 } from "@phosphor-icons/react";
@@ -26,12 +25,22 @@ interface CartItemComponentProps {
   updateQuantity: (
     productId: string | number,
     quantity: number,
-    selectedSizes?: string[]
+    selectedSizes?: string[],
   ) => void;
   removeFromCart: (
     productId: string | number,
-    selectedSizes?: string[]
+    selectedSizes?: string[],
   ) => void;
+}
+
+function getCartItemId(item: CartItem) {
+  const selectedSizes = item.selectedSizes ?? [];
+  if (item._id) return item._id;
+  return `${item.name}-${selectedSizes.join("-")}`;
+}
+
+function formatPrice(amount: number) {
+  return `CHF ${amount.toFixed(2)}`;
 }
 
 function CartItemComponent({
@@ -41,13 +50,7 @@ function CartItemComponent({
 }: CartItemComponentProps) {
   const selectedSizes = item.selectedSizes ?? [];
   const quantity = item.quantity;
-
-  const getItemId = () => {
-    if (item._id) return item._id;
-    return `${item.name}-${selectedSizes.join("-")}`;
-  };
-
-  const itemId = getItemId();
+  const itemId = getCartItemId(item);
 
   // calculate if user can increase quantity based on stock
   const canIncrease = selectedSizes.every((sizeStr) => {
@@ -75,64 +78,69 @@ function CartItemComponent({
   const itemTotal = item.price * quantity;
 
   return (
-    <div className="flex justify-between pb-4 border-b border-black/10">
-      <div className="flex items-start gap-4">
-        <div className="w-20 h-20 bg-black/10 overflow-hidden shrink-0">
-          {item?.images ? (
-            <Image
-              src={item.images[0]}
-              alt={item.name}
-              width={100}
-              height={100}
-              className="object-contain"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-black/50">
-              <PackageIcon size={28} />
-            </div>
-          )}
+    <div className="flex gap-4 border-b border-black/5 py-4">
+      <div className="flex h-24 w-24 items-center justify-center overflow-hidden bg-black/10 shrink-0">
+        {item?.images ? (
+          <Image
+            src={item.images[0]}
+            alt={item.name}
+            width={80}
+            height={96}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-black/40">
+            <PackageIcon size={24} />
+          </div>
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-base leading-tight text-black">{item.name}</p>
+            {selectedSizes.length > 0 && (
+              <p className="mt-1 text-xs text-black/45">
+                {selectedSizes.join(", ")}
+              </p>
+            )}
+          </div>
+          <button
+            onClick={handleRemove}
+            className="ml-2 shrink-0 text-black/25 transition-colors hover:text-black/60"
+            aria-label="Remove item from cart"
+          >
+            <TrashSimpleIcon size={16} weight="light" />
+          </button>
         </div>
 
-        <div className="flex flex-col">
-          <h6>{item.name}</h6>
-          <small className="text-black/75">Size: {selectedSizes}</small>
-        </div>
-      </div>
-      <div className="flex flex-col justify-between items-end">
-        <p className="font-medium!">CHF {itemTotal.toFixed(2)}</p>
-        <div className="w-fit inline-flex items-center border border-black/5">
-          {quantity > 1 ? (
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 border border-black/15 px-2 py-1">
             <button
               onClick={handleDecreaseQuantity}
-              className="p-2 bg-black/10 hover:bg-black/5"
+              className="text-black/45 transition-colors hover:text-black"
               aria-label="Decrease quantity"
             >
-              <MinusIcon size={16} weight="light" />
+              <MinusIcon size={12} weight="light" />
             </button>
-          ) : (
+            <span className="w-5 text-center text-xs font-medium text-black/70">
+              {quantity}
+            </span>
             <button
-              onClick={handleRemove}
-              className="p-2 bg-black/10 hover:bg-black/5"
-              aria-label="Remove item from cart"
+              onClick={handleIncreaseQuantity}
+              disabled={!canIncrease}
+              className={`transition-colors ${
+                !canIncrease
+                  ? "cursor-not-allowed opacity-40"
+                  : "text-black/45 hover:text-black"
+              }`}
+              aria-label="Increase quantity"
             >
-              <TrashSimpleIcon size={16} weight="light" />
+              <PlusIcon size={12} weight="light" />
             </button>
-          )}
-
-          <span className="px-4 text-center bg-white">{quantity}</span>
-
-          <button
-            onClick={handleIncreaseQuantity}
-            disabled={!canIncrease}
-            className={`p-2 bg-black/10 ${
-              !canIncrease
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-black/5"
-            }`}
-            aria-label="Increase quantity"
-          >
-            <PlusIcon size={16} weight="light" />
-          </button>
+          </div>
+          <span className="shrink-0 text-sm font-medium text-black">
+            {formatPrice(itemTotal)}
+          </span>
         </div>
       </div>
     </div>
@@ -140,51 +148,21 @@ function CartItemComponent({
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const {
-    items,
-    updateQuantity,
-    removeFromCart,
-    getTotalPrice,
-    clearCart,
-    clearServerCart,
-  } = useCart();
-  const { showToast } = useToast();
-  const { user } = useUser();
-  const router = useRouter();
+  const { items, updateQuantity, removeFromCart, getTotalPrice } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutEmail, setCheckoutEmail] = useState("");
 
   const subtotal = getTotalPrice();
-  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-
-  const handleClearCart = () => {
-    if (items.length === 0) return;
-    clearCart();
-    clearServerCart().catch((error) => {
-      console.error("Failed to clear server cart", error);
-    });
-    showToast("All items removed from cart", "success");
-  };
+  const hasItems = items.length > 0;
+  const normalizedCheckoutEmail = useMemo(
+    () => checkoutEmail.trim(),
+    [checkoutEmail],
+  );
+  const checkoutLabel = isCheckingOut ? "Processing..." : "Checkout";
 
   const handleCheckout = async () => {
-    if (items.length === 0) return;
-
-    // require login before checkout
-    if (!user) {
-      if (typeof window !== "undefined") {
-        const isAuthPage = window.location.pathname.startsWith("/sign-in");
-        const storedReturn = sessionStorage.getItem("returnAfterLogin") || "/";
-        const currentUrl = isAuthPage ? storedReturn : window.location.href;
-
-        if (!isAuthPage) {
-          sessionStorage.setItem("returnAfterLogin", currentUrl);
-        }
-
-        router.push(
-          `/sign-in?redirect_url=${encodeURIComponent(currentUrl || "/")}`
-        );
-      } else {
-        router.push("/sign-in");
-      }
+    if (!hasItems) return;
+    if (!normalizedCheckoutEmail) {
       return;
     }
 
@@ -200,12 +178,6 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         selectedSizes: item.selectedSizes,
       }));
 
-      // get user email
-      const email = user.primaryEmailAddress?.emailAddress;
-      if (!email) {
-        throw new Error("User email is required for checkout");
-      }
-
       // call checkout API
       const response = await fetch("/api/checkout", {
         method: "POST",
@@ -214,7 +186,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         },
         body: JSON.stringify({
           items: checkoutItems,
-          email,
+          email: normalizedCheckoutEmail,
         }),
       });
 
@@ -231,66 +203,90 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      showToast(
-        error instanceof Error
-          ? error.message
-          : "Failed to initiate checkout. Please try again.",
-        "error"
-      );
       setIsCheckingOut(false);
     }
   };
 
-  const footerContent = items.length > 0 && (
-    <>
-      <div className="flex items-center justify-between mb-6">
-        <p>Subtotal</p>
-        <span className="font-semibold">CHF {subtotal.toFixed(2)}</span>
+  const footerContent = hasItems && (
+    <div className="-m-6 space-y-4 bg-black/5 p-6">
+      <div className="space-y-2">
+        <label
+          htmlFor="cart-checkout-email"
+          className="block text-xs uppercase tracking-[0.18em] text-black/45"
+        >
+          Email
+        </label>
+        <input
+          id="cart-checkout-email"
+          type="email"
+          value={checkoutEmail}
+          onChange={(event) => setCheckoutEmail(event.target.value)}
+          placeholder="name@email.com"
+          className="w-full border border-black/10 bg-white px-4 py-3 text-sm text-black placeholder:text-black/30 focus:outline-none"
+        />
       </div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm">Subtotal</span>
+        <span className="text-lg">{formatPrice(subtotal)}</span>
+      </div>
+      <p className="text-sm text-black/50">
+        Shipping is calculated at checkout.
+      </p>
       <Button
         variant="primary"
         onClick={handleCheckout}
-        disabled={isCheckingOut}
-        className="w-full"
+        disabled={isCheckingOut || !normalizedCheckoutEmail}
+        className="group w-full transition-colors disabled:opacity-50"
       >
-        {isCheckingOut
-          ? "Processing..."
-          : user
-          ? "Checkout"
-          : "Sign in to checkout"}
+        {checkoutLabel}
       </Button>
-    </>
+      <button
+        onClick={onClose}
+        className="w-full text-center text-sm text-black/40 transition-colors hover:text-black/65"
+      >
+        Continue shopping
+      </button>
+    </div>
   );
 
   return (
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      title={`${totalQuantity} ${totalQuantity === 1 ? "item" : "items"}`}
+      title={
+        <span className="inline-flex items-center gap-2">
+          <ShoppingBagIcon size={18} weight="light" className="text-black/70" />
+          <span>Your bag</span>
+        </span>
+      }
       footer={footerContent}
       ariaLabel="Shopping cart"
-      headerActions={
-        items.length > 0 ? (
-          <button
-            type="button"
-            onClick={handleClearCart}
-            disabled={isCheckingOut}
-            className={`text-xs underline ${
-              isCheckingOut ? "" : "hover:opacity-75"
-            }`}
-          >
-            Clear
-          </button>
-        ) : null
-      }
     >
       <div className="space-y-4">
-        {items.length === 0 ? (
-          <p className="text-center">Your cart is empty</p>
+        {!hasItems ? (
+          <div className="flex h-full min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black/5">
+              <ShoppingBagIcon
+                size={28}
+                weight="thin"
+                className="text-black/35"
+              />
+            </div>
+            <p className="text-sm text-black/50">Your bag is empty</p>
+
+            <Button
+              as="link"
+              href="/collection"
+              variant="primary"
+              onClick={onClose}
+            >
+              Continue shopping
+            </Button>
+          </div>
         ) : (
           items.map((item) => (
             <CartItemComponent
-              key={`${item.id || item._id}-${item.selectedSizes}`}
+              key={`${item.id || item._id}-${(item.selectedSizes ?? []).join("-")}`}
               item={item}
               updateQuantity={updateQuantity}
               removeFromCart={removeFromCart}
