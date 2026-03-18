@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { ArrowDownIcon } from "@phosphor-icons/react";
-import { HERO_IMAGE } from "@/lib/images/home";
+import { HERO_IMAGE } from "@/lib/images";
 import Button from "../common/Button";
 
 export function Hero() {

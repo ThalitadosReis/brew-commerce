@@ -3,7 +3,7 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import Section from "@/components/common/Section";
 
-import { FEATURE_IMAGES } from "@/lib/images/home";
+import { FEATURE_IMAGES } from "@/lib/images";
 
 const countryCards = [
   {
