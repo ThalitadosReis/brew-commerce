@@ -7,7 +7,7 @@ import Button from "./Button";
 interface ButtonItem {
   label: string;
   href: string;
-  variant?: "primary" | "secondary" | "tertiary" | "default";
+  variant?: "primary" | "secondary" | "outline" | "link";
 }
 
 interface ContentBlockProps {
@@ -37,25 +37,25 @@ const ContentBlock = ({
 }: ContentBlockProps) => {
   return (
     <div
-      className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center ${className} ${
+      className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch  bg-neutral-100 ${className} ${
         imagePosition === "left" ? "md:grid-flow-col-dense" : ""
       }`}
     >
       <div
-        className={`flex flex-col justify-center space-y-4 p-6 ${
+        className={`flex flex-col justify-center space-y-6 p-6 md:p-8 lg:p-12 ${
           imagePosition === "left" ? "md:order-2" : "md:order-1"
         } ${contentClassName}`}
       >
-        <div className="max-w-lg space-y-2">
+        <div className="max-w-md space-y-3">
           {subtitle && (
-            <h6 className="text-sm md:text-base lg:text-lg text-black tracking-wide">
+            <h6 className="text-[11px] uppercase tracking-[0.24em] text-amber-700">
               {subtitle}
             </h6>
           )}
-          <h4 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
+          <h4 className="text-2xl md:text-3xl lg:text-5xl font-semibold tracking-[-0.03em] text-black">
             {title}
           </h4>
-          <div className="text-sm md:text-base lg:text-lg leading-6 text-black/75 font-light">
+          <div className="text-sm md:text-base lg:text-lg leading-7 text-neutral-600 font-light">
             {text}
           </div>
         </div>
@@ -86,7 +86,7 @@ const ContentBlock = ({
             priority={priority}
             fetchPriority={priority ? "high" : "auto"}
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent" />
         </div>
       )}
     </div>

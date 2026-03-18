@@ -41,8 +41,7 @@ export default function PageHeader({
         </h1>
         {description && (
           <p
-            className="mt-2 text-sm lg:text-base font-light leading-7 text-white/75 ${
-            }"
+            className="mt-2 text-sm lg:text-base font-light leading-7 text-white/75"
           >
             {description}
           </p>

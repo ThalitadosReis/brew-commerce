@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 
-import { STORY_IMAGES } from "@/lib/images/about";
+import { STORY_IMAGES } from "@/lib/images";
 
 export default function ImageCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
