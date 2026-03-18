@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCart } from "@/contexts/CartContext";
 import { Product } from "@/types/product";
 import Cart from "./Cart";
-import SearchDrawer from "./common/SearchDrawer";
+import SearchDrawer from "./Search";
 
 import {
   ArrowRightIcon,
@@ -91,7 +91,10 @@ export default function Navbar() {
   const router = useRouter();
   const { getTotalItems } = useCart();
   const cartCount = getTotalItems();
-  const navSurface = scrolled || isMenuOpen || isSearchOpen;
+  const isSolidNavPage =
+    /^\/collection\/.+/.test(pathname ?? "") ||
+    pathname === "/success";
+  const navSurface = scrolled || isMenuOpen || isSearchOpen || isSolidNavPage;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
