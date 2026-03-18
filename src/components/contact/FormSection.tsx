@@ -1,53 +1,32 @@
 "use client";
 
-import { ReactNode } from "react";
-import {
-  CircleNotchIcon,
-  ClockIcon,
-  EnvelopeIcon,
-  MapPinIcon,
-  PhoneIcon,
-} from "@phosphor-icons/react";
+import { CircleNotchIcon } from "@phosphor-icons/react";
 import { useForm, type FieldErrors } from "react-hook-form";
 
 import Button from "../common/Button";
-import Section from "../common/Section";
-import { useToast } from "@/contexts/ToastContext";
 
-type ContactItemType = {
-  heading: string;
-  info: string;
-  text: string;
-  icon: ReactNode;
-};
-
-const iconClasses = "h-7 w-7 lg:h-8 lg:w-8";
-const contactItems: ContactItemType[] = [
+const contactItems = [
   {
     heading: "Email",
     info: "contact@brew.com",
-    text: "We'll respond within one business day",
-    icon: <EnvelopeIcon weight="light" className={iconClasses} />,
   },
   {
     heading: "Phone",
     info: "+41 76 123 45 67",
-    text: "Our team is ready to chat about your coffee needs",
-    icon: <PhoneIcon weight="light" className={iconClasses} />,
   },
   {
     heading: "Office",
     info: "123 Coffee St, Roastery City",
-    text: "Visit our roastery and experience our coffee craft",
-    icon: <MapPinIcon weight="light" className={iconClasses} />,
   },
   {
     heading: "Hours",
-    info: "",
-    text: "",
-    icon: <ClockIcon weight="light" className={iconClasses} />,
+    hours: [
+      { day: "Monday – Friday", time: "9:00 – 18:00" },
+      { day: "Saturday", time: "10:00 – 16:00" },
+      { day: "Sunday", time: "Closed" },
+    ],
   },
-];
+] as const;
 
 type ContactFormValues = {
   name: string;
@@ -56,188 +35,139 @@ type ContactFormValues = {
   message: string;
 };
 
-export default function FormSection() {
-  const { showToast } = useToast();
+const inputClass =
+  "w-full bg-transparent border-b border-black/20 py-3 text-sm outline-none transition-colors focus:border-black placeholder:text-black/30";
 
+export default function FormSection() {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
+    defaultValues: { name: "", email: "", subject: "", message: "" },
   });
 
   const onSubmit = async (values: ContactFormValues) => {
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
       const data = await response.json();
-
       if (response.ok) {
-        showToast(
-          "Thank you! Your message has been sent successfully.",
-          "success"
-        );
         reset();
       } else {
-        showToast(
-          data.error || "Failed to send message. Please try again.",
-          "error"
-        );
+        console.error(data.error || "Failed to send message. Please try again.");
       }
     } catch (error) {
       console.error("Failed to submit contact form:", error);
-      showToast("An error occurred. Please try again later.", "error");
     }
   };
 
   const handleError = (errors: FieldErrors<ContactFormValues>) => {
-    const orderedFields: Array<keyof ContactFormValues> = [
-      "name",
-      "email",
-      "subject",
-      "message",
-    ];
-
-    for (const field of orderedFields) {
-      const fieldError = errors[field];
-      if (!fieldError) continue;
-
-      const message =
-        typeof fieldError?.message === "string"
-          ? fieldError.message
-          : "Please double-check the highlighted field.";
-
-      showToast(message, "error");
+    const fields: Array<keyof ContactFormValues> = ["name", "email", "subject", "message"];
+    for (const field of fields) {
+      const err = errors[field];
+      if (!err) continue;
+      console.error(typeof err?.message === "string" ? err.message : "Please check the highlighted field.");
       break;
     }
   };
 
   return (
-    <section className="bg-white/90">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
-        <Section
-          className="ml-0 text-left"
-          subtitle="Reach"
-          title="Get in Touch"
-          description="We select beans with precision, roast with care, and deliver pure flavor in every package."
-        />
+    <section className="bg-white px-4 md:px-6 py-14 lg:py-24">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-10 lg:mb-14">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-amber-700 mb-3">
+            Get in touch
+          </p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-black max-w-xl">
+            We&apos;d love to hear from you
+          </h2>
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 space-y-4">
-          <form
-            onSubmit={handleSubmit(onSubmit, handleError)}
-            className="space-y-4"
-            noValidate
-          >
-            <div className="grid md:grid-cols-2 gap-4">
-              <label className="text-sm text-black/75">
-                <span className="font-medium">Name</span>
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24">
+          {/* form */}
+          <form onSubmit={handleSubmit(onSubmit, handleError)} className="space-y-6" noValidate>
+            <div className="grid md:grid-cols-2 gap-6">
+              <label className="block">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-black/40 mb-2 block">Name</span>
                 <input
-                  {...register("name", {
-                    required: "Please tell us your name.",
-                  })}
+                  {...register("name", { required: "Please tell us your name." })}
                   placeholder="Your name"
                   aria-invalid={Boolean(errors.name)}
-                  className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-black/5"
+                  className={inputClass}
                 />
               </label>
-              <label className="text-sm text-black/75">
-                <span className="font-medium">Email</span>
+              <label className="block">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-black/40 mb-2 block">Email</span>
                 <input
                   {...register("email", {
                     required: "We need your email to get back to you.",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Please enter a valid email.",
-                    },
+                    pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Please enter a valid email." },
                   })}
                   type="email"
                   placeholder="Your email address"
                   aria-invalid={Boolean(errors.email)}
-                  className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-black/5"
+                  className={inputClass}
                 />
               </label>
             </div>
 
-            <label className="block text-sm text-black/75">
-              <span className="font-medium">Subject</span>
+            <label className="block">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-black/40 mb-2 block">Subject</span>
               <input
-                {...register("subject", {
-                  required: "Please provide a subject.",
-                })}
+                {...register("subject", { required: "Please provide a subject." })}
                 placeholder="How can we help?"
                 aria-invalid={Boolean(errors.subject)}
-                className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-black/5"
+                className={inputClass}
               />
             </label>
 
-            <label className="block text-sm text-black/75">
-              <span className="font-medium">Message</span>
+            <label className="block">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-black/40 mb-2 block">Message</span>
               <textarea
-                {...register("message", {
-                  required: "Let us know how we can help.",
-                })}
-                rows={6}
+                {...register("message", { required: "Let us know how we can help." })}
+                rows={5}
                 placeholder="Tell us more about your inquiry..."
                 aria-invalid={Boolean(errors.message)}
-                className="w-full font-normal bg-black/10 px-4 py-4 text-sm outline-none transition focus:bg-black/5"
+                className={inputClass + " resize-none"}
               />
             </label>
 
             <Button
               type="submit"
               variant="primary"
-              className="w-full lg:w-fit flex items-center justify-center space-x-2"
               disabled={isSubmitting}
+              className="w-full lg:w-fit"
             >
-              {isSubmitting && (
-                <CircleNotchIcon
-                  className="w-5 h-5 animate-spin"
-                  weight="bold"
-                />
-              )}
-              <span>{isSubmitting ? "Sending..." : "Send message"}</span>
+              {isSubmitting && <CircleNotchIcon className="w-4 h-4 animate-spin" weight="bold" />}
+              {isSubmitting ? "Sending..." : "Send message"}
             </Button>
           </form>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* contact info */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 content-start">
             {contactItems.map((item) => (
-              <article
-                key={item.heading}
-                className="flex flex-col items-center text-center space-y-2"
-              >
-                <div className="text-black">{item.icon}</div>
-                <h5 className="text-lg font-semibold text-black">
+              <div key={item.heading} className="space-y-2 border-t border-black/10 pt-4">
+                <p className="text-[11px] uppercase tracking-[0.25em] text-amber-700">
                   {item.heading}
-                </h5>
-                <p className="text-sm text-black/50">{item.text}</p>
-
-                {item.heading === "Hours" ? (
-                  <div className="text-sm text-black">
-                    <p>Mon-Fri: 9:00-18:00</p>
-                    <p>Saturday: 10:00-16:00</p>
-                    <p>Sunday: Closed</p>
+                </p>
+                {"hours" in item ? (
+                  <div className="space-y-1">
+                    {item.hours.map(({ day, time }) => (
+                      <div key={day} className="flex justify-between gap-4 text-sm">
+                        <span className="text-black/60">{day}</span>
+                        <span className="font-medium text-black tabular-nums">{time}</span>
+                      </div>
+                    ))}
                   </div>
                 ) : (
-                  <>
-                    {item.info && (
-                      <p className="text-sm text-black">{item.info}</p>
-                    )}
-                  </>
+                  <p className="text-sm font-medium text-black">{item.info}</p>
                 )}
-              </article>
+              </div>
             ))}
           </div>
         </div>

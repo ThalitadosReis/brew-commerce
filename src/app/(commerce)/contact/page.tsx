@@ -3,8 +3,9 @@
 import Reveal from "@/components/Reveal";
 import PageHeader from "@/components/common/PageHeader";
 import FormSection from "@/components/contact/FormSection";
+import LocationSection from "@/components/contact/LocationSection";
 
-import { CONTACT_LOCATION_IMAGES } from "@/lib/images/contact";
+import { CONTACT_LOCATION_IMAGES } from "@/lib/images";
 
 export default function ContactPage() {
   return (
@@ -18,6 +19,9 @@ export default function ContactPage() {
       </Reveal>
       <Reveal direction="right" delay={0.08}>
         <FormSection />
+      </Reveal>
+      <Reveal delay={0.08}>
+        <LocationSection />
       </Reveal>
     </>
   );
