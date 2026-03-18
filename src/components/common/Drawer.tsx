@@ -2,13 +2,14 @@
 
 import React from "react";
 import { createPortal } from "react-dom";
+import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { XIcon } from "@phosphor-icons/react";
 
 interface DrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
+  title?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
   side?: "left" | "right";
@@ -31,8 +32,6 @@ export default function Drawer({
   headerActions,
 }: DrawerProps) {
   const [mounted, setMounted] = React.useState(false);
-  const [shouldRender, setShouldRender] = React.useState(isOpen);
-  const [isVisible, setIsVisible] = React.useState(isOpen);
 
   React.useEffect(() => {
     setMounted(true);
@@ -40,18 +39,7 @@ export default function Drawer({
   }, []);
 
   React.useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      const raf = requestAnimationFrame(() => setIsVisible(true));
-      return () => cancelAnimationFrame(raf);
-    }
-    setIsVisible(false);
-    const timeout = setTimeout(() => setShouldRender(false), 200);
-    return () => clearTimeout(timeout);
-  }, [isOpen]);
-
-  React.useEffect(() => {
-    if (!shouldRender) return;
+    if (!isOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
@@ -59,86 +47,85 @@ export default function Drawer({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [shouldRender, onClose]);
+  }, [isOpen, onClose]);
 
   if (!mounted) return null;
-  if (!shouldRender) return null;
 
   const portalTarget = typeof document !== "undefined" ? document.body : null;
   if (!portalTarget) return null;
 
-  const translateClosed =
-    side === "left" ? "-translate-x-full" : "translate-x-full";
-  const translateOpen = "translate-x-0";
-
   const panelWidth = width;
   const sideAlignment = side === "left" ? "mr-auto" : "ml-auto";
+  const initialX = side === "left" ? "-100%" : "100%";
 
   return createPortal(
-    <div
-      className={cn(
-        "fixed inset-0 z-9998 flex items-stretch",
-        isOpen ? "" : "pointer-events-none"
-      )}
-    >
-      <div
-        className={cn(
-          "absolute inset-0 bg-black/40 transition-opacity duration-200",
-          isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        aria-hidden
-        onClick={onClose}
-      />
-      <section
-        role="dialog"
-        aria-label={ariaLabel}
-        aria-modal="true"
-        className={cn(
-          "relative flex h-screen w-full transform bg-white transition-transform duration-200 ease-out",
-          isVisible ? translateOpen : translateClosed,
-          panelWidth,
-          sideAlignment
-        )}
-      >
-        <div className="flex h-full w-full flex-col">
-          {showHeader && (
-            <header className="flex items-center justify-between border-b border-black/10 p-6">
-              {title && (
-                <h6 className="text-base md:text-lg lg:text-2xl text-black tracking-wide">
-                  {title}
-                </h6>
-              )}
-              <div className="flex items-center gap-4">
-                {headerActions}
-                <button
-                  type="button"
-                  aria-label={`Close ${ariaLabel}`}
-                  onClick={onClose}
-                  className="hover:text-black/50"
-                >
-                  <XIcon size={18} weight="bold" />
-                </button>
-              </div>
-            </header>
-          )}
-
-          <div
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-9998 flex items-stretch">
+          <motion.div
+            className="absolute inset-0 bg-black/40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            aria-hidden
+            onClick={onClose}
+          />
+          <motion.aside
+            role="dialog"
+            aria-label={ariaLabel}
+            aria-modal="true"
+            initial={{ x: initialX }}
+            animate={{ x: 0 }}
+            exit={{ x: initialX }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              "flex-1 overflow-y-auto p-6",
-              footer ? "pb-32" : undefined
+              "relative flex h-screen w-full bg-white",
+              panelWidth,
+              sideAlignment,
             )}
           >
-            {children}
-          </div>
+            <div className="flex h-full w-full flex-col">
+              {showHeader && (
+                <header className="flex items-center justify-between border-b border-black/10 p-6">
+                  {title && (
+                    <h6 className="text-base md:text-lg lg:text-2xl text-black tracking-wide">
+                      {title}
+                    </h6>
+                  )}
+                  <div className="flex items-center gap-4">
+                    {headerActions}
+                    <button
+                      type="button"
+                      aria-label={`Close ${ariaLabel}`}
+                      onClick={onClose}
+                      className="text-black/50 transition-colors hover:text-black/75"
+                    >
+                      <XIcon size={18} weight="bold" />
+                    </button>
+                  </div>
+                </header>
+              )}
 
-          {footer && (
-            <footer className="sticky bottom-0 border-t border-black/10 p-6">
-              {footer}
-            </footer>
-          )}
+              <div
+                className={cn(
+                  "flex-1 overflow-y-auto p-6",
+                  footer ? "pb-32" : undefined,
+                )}
+              >
+                {children}
+              </div>
+
+              {footer && (
+                <footer className="sticky bottom-0 border-t border-black/10 p-6">
+                  {footer}
+                </footer>
+              )}
+            </div>
+          </motion.aside>
         </div>
-      </section>
-    </div>,
-    portalTarget
+      )}
+    </AnimatePresence>,
+    portalTarget,
   );
 }

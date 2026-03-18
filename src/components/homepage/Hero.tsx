@@ -33,7 +33,7 @@ export function Hero() {
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-center justify-center px-4 pb-24 md:items-end md:justify-start md:px-6 md:pb-32">
         <div className="mb-6 max-w-3xl space-y-4 text-center text-white md:mb-10 md:text-left">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-[-0.03em]">
             Craft coffee that tells a story in every cup
           </h1>
           <p className="text-sm md:text-base lg:text-lg font-light">

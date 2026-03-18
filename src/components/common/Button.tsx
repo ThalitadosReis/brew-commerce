@@ -16,7 +16,7 @@ const variantClasses = {
   primary: "border border-transparent bg-black text-white hover:bg-black/80",
   secondary:
     "border border-neutral-200 bg-white text-neutral-900 hover:bg-white/80",
-  outline: "border border-white bg-transparent text-white hover:bg-white/10",
+  outline: "border border-current bg-transparent text-current hover:opacity-70",
   link: "text-left text-neutral-900",
 } as const;
 
