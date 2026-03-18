@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import type { CartItem } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
 import Loading from "@/components/common/Loading";
@@ -11,11 +10,11 @@ import Button from "@/components/common/Button";
 function SuccessPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const { user, isLoaded: userLoaded } = useUser();
-  const { items: cartItems, clearCart, clearServerCart } = useCart();
+  const { items: cartItems, clearCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasProcessed, setHasProcessed] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (hasProcessed) return;
@@ -26,15 +25,10 @@ function SuccessPageContent() {
       return;
     }
 
-    if (!userLoaded) return;
-
     const saveOrderToDB = async () => {
       const clearAllCarts = () => {
         setHasProcessed(true);
         clearCart();
-        clearServerCart().catch((err) =>
-          console.error("Failed to clear server cart", err)
-        );
       };
 
       const itemsSource: CartItem[] = (() => {
@@ -85,6 +79,7 @@ function SuccessPageContent() {
             const sessionData = await sessionRes.json();
             shippingAddress = sessionData.shippingAddress ?? null;
             checkoutEmail = sessionData.customerEmail ?? null;
+            setCustomerEmail(checkoutEmail);
           } else if (sessionRes.status === 404) {
             shippingAddress = null;
           }
@@ -98,11 +93,7 @@ function SuccessPageContent() {
           subtotal,
           shipping: subtotal >= 50 ? 0 : 4.5,
           total: subtotal >= 50 ? subtotal : subtotal + 4.5,
-          userId: user?.id,
-          customerEmail:
-            user?.primaryEmailAddress?.emailAddress ??
-            checkoutEmail ??
-            undefined,
+          customerEmail: checkoutEmail ?? undefined,
           shippingAddress,
         };
 
@@ -141,46 +132,53 @@ function SuccessPageContent() {
     saveOrderToDB();
   }, [
     sessionId,
-    user,
-    userLoaded,
     cartItems,
     clearCart,
-    clearServerCart,
     hasProcessed,
   ]);
-
-  const userName = user?.firstName || "";
 
   if (loading) {
     return <Loading message="Processing order..." />;
   }
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-12">
-      <div className="px-4 md:px-6 text-center space-y-4">
-        <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
-          Thanks, {userName}!
-          <br />
-          We received your order
-        </h3>
+    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-24">
+      <div className="max-w-lg mx-auto text-center space-y-6">
+        <p className="text-[11px] uppercase tracking-[0.3em] text-amber-700">
+          Order confirmed
+        </p>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-black leading-tight">
+          Thanks! Your coffee is on its way
+        </h1>
 
         {sessionId && (
-          <div className="bg-white p-8 space-y-2">
-            <p className="text-sm">Your order confirmation:</p>
-            <small className="text-xs font-mono break-all">{sessionId}</small>
+          <div className="border border-black/10 p-6 space-y-2 text-left">
+            <p className="text-[11px] uppercase tracking-[0.25em] text-black/40">
+              Confirmation
+            </p>
+            <p className="text-xs font-mono text-black/60 break-all">{sessionId}</p>
           </div>
         )}
 
-        {error && <div className="bg-white p-8 text-red-600">{error}</div>}
+        {error && (
+          <div className="border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
-        <p className="text-sm font-light">
-          You will receive a confirmation email with tracking details as your
-          items ship.
+        <p className="text-sm leading-7 text-neutral-500">
+          {customerEmail ? (
+            <>A confirmation will be sent to <span className="text-black">{customerEmail}</span>. </>
+          ) : null}
+          We&apos;ll send you tracking details as soon as your order ships.
         </p>
 
-        <div className="flex justify-center">
-          <Button as="link" href="/collection" variant="primary">
+        <div className="flex justify-center gap-4 pt-2">
+          <Button as="a" href="/collection" variant="primary">
             Continue shopping
+          </Button>
+          <Button as="a" href="/about" variant="secondary">
+            Our story
           </Button>
         </div>
       </div>
