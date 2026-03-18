@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { CaretRightIcon, SignOutIcon } from "@phosphor-icons/react";
-import { PanelLeft } from "lucide-react";
+import { CaretRightIcon, SignOutIcon, SolarPanelIcon } from "@phosphor-icons/react";
 
 import { AdminNavigationDrawer } from "@/components/admin/AdminNavigationDrawer";
 
@@ -74,7 +73,7 @@ export function AdminConsoleNav({
             className="flex items-center justify-center transition hover:bg-black/5 rounded-md p-2"
             aria-label="Toggle navigation"
           >
-            <PanelLeft size={20} />
+            <SolarPanelIcon size={20} />
           </button>
           <span className="h-6 w-px bg-black/10" />
           <div className="flex items-center gap-2">

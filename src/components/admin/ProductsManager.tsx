@@ -9,7 +9,6 @@ import {
   type ProductPayload,
 } from "@/components/admin/ProductForm";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/contexts/ToastContext";
 import Loading from "@/components/common/Loading";
 import type { Product } from "@/types/product";
 
@@ -182,7 +181,6 @@ export default function AdminProductsManager() {
   const { token, user, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { showToast } = useToast();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -227,7 +225,6 @@ export default function AdminProductsManager() {
       });
       const data = await response.json().catch(() => ({}));
       if (response.status === 401 || response.status === 403) {
-        showToast("Session expired. Please sign in again.", "error");
         router.replace("/admin-login");
         setProducts([]);
         return;
@@ -238,15 +235,11 @@ export default function AdminProductsManager() {
       setProducts(Array.isArray(data.products) ? data.products : []);
     } catch (error) {
       console.error("Error fetching products:", error);
-      showToast(
-        error instanceof Error ? error.message : "Unable to load products",
-        "error"
-      );
       setProducts([]);
     } finally {
       setLoadingProducts(false);
     }
-  }, [token, showToast, router]);
+  }, [token, router]);
 
   useEffect(() => {
     if (ready) fetchProducts();
@@ -282,7 +275,6 @@ export default function AdminProductsManager() {
 
         const data = await response.json().catch(() => ({}));
         if (response.status === 401 || response.status === 403) {
-          showToast("Session expired. Please sign in again.", "error");
           router.replace("/admin-login");
           return;
         }
@@ -290,27 +282,15 @@ export default function AdminProductsManager() {
           throw new Error(data.error || "Failed to save product");
         }
 
-        showToast(
-          productId
-            ? "Product updated successfully"
-            : "Product created successfully",
-          "success"
-        );
         await fetchProducts();
         closeModal();
       } catch (error) {
         console.error("Error saving product:", error);
-        showToast(
-          error instanceof Error
-            ? error.message
-            : "An error occurred while saving the product",
-          "error"
-        );
       } finally {
         setSavingProduct(false);
       }
     },
-    [token, showToast, router, fetchProducts, closeModal]
+    [token, router, fetchProducts, closeModal]
   );
 
   const handleDelete = useCallback(
@@ -326,27 +306,19 @@ export default function AdminProductsManager() {
         });
         const data = await response.json().catch(() => ({}));
         if (response.status === 401 || response.status === 403) {
-          showToast("Session expired. Please sign in again.", "error");
           router.replace("/admin-login");
           return;
         }
         if (!response.ok) {
           throw new Error(data.error || "Failed to delete product");
         }
-        showToast("Product deleted successfully", "success");
         await fetchProducts();
         setDeleteId(null);
       } catch (error) {
         console.error("Error deleting product:", error);
-        showToast(
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the product",
-          "error"
-        );
       }
     },
-    [token, showToast, router, fetchProducts]
+    [token, router, fetchProducts]
   );
 
   const filteredProducts = useMemo(() => {

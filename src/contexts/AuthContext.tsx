@@ -9,7 +9,6 @@ import React, {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/contexts/ToastContext";
 
 export interface AdminUser {
   id: string;
@@ -156,7 +155,6 @@ export function AuthProvider({
   const [loading, setLoading] = useState(verifyOnMount);
   const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
-  const { showToast } = useToast();
   const isDev = process.env.NODE_ENV !== "production";
 
   const persistSession = useCallback(
@@ -282,15 +280,12 @@ export function AuthProvider({
         router.push("/admin");
       } catch (err) {
         if (isDev) console.error("Login error:", err);
-        const message =
-          err instanceof Error ? err.message : "Authentication failed";
-        showToast(message, "error");
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [persistSession, router, showToast, isDev]
+    [persistSession, router, isDev]
   );
 
   const register = useCallback(
@@ -327,19 +322,15 @@ export function AuthProvider({
           typeof data.token === "string" && data.token ? data.token : null;
         persistSession({ nextUser: adminUser, nextToken: tokenValue });
 
-        showToast("Admin account created successfully.", "success");
         router.push("/admin");
       } catch (err) {
         if (isDev) console.error("Registration error:", err);
-        const message =
-          err instanceof Error ? err.message : "Registration failed";
-        showToast(message, "error");
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [persistSession, router, showToast, isDev]
+    [persistSession, router, isDev]
   );
 
   const logout = useCallback(async () => {

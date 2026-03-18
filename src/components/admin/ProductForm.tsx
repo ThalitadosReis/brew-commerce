@@ -11,7 +11,6 @@ import React, {
 } from "react";
 import Image from "next/image";
 
-import { useToast } from "@/contexts/ToastContext";
 import type { Product, ProductSize } from "@/types/product";
 import {
   ProductFormData,
@@ -179,7 +178,6 @@ export function ProductForm({
   onClose,
   onSubmit,
 }: ProductFormProps) {
-  const { showToast } = useToast();
   const [formData, setFormData] = useState<ProductFormData>(
     buildFormState(product)
   );
@@ -222,16 +220,13 @@ export function ProductForm({
           (sizeEntry, sizeIndex) =>
             sizeIndex !== index && sizeEntry.size === nextSize
         );
-        if (isDuplicate) {
-          showToast("This size is already added.", "warning");
-          return prev;
-        }
+        if (isDuplicate) return prev;
         const nextSizes = [...prev.sizes];
         nextSizes[index] = { ...nextSizes[index], size: nextSize };
         return { ...prev, sizes: nextSizes };
       });
     },
-    [showToast]
+    []
   );
 
   const addSizeRow = useCallback(() => {
@@ -239,16 +234,13 @@ export function ProductForm({
       const remaining = BASE_SIZES.filter(
         (size) => !prev.sizes.some((entry) => entry.size === size)
       );
-      if (!remaining.length) {
-        showToast("All available sizes are already added.", "info");
-        return prev;
-      }
+      if (!remaining.length) return prev;
       return {
         ...prev,
         sizes: [...prev.sizes, { size: remaining[0], price: 0, stock: 0 }],
       };
     });
-  }, [showToast]);
+  }, []);
 
   const removeSizeRow = useCallback((index: number) => {
     setFormData((prev) => {
@@ -284,58 +276,40 @@ export function ProductForm({
 
   const handleAddImageLink = useCallback(() => {
     const candidate = newImageUrl.trim();
-    if (!candidate) {
-      showToast("Paste an image URL before adding.", "warning");
-      return;
-    }
-    if (!/^https?:\/\//i.test(candidate)) {
-      showToast("Please provide a valid http(s) URL.", "warning");
-      return;
-    }
+    if (!candidate) return;
+    if (!/^https?:\/\//i.test(candidate)) return;
     setFormData((prev) => {
-      if (prev.image === candidate || prev.images.includes(candidate)) {
-        showToast("This image was already added.", "info");
-        return prev;
-      }
+      if (prev.image === candidate || prev.images.includes(candidate)) return prev;
       return { ...prev, images: [...prev.images, candidate] };
     });
     setNewImageUrl("");
-  }, [newImageUrl, showToast]);
+  }, [newImageUrl]);
 
   const handleUploadFromDevice = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       event.target.value = "";
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) {
-        showToast("Image size should be less than 5MB.", "warning");
-        return;
-      }
-      if (!file.type.startsWith("image/")) {
-        showToast("Please upload an image file.", "warning");
-        return;
-      }
+      if (file.size > 5 * 1024 * 1024) return;
+      if (!file.type.startsWith("image/")) return;
 
       setUploadingImage(true);
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
         setFormData((prev) => {
-          if (prev.image === base64 || prev.images.includes(base64)) {
-            showToast("This image was already added.", "info");
-            return prev;
-          }
+          if (prev.image === base64 || prev.images.includes(base64)) return prev;
           return { ...prev, images: [...prev.images, base64] };
         });
         setUploadingImage(false);
       };
       reader.onerror = () => {
-        showToast("Failed to read image file.", "error");
+        console.error("Failed to read image file.");
         setUploadingImage(false);
       };
       reader.readAsDataURL(file);
     },
-    [showToast]
+    []
   );
 
   const removeImageByValue = useCallback((image: string) => {
@@ -364,10 +338,7 @@ export function ProductForm({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = buildProductPayload(formData);
-    if (!result.ok) {
-      showToast(result.message, "error");
-      return;
-    }
+    if (!result.ok) return;
     await onSubmit(result.payload, product?._id);
   };
 

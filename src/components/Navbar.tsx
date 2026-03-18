@@ -158,18 +158,9 @@ export default function Navbar() {
     setIsSearchOpen(false);
   };
 
-  const navTextClass = navSurface ? "text-neutral-900" : "text-white";
-  const navMutedTextClass = navSurface
-    ? "text-neutral-600 hover:text-neutral-900"
-    : "text-white/70 hover:text-white";
-  const navIconClass = navSurface
-    ? "text-neutral-700 hover:text-neutral-900"
-    : "text-white";
   const navIconMotionClass =
     "transition-all duration-300 ease-in-out hover:scale-90";
-  const navBadgeClass = navSurface
-    ? "bg-black text-white"
-    : "bg-white text-black";
+  const navBadgeClass = "bg-white text-black";
 
   // filter products for search
   useEffect(() => {
@@ -193,15 +184,11 @@ export default function Navbar() {
     <div className="relative">
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          navSurface ? "bg-white" : "bg-transparent text-white"
+          navSurface ? "bg-black" : "bg-transparent"
         }`}
       >
         <div className="mx-auto grid h-20 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-6 px-4 md:px-6">
-          <BrandLink
-            className={`hidden text-xl uppercase tracking-[0.16em] transition-colors duration-300 md:block ${
-              navTextClass
-            }`}
-          />
+          <BrandLink className="hidden text-xl uppercase tracking-[0.16em] transition-colors duration-300 md:block text-white" />
 
           <div className="hidden items-center justify-center gap-8 md:flex">
             {NAV_LINKS.map(({ href, label }) => (
@@ -210,21 +197,21 @@ export default function Navbar() {
                 as="link"
                 href={href}
                 variant="link"
-                className={navTextClass}
+                className="text-white/75 hover:text-white"
               >
                 {label}
               </Button>
             ))}
           </div>
 
-          <BrandLink className="text-lg uppercase tracking-[0.16em] md:hidden" />
+          <BrandLink className="text-lg uppercase tracking-[0.16em] text-white md:hidden" />
 
-          <div className="relative flex items-center justify-end gap-4">
+          <div className="relative flex items-center justify-end gap-4 text-white">
             <button onClick={toggleSearch} title="Search">
               <MagnifyingGlassIcon
                 size={24}
                 weight="light"
-                className={`${navIconMotionClass} ${navIconClass}`}
+                className={`${navIconMotionClass}`}
               />
             </button>
 
@@ -237,22 +224,18 @@ export default function Navbar() {
                 <ShoppingBagIcon
                   size={24}
                   weight="light"
-                  className={`${navIconMotionClass} ${navIconClass}`}
+                  className={`${navIconMotionClass}`}
                 />
                 <CountBadge count={cartCount} className={navBadgeClass} />
               </button>
               <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
             </div>
 
-            <span
-              className={`text-sm md:hidden ${navSurface ? "text-black/20" : "text-white/45"}`}
-            >
-              |
-            </span>
+            <span className="text-sm md:hidden text-white/30">|</span>
 
             <div className="flex items-center ml-2 md:hidden">
               <button
-                className={`transition-colors duration-300 ${navIconClass}`}
+                className="transition-colors duration-300"
                 onClick={toggleMenu}
                 title="Menu"
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -290,17 +273,17 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-0 z-50 flex flex-col bg-neutral-50 md:hidden"
+              className="fixed inset-0 z-50 flex flex-col bg-white md:hidden"
             >
-              <div className="flex h-20 items-center justify-between border-b border-neutral-200 px-6">
+              <div className="flex h-20 items-center justify-between border-b border-black/10 px-6">
                 <div className="flex flex-col leading-none">
-                  <span className="text-lg font-medium tracking-[0.15em] uppercase">
+                  <span className="text-lg font-medium tracking-[0.15em] uppercase text-black">
                     brew<span className="text-amber-700">.</span>
                   </span>
                 </div>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-neutral-500 transition-colors duration-300 hover:text-neutral-900"
+                  className="text-black/40 transition-colors duration-300 hover:text-black"
                   aria-label="Close menu"
                 >
                   <XIcon size={22} weight="light" />
@@ -322,29 +305,29 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`group flex items-center justify-between border-b border-neutral-200 py-5 ${
+                      className={`group flex items-center justify-between border-b border-black/10 py-5 ${
                         pathname === link.href
-                          ? "text-neutral-900"
-                          : "text-neutral-700 hover:text-neutral-900"
+                          ? "text-black"
+                          : "text-black/50 hover:text-black"
                       }`}
                     >
                       <span className="text-xl font-light">{link.label}</span>
                       <ArrowRightIcon
                         size={18}
-                        className="text-neutral-500 transition-transform duration-300 group-hover:translate-x-1"
+                        className="text-black/30 transition-transform duration-300 group-hover:translate-x-1"
                       />
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
-              <div className="border-t border-neutral-200 px-6 py-6">
+              <div className="border-t border-black/10 px-6 py-6">
                 <p className="text-[10px] tracking-[0.2em] uppercase text-amber-700">
                   Get in touch
                 </p>
                 <a
                   href="mailto:hello@brewcommerce.com"
-                  className="text-sm text-neutral-900/75 transition-colors duration-300 hover:text-neutral-900"
+                  className="text-sm text-black/50 transition-colors duration-300 hover:text-black"
                 >
                   hello@brewcommerce.com
                 </a>

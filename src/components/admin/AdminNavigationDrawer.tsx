@@ -73,7 +73,9 @@ export function AdminNavigationDrawer({
               <CardsThreeIcon size={24} />
             </div>
             <div className="-space-y-1">
-              <div className=" font-semibold">brew.</div>
+              <div className="font-semibold">
+                brew<span className="text-amber-700">.</span>
+              </div>
               <div className="text-sm text-black/75">Commerce</div>
             </div>
           </div>

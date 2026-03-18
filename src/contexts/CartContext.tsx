@@ -7,19 +7,14 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
-  useRef,
 } from "react";
-import { useUser } from "@clerk/nextjs";
 import type {
   CartItem,
   Product,
   CartContextType,
   ProductSize,
 } from "@/types/product";
-import type { ICartItem } from "@/models/Cart";
-import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
 import { readJSON } from "@/hooks/useLocalStorage";
-import { useToast } from "@/contexts/ToastContext";
 
 // -------------------------------- helpers --------------------------------
 
@@ -187,257 +182,22 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
 
 // -------------------------------- context --------------------------------
 
-type ExtendedCartContextType = CartContextType & {
-  clearServerCart: () => Promise<void>;
-};
-
-const CartContext = createContext<ExtendedCartContextType | undefined>(
-  undefined
-);
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
-  const { isSignedIn, user, isLoaded } = useUser();
-  const { showToast } = useToast();
-
-  const isClientRef = useRef(false);
-  const previousSignedInRef = useRef<boolean | null>(null);
-  const hasLoadedInitialCartRef = useRef(false);
-  const itemsRef = useRef<CartItem[]>(items);
-  const stableUserIdRef = useRef<string | null>(null);
-
   useEffect(() => {
-    isClientRef.current = true;
+    const saved = readJSON<CartItem[]>("brew-cart", []);
+    if (saved?.length) {
+      dispatch({ type: "LOAD_CART", payload: saved });
+    }
   }, []);
 
   useEffect(() => {
-    itemsRef.current = items;
+    try {
+      window.localStorage.setItem("brew-cart", JSON.stringify(items));
+    } catch {}
   }, [items]);
-
-  // --------------------------- one-time initial load ---------------------------
-  useEffect(() => {
-    if (!isClientRef.current || hasLoadedInitialCartRef.current) return;
-    if (!isLoaded) return;
-
-    (async () => {
-      if (isSignedIn && user) {
-        try {
-          const response = await fetch("/api/cart", {
-            credentials: "include",
-            cache: "no-store",
-          });
-          if (response.ok) {
-            const payload: { items: ICartItem[] } = await response.json();
-            const databaseItems: CartItem[] = (payload.items ?? []).map(
-              (record) => ({
-                id: record.productId,
-                _id: record.productId,
-                name: record.name,
-                description: record.description,
-                price: record.price,
-                quantity: record.quantity,
-                selectedSizes: normalizeSizes(record.selectedSizes || []),
-                images: record.images || [],
-                category: record.category || "",
-                country: record.country || "",
-                sizes: record.sizes || [],
-              })
-            );
-            dispatch({ type: "LOAD_CART", payload: databaseItems });
-          } else {
-            const saved = readJSON<CartItem[]>("brew-cart", []);
-            if (saved?.length) dispatch({ type: "LOAD_CART", payload: saved });
-          }
-        } catch {
-          const saved = readJSON<CartItem[]>("brew-cart", []);
-          if (saved?.length) dispatch({ type: "LOAD_CART", payload: saved });
-        }
-      } else {
-        const saved = readJSON<CartItem[]>("brew-cart", []);
-        if (saved?.length) dispatch({ type: "LOAD_CART", payload: saved });
-      }
-      hasLoadedInitialCartRef.current = true;
-    })();
-  }, [isLoaded, isSignedIn, user]);
-
-  // ---------------------- auth transitions login / logout -------------------
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    const currentUserId = user?.id ?? null;
-    const previousUserId = stableUserIdRef.current;
-    const wasSignedIn = previousSignedInRef.current;
-    const isCurrentlySignedIn = !!isSignedIn;
-
-    // handle logout transition
-    if (wasSignedIn === true && !isCurrentlySignedIn) {
-      dispatch({ type: "CLEAR_CART" });
-      try {
-        window.localStorage.removeItem("brew-cart");
-      } catch {}
-      stableUserIdRef.current = null;
-      previousSignedInRef.current = false;
-      return;
-    }
-
-    // do not handle login merge until initial load is done
-    if (!hasLoadedInitialCartRef.current) {
-      previousSignedInRef.current = isCurrentlySignedIn;
-      if (currentUserId) stableUserIdRef.current = currentUserId;
-      return;
-    }
-
-    // handle login transition (merge guest cart with DB cart)
-    if (!previousUserId && currentUserId && user) {
-      (async () => {
-        try {
-          const response = await fetch("/api/cart", {
-            credentials: "include",
-            cache: "no-store",
-          });
-          const payload: { items: ICartItem[] } = response.ok
-            ? await response.json()
-            : { items: [] };
-
-          const databaseItems: CartItem[] = (payload.items ?? []).map(
-            (record) => ({
-              id: record.productId,
-              _id: record.productId,
-              name: record.name,
-              description: record.description,
-              price: record.price,
-              quantity: record.quantity,
-              selectedSizes: normalizeSizes(record.selectedSizes || []),
-              images: record.images || [],
-              category: record.category || "",
-              country: record.country || "",
-              sizes: record.sizes || [],
-            })
-          );
-
-          const mergedItems = canonicalizeAndDedupe([
-            ...databaseItems,
-            ...itemsRef.current,
-          ]);
-
-          await fetch("/api/cart", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            cache: "no-store",
-            body: JSON.stringify({ items: mergedItems }),
-          }).catch(() => undefined);
-
-          dispatch({ type: "LOAD_CART", payload: mergedItems });
-          try {
-            window.localStorage.setItem(
-              "brew-cart",
-              JSON.stringify(mergedItems)
-            );
-          } catch {}
-
-          const clamped = mergedItems.filter((item) => {
-            const maxAllowed = maxAllowedQuantityForSelection(
-              item.selectedSizes ?? [],
-              item.sizes
-            );
-            return (
-              item.quantity === maxAllowed &&
-              maxAllowed !== Number.POSITIVE_INFINITY
-            );
-          });
-          if (clamped.length > 0) {
-            showToast(
-              `${clamped.length} cart item${
-                clamped.length > 1 ? "s" : ""
-              } adjusted to available stock`,
-              "warning"
-            );
-          }
-        } catch (error) {
-          console.error("Cart merge on login failed:", error);
-        }
-      })();
-    }
-
-    previousSignedInRef.current = isCurrentlySignedIn;
-    if (currentUserId) stableUserIdRef.current = currentUserId;
-  }, [isSignedIn, user, isLoaded, showToast]);
-
-  // ------------- debounced persistence local + db ----------------
-
-  useDebouncedEffect(
-    () => {
-      if (!isClientRef.current || !isLoaded) return;
-
-      // always mirror to localStorage
-      try {
-        window.localStorage.setItem("brew-cart", JSON.stringify(items));
-      } catch {}
-
-      // save to DB if signed in
-      if (isSignedIn && user) {
-        const url = `${window.location.origin}/api/cart`;
-        void fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items }),
-          credentials: "include",
-          cache: "no-store",
-          keepalive: true,
-        }).catch((error) => console.error("Failed to save cart to DB", error));
-      }
-    },
-    [items, isSignedIn, user, isLoaded],
-    { delay: 500 }
-  );
-
-  useEffect(() => {
-    if (!isSignedIn || !user) return;
-    const url = `${window.location.origin}/api/cart`;
-    const handler = () => {
-      try {
-        const blob = new Blob([JSON.stringify({ items })], {
-          type: "application/json",
-        });
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(url, blob);
-        } else {
-          fetch(url, {
-            method: "POST",
-            body: JSON.stringify({ items }),
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            cache: "no-store",
-            keepalive: true,
-          }).catch(() => {});
-        }
-      } catch {}
-    };
-    window.addEventListener("beforeunload", handler);
-    document.addEventListener("visibilitychange", handler);
-    return () => {
-      window.removeEventListener("beforeunload", handler);
-      document.removeEventListener("visibilitychange", handler);
-    };
-  }, [isSignedIn, user, items]);
-
-  // -------------------------------- actions --------------------------------
-
-  const saveNowIfSignedIn = useCallback(
-    (nextItems: CartItem[]) => {
-      if (!isSignedIn || !user) return;
-      fetch(`${window.location.origin}/api/cart`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: nextItems }),
-        credentials: "include",
-        cache: "no-store",
-        keepalive: true,
-      }).catch(() => {});
-    },
-    [isSignedIn, user]
-  );
 
   const addToCart = useCallback(
     (product: Product, selectedSizes: string[], quantity: number) => {
@@ -454,10 +214,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         product.sizes,
         existingQuantity + quantity
       );
-      if (!stockCheck.ok) {
-        showToast(stockCheck.message!, "warning");
-        return;
-      }
+      if (!stockCheck.ok) return;
 
       const newItem: CartItem = {
         id: product._id,
@@ -476,9 +233,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       };
 
       dispatch({ type: "ADD_TO_CART", payload: newItem });
-      saveNowIfSignedIn(canonicalizeAndDedupe([...items, newItem]));
     },
-    [items, showToast, saveNowIfSignedIn]
+    [items]
   );
 
   const updateQuantity = useCallback(
@@ -500,51 +256,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         targetItem.sizes,
         quantity
       );
-      if (!stockCheck.ok) {
-        showToast(stockCheck.message!, "warning");
-        return;
-      }
-
-      const nextItems = canonicalizeAndDedupe(
-        items
-          .map((item) =>
-            toKeyId(item.id) === toKeyId(productId) &&
-            areSizesEqual(item.selectedSizes, normalizedSizes)
-              ? { ...item, quantity }
-              : item
-          )
-          .filter((item) => item.quantity > 0)
-      );
+      if (!stockCheck.ok) return;
 
       dispatch({
         type: "UPDATE_QUANTITY",
         payload: { id: productId, quantity, selectedSizes: normalizedSizes },
       });
-      saveNowIfSignedIn(nextItems);
     },
-    [items, showToast, saveNowIfSignedIn]
+    [items]
   );
 
   const removeFromCart = useCallback(
     (productId: string | number, selectedSizes?: string[]) => {
       const normalized = normalizeSizes(selectedSizes);
-      const nextItems = canonicalizeAndDedupe(
-        items.filter(
-          (item) =>
-            !(
-              toKeyId(item.id) === toKeyId(productId) &&
-              areSizesEqual(item.selectedSizes, normalized)
-            )
-        )
-      );
-
       dispatch({
         type: "REMOVE_FROM_CART",
         payload: { id: productId, selectedSizes: normalized },
       });
-      saveNowIfSignedIn(nextItems);
     },
-    [items, saveNowIfSignedIn]
+    [items]
   );
 
   const clearCart = useCallback(() => {
@@ -553,19 +283,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       window.localStorage.removeItem("brew-cart");
     } catch {}
   }, []);
-
-  const clearServerCart = useCallback(async () => {
-    try {
-      if (!isSignedIn || !user) return;
-      await fetch("/api/cart", {
-        method: "DELETE",
-        credentials: "include",
-        cache: "no-store",
-      });
-    } catch (error) {
-      console.error("Failed to clear server cart", error);
-    }
-  }, [isSignedIn, user]);
 
   // -------------------------------- selectors -------------------------------
 
@@ -579,7 +296,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [items]
   );
 
-  const value = useMemo<ExtendedCartContextType>(
+  const value = useMemo<CartContextType>(
     () => ({
       items,
       addToCart,
@@ -588,7 +305,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart,
       getTotalItems: () => totalItemCount,
       getTotalPrice: () => totalPriceAmount,
-      clearServerCart,
     }),
     [
       items,
@@ -598,7 +314,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart,
       totalItemCount,
       totalPriceAmount,
-      clearServerCart,
     ]
   );
 

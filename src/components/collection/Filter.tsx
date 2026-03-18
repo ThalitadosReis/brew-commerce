@@ -1,268 +1,321 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { Product } from "@/types/product";
-import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
-import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
+import React, { useState } from "react";
+import {
+  CaretDownIcon,
+  CheckIcon,
+  DotOutlineIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 
 export type SortOption = "a-z" | "z-a" | "price-low" | "price-high";
 
-interface FilterProps {
+export interface FilterState {
   sortBy: SortOption;
-  setSortBy: (sort: SortOption) => void;
-  selectedRoasts: string[];
-  setSelectedRoasts: (roasts: string[]) => void;
-  selectedCountries: string[];
-  setSelectedCountries: (countries: string[]) => void;
-  showFilters: boolean;
-  onClose: () => void;
-  products: Product[];
-  onFilter: (filtered: Product[]) => void;
+  roasts: string[];
+  countries: string[];
+  minPrice: number;
+  maxPrice: number;
 }
 
-// sort by dropdown
-export function SortDropdown({
-  sortBy,
-  setSortBy,
+export interface FilterProps {
+  state: FilterState;
+  onChange: (state: FilterState) => void;
+  priceBounds: { min: number; max: number };
+  availableRoasts: string[];
+  availableCountries: string[];
+  activeFilterTags: { key: string; label: string }[];
+  onRemoveFilter: (key: string) => void;
+}
+
+export const SORT_OPTIONS = [
+  { value: "a-z" as const, label: "A - Z" },
+  { value: "z-a" as const, label: "Z - A" },
+  { value: "price-low" as const, label: "Price: Low to High" },
+  { value: "price-high" as const, label: "Price: High to Low" },
+];
+
+function AccordionSection({
+  label,
+  isOpen,
+  onToggle,
+  children,
 }: {
-  sortBy: SortOption;
-  setSortBy: (sort: SortOption) => void;
+  label: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
 }) {
-  const options = [
-    { value: "a-z", label: "A-Z" },
-    { value: "z-a", label: "Z-A" },
-    { value: "price-low", label: "Price (Low to High)" },
-    { value: "price-high", label: "Price (High to Low)" },
-  ] as const;
+  return (
+    <div className="border-b border-black/10">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between py-4 text-sm font-medium text-left"
+      >
+        {label}
+        <CaretDownIcon
+          size={14}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ${
+          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="pb-4 flex flex-col gap-2">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CheckboxRow({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className="flex items-center gap-3 text-sm py-1 text-left"
+    >
+      <span
+        className={`w-4 h-4 shrink-0 flex items-center justify-center border rounded-sm transition-colors ${
+          checked ? "bg-black border-black" : "border-black/30"
+        }`}
+      >
+        {checked && (
+          <CheckIcon size={10} weight="bold" className="text-white" />
+        )}
+      </span>
+      {label}
+    </button>
+  );
+}
+
+function PriceRangeSlider({
+  min,
+  max,
+  minVal,
+  maxVal,
+  onMinChange,
+  onMaxChange,
+}: {
+  min: number;
+  max: number;
+  minVal: number;
+  maxVal: number;
+  onMinChange: (v: number) => void;
+  onMaxChange: (v: number) => void;
+}) {
+  const range = max - min || 1;
+  const leftPct = ((minVal - min) / range) * 100;
+  const rightPct = ((maxVal - min) / range) * 100;
 
   return (
-    <div className="relative inline-flex items-center">
-      <span className="text-sm select-none pointer-events-none">
-        <span className="text-black/50">Sort by </span>
-        {options.find((o) => o.value === sortBy)?.label}
-      </span>
+    <div className="relative h-4 flex items-center select-none">
+      <div className="absolute w-full h-[1.5px] bg-black/15 rounded-full" />
 
-      <CaretDownIcon
-        size={12}
-        weight="light"
-        className="ml-1 pointer-events-none"
+      <div
+        className="absolute h-[1.5px] bg-black rounded-full"
+        style={{ left: `${leftPct}%`, width: `${rightPct - leftPct}%` }}
       />
 
-      {/* invisible native select */}
-      <select
-        value={sortBy}
-        onChange={(e) => setSortBy(e.target.value as SortOption)}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        aria-label="Sort products"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={minVal}
+        onChange={(e) =>
+          onMinChange(Math.min(Number(e.target.value), maxVal - 1))
+        }
+        className="absolute w-full h-1 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[1.5px] [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-[1.5px] [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:cursor-pointer"
+        style={{ zIndex: minVal > max - 10 ? 5 : 3 }}
+      />
+
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={maxVal}
+        onChange={(e) =>
+          onMaxChange(Math.max(Number(e.target.value), minVal + 1))
+        }
+        className="absolute w-full h-1 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[1.5px] [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-[1.5px] [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:cursor-pointer"
+        style={{ zIndex: 4 }}
+      />
     </div>
   );
 }
 
 export default function Filter({
-  sortBy,
-  setSortBy,
-  selectedRoasts,
-  setSelectedRoasts,
-  selectedCountries,
-  setSelectedCountries,
-  products,
-  onFilter,
+  state,
+  onChange,
+  priceBounds,
+  availableRoasts,
+  availableCountries,
+  activeFilterTags,
+  onRemoveFilter,
 }: FilterProps) {
-  const availableRoasts = useMemo(() => {
-    const roasts = new Set<string>();
-    products?.forEach((p) => p.category && roasts.add(p.category));
-    return Array.from(roasts).sort();
-  }, [products]);
+  // track which accordion section is open (only one at a time)
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const toggle = (key: string) =>
+    setOpenSection((prev) => (prev === key ? null : key));
 
-  const availableCountries = useMemo(() => {
-    const countries = new Set<string>();
-    products?.forEach((p) => {
-      const hasStock = p.sizes.some((s) => s.stock > 0);
-      if (hasStock && p.country) countries.add(p.country);
-    });
-    return Array.from(countries).sort();
-  }, [products]);
+  // helpers to update a single key or toggle an item in a list
+  const set = <K extends keyof FilterState>(key: K, value: FilterState[K]) =>
+    onChange({ ...state, [key]: value });
 
-  const hasActiveFilters = useMemo(
-    () => selectedRoasts.length > 0 || selectedCountries.length > 0,
-    [selectedRoasts, selectedCountries]
-  );
-
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  // reset filter selections
-  const resetFilters = () => {
-    setSelectedRoasts([]);
-    setSelectedCountries([]);
-    setSortBy("a-z");
+  const toggleList = (key: "roasts" | "countries", item: string) => {
+    const current = state[key];
+    set(
+      key,
+      current.includes(item)
+        ? current.filter((v) => v !== item)
+        : [...current, item],
+    );
   };
 
-  // debounced filtering + sorting
-  useDebouncedEffect(
-    () => {
-      if (!products) return;
-
-      const filtered = products.filter((product) => {
-        const matchesRoast =
-          selectedRoasts.length === 0 ||
-          selectedRoasts.includes(product.category);
-        const matchesCountry =
-          selectedCountries.length === 0 ||
-          selectedCountries.includes(product.country);
-
-        return matchesRoast && matchesCountry;
-      });
-
-      const sorted = [...filtered].sort((a, b) => {
-        switch (sortBy) {
-          case "price-low":
-            return (a.price ?? 0) - (b.price ?? 0);
-          case "price-high":
-            return (b.price ?? 0) - (a.price ?? 0);
-          case "z-a":
-            return b.name.localeCompare(a.name);
-          default:
-            return a.name.localeCompare(b.name);
-        }
-      });
-
-      onFilter(sorted);
-    },
-    [products, sortBy, selectedRoasts, selectedCountries],
-    { delay: 300 }
-  );
-
   return (
-    <div className="w-full lg:w-40 pb-8">
-      <button
-        onClick={() => setIsFilterOpen(!isFilterOpen)}
-        className="w-full p-4 lg:p-0 flex items-center justify-between bg-black/5 lg:bg-transparent transition-colors"
-        aria-expanded={isFilterOpen}
-        aria-controls="filters-panel"
+    <div>
+      {activeFilterTags.length > 0 && (
+        <div className="flex flex-wrap gap-2 py-4 border-b border-black/10">
+          {activeFilterTags.map((tag) => (
+            <button
+              key={tag.key}
+              onClick={() => onRemoveFilter(tag.key)}
+              className="flex items-center gap-1.5 border border-black/20 px-3 py-1.5 text-xs hover:bg-black/5 transition-colors"
+            >
+              {tag.label}
+              <XIcon size={11} weight="bold" className="text-black/50" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <AccordionSection
+        label="Sort by"
+        isOpen={openSection === "sort"}
+        onToggle={() => toggle("sort")}
       >
-        <div className="flex items-center gap-2">
-          <h6 className="text-lg lg:text-xl">Filters</h6>
-          <CaretDownIcon
-            size={12}
-            weight="light"
-            className={`transition-transform lg:hidden ${
-              isFilterOpen ? "rotate-180" : ""
+        {SORT_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => set("sortBy", opt.value)}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${
+              state.sortBy === opt.value
+                ? "font-medium"
+                : "text-black/60 hover:text-black"
             }`}
+          >
+            <DotOutlineIcon
+              size={28}
+              weight={state.sortBy === opt.value ? "fill" : "regular"}
+              className={state.sortBy === opt.value ? "" : "opacity-30"}
+            />
+            {opt.label}
+          </button>
+        ))}
+      </AccordionSection>
+
+      <AccordionSection
+        label="Price"
+        isOpen={openSection === "price"}
+        onToggle={() => toggle("price")}
+      >
+        <div className="pt-2 pb-1">
+          <PriceRangeSlider
+            min={priceBounds.min}
+            max={priceBounds.max}
+            minVal={state.minPrice}
+            maxVal={state.maxPrice}
+            onMinChange={(v) => set("minPrice", v)}
+            onMaxChange={(v) => set("maxPrice", v)}
           />
         </div>
 
-        {hasActiveFilters && (
-          <small
-            onClick={(e) => {
-              e.stopPropagation();
-              resetFilters();
-            }}
-            className="text-black/50 hover:underline"
-          >
-            Reset
-          </small>
-        )}
-      </button>
-
-      <div
-        id="filters-panel"
-        className={`px-6 lg:px-0 lg:block ${isFilterOpen ? "block" : "hidden"}`}
-      >
-        {/* roast */}
-        {availableRoasts.length > 0 && (
-          <div className="my-4">
-            <p>Roast</p>
-            <div className="w-full flex flex-col gap-2 mt-2">
-              {availableRoasts.map((roast) => {
-                const isSelected = selectedRoasts.includes(roast);
-                return (
-                  <button
-                    key={roast}
-                    onClick={() =>
-                      isSelected
-                        ? setSelectedRoasts(
-                            selectedRoasts.filter((r) => r !== roast)
-                          )
-                        : setSelectedRoasts([...selectedRoasts, roast])
-                    }
-                    className="flex items-center gap-2 text-sm transition-colors"
-                    aria-pressed={isSelected}
-                    aria-label={`Toggle roast ${roast}`}
-                  >
-                    <span
-                      className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
-                        isSelected
-                          ? "bg-black"
-                          : "border-black/25 hover:border-black/50"
-                      }`}
-                    >
-                      {isSelected && (
-                        <CheckIcon
-                          size={12}
-                          weight="bold"
-                          className="text-white"
-                        />
-                      )}
-                    </span>
-                    <span className="text-sm">{roast}</span>
-                  </button>
-                );
-              })}
-            </div>
+        <div className="flex items-center gap-3 mt-3">
+          <div className="flex items-center gap-2 border border-black/15 px-3 py-2 flex-1">
+            <span className="text-xs text-black/40 shrink-0">CHF</span>
+            <input
+              type="number"
+              value={state.minPrice}
+              min={priceBounds.min}
+              max={state.maxPrice - 1}
+              onChange={(e) =>
+                set(
+                  "minPrice",
+                  Math.max(
+                    priceBounds.min,
+                    Math.min(Number(e.target.value), state.maxPrice - 1),
+                  ),
+                )
+              }
+              className="w-full text-sm outline-none bg-transparent"
+            />
           </div>
-        )}
-
-        {/* countries */}
-        {availableCountries.length > 0 && (
-          <div>
-            <p>Country</p>
-            <div className="w-full flex flex-col gap-2 mt-2">
-              {availableCountries.map((country) => {
-                const isSelected = selectedCountries.includes(country);
-                return (
-                  <button
-                    key={country}
-                    onClick={() =>
-                      isSelected
-                        ? setSelectedCountries(
-                            selectedCountries.filter((c) => c !== country)
-                          )
-                        : setSelectedCountries([...selectedCountries, country])
-                    }
-                    className="flex items-center gap-2 text-sm transition-colors"
-                    aria-pressed={isSelected}
-                    aria-label={`Toggle country ${country}`}
-                  >
-                    <span
-                      className={`w-5 h-5 flex items-center justify-center border rounded-sm ${
-                        isSelected
-                          ? "bg-black"
-                          : "border-black/25 hover:border-black/50"
-                      }`}
-                    >
-                      {isSelected && (
-                        <CheckIcon
-                          size={12}
-                          weight="bold"
-                          className="text-white"
-                        />
-                      )}
-                    </span>
-                    <span className="text-sm">{country}</span>
-                  </button>
-                );
-              })}
-            </div>
+          <span className="text-sm text-black/40 shrink-0">to</span>
+          <div className="flex items-center gap-2 border border-black/15 px-3 py-2 flex-1">
+            <span className="text-xs text-black/40 shrink-0">CHF</span>
+            <input
+              type="number"
+              value={state.maxPrice}
+              min={state.minPrice + 1}
+              max={priceBounds.max}
+              onChange={(e) =>
+                set(
+                  "maxPrice",
+                  Math.min(
+                    priceBounds.max,
+                    Math.max(Number(e.target.value), state.minPrice + 1),
+                  ),
+                )
+              }
+              className="w-full text-sm outline-none bg-transparent"
+            />
           </div>
-        )}
-      </div>
+        </div>
+      </AccordionSection>
+
+      {availableRoasts.length > 0 && (
+        <AccordionSection
+          label="Roast"
+          isOpen={openSection === "roast"}
+          onToggle={() => toggle("roast")}
+        >
+          {availableRoasts.map((roast) => (
+            <CheckboxRow
+              key={roast}
+              label={roast}
+              checked={state.roasts.includes(roast)}
+              onToggle={() => toggleList("roasts", roast)}
+            />
+          ))}
+        </AccordionSection>
+      )}
+
+      {availableCountries.length > 0 && (
+        <AccordionSection
+          label="Country"
+          isOpen={openSection === "country"}
+          onToggle={() => toggle("country")}
+        >
+          {availableCountries.map((country) => (
+            <CheckboxRow
+              key={country}
+              label={country}
+              checked={state.countries.includes(country)}
+              onToggle={() => toggleList("countries", country)}
+            />
+          ))}
+        </AccordionSection>
+      )}
     </div>
   );
 }

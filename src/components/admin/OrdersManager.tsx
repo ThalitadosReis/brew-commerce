@@ -18,7 +18,6 @@ import {
 
 import type { ApiOrder, OrdersResponse, ShippingAddress } from "@/types/orders";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/contexts/ToastContext";
 import Loading from "@/components/common/Loading";
 
 type OrderItem = {
@@ -43,7 +42,6 @@ type Order = Required<
 export default function OrdersManager() {
   const { user, token, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
-  const { showToast } = useToast();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -112,11 +110,10 @@ export default function OrdersManager() {
       console.error("Error fetching orders:", err);
       const message = err instanceof Error ? err.message : "Unknown error";
       setError(message);
-      showToast(message, "error");
     } finally {
       setLoading(false);
     }
-  }, [token, showToast]);
+  }, [token]);
 
   const filterOrders = useCallback(() => {
     if (!searchTerm) {
