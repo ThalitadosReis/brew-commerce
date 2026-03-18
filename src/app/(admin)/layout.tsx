@@ -3,7 +3,6 @@
 import { ReactNode, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-import { ToastProvider } from "@/contexts/ToastContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminConsoleNav } from "@/components/admin/AdminConsoleNav";
 
@@ -27,15 +26,13 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
     : "";
 
   return (
-    <ToastProvider>
-      <AuthProvider verifyOnMount={!isAdminLogin}>
-        {isAdminLogin ? (
-          <div className="min-h-screen bg-black/5">{children}</div>
-        ) : (
-          <AdminConsoleNav activeTab={activeTab}>{children}</AdminConsoleNav>
-        )}
-      </AuthProvider>
-    </ToastProvider>
+    <AuthProvider verifyOnMount={!isAdminLogin}>
+      {isAdminLogin ? (
+        <div className="min-h-screen bg-black/5">{children}</div>
+      ) : (
+        <AdminConsoleNav activeTab={activeTab}>{children}</AdminConsoleNav>
+      )}
+    </AuthProvider>
   );
 }
 

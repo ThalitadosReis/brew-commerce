@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 :root {
   --font-heading: "Questrial", sans-serif;
@@ -38,21 +37,4 @@ input:-webkit-autofill {
 
 .scroll-container {
   scroll-behavior: auto;
-}
-
-/* toast animations */
-@keyframes slide-in-right {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.3s ease-out;
 }
