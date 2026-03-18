@@ -1,218 +1,187 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
-import Section from "../common/Section";
-import { TEAM_AVATARS } from "@/lib/images/about";
-import Button from "../common/Button";
+
+import { TEAM_AVATARS } from "@/lib/images";
+
+const ITEM_W = 180;
+const SECTION_H = 420;
+
+const MASK_H = "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)";
+
+const teamMembers = [
+  {
+    name: "Emma Rodriguez",
+    title: "Founder & CEO",
+    description:
+      "Emma built Brew from a single bag of Colombian beans sourced on a solo trip, and has spent every year since deepening the relationships that make the coffee worth drinking.",
+    image: TEAM_AVATARS[0],
+  },
+  {
+    name: "Jack Thompson",
+    title: "Head Roaster",
+    description:
+      "Jack has been roasting professionally for over a decade. He approaches each origin as a puzzle — adjusting drum temperature, airflow, and timing until the beans express exactly what the farm intended.",
+    image: TEAM_AVATARS[1],
+  },
+  {
+    name: "Sarah Kim",
+    title: "Sustainability Director",
+    description:
+      "Sarah oversees every decision that touches the land — from packaging materials to logistics partners. Her goal is simple: leave every part of the supply chain better than we found it.",
+    image: TEAM_AVATARS[2],
+  },
+  {
+    name: "Michael Chen",
+    title: "Head of Sourcing",
+    description:
+      "Michael spends several months a year on origin, cupping alongside farmers and cooperative leaders. He looks for farms that produce interesting coffee and treat their workers well.",
+    image: TEAM_AVATARS[3],
+  },
+  {
+    name: "David Martinez",
+    title: "Quality Control",
+    description:
+      "Every batch that leaves our roastery has been signed off by David. He runs daily cuppings, tracks roast profiles, and is the last line of defence between our standards and your cup.",
+    image: TEAM_AVATARS[4],
+  },
+  {
+    name: "Olivia Parker",
+    title: "Customer Experience",
+    description:
+      "Olivia leads the team that talks to our customers every day. She turns feedback into real product decisions and is the reason our subscription flow is actually simple to use.",
+    image: TEAM_AVATARS[5],
+  },
+];
 
 export default function TeamSection() {
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const prevButtonRef = useRef<HTMLButtonElement>(null);
-  const touchStartX = useRef<number | null>(null);
-  const [isAtStart, setIsAtStart] = useState(true);
-
-  const teamMembers = [
-    {
-      name: "Emma Rodriguez",
-      title: "Founder and CEO",
-      description:
-        "A coffee lover who turned her passion into a mission to bring pure, exceptional coffee to everyone.",
-      image: TEAM_AVATARS[0],
-    },
-    {
-      name: "Jack Thompson",
-      title: "Head Roaster",
-      description:
-        "A master of flavor who understands the art of transforming raw beans into perfect roasts.",
-      image: TEAM_AVATARS[1],
-    },
-    {
-      name: "Sarah Kim",
-      title: "Sustainability Director",
-      description:
-        "Ensuring our coffee supports farmers and protects the environment with every batch.",
-      image: TEAM_AVATARS[2],
-    },
-    {
-      name: "Michael Chen",
-      title: "Head of Sourcing",
-      description:
-        "Traveling the world to find the most exceptional coffee beans and support local communities.",
-      image: TEAM_AVATARS[3],
-    },
-    {
-      name: "David Martinez",
-      title: "Quality Control",
-      description:
-        "Tasting and testing every batch to guarantee the highest standards of flavor and quality.",
-      image: TEAM_AVATARS[4],
-    },
-    {
-      name: "Olivia Parker",
-      title: "Customer Experience",
-      description:
-        "Passionate about connecting coffee lovers with their perfect brew and exceptional service.",
-      image: TEAM_AVATARS[5],
-    },
-  ];
-
-  const updatePrev = useCallback(() => {
-    if (!carouselRef.current) return;
-    const atStart = carouselRef.current.scrollLeft <= 0;
-    setIsAtStart(atStart);
-
-    if (!prevButtonRef.current) return;
-    prevButtonRef.current.disabled = atStart;
-    prevButtonRef.current.classList.toggle("opacity-40", atStart);
-    prevButtonRef.current.classList.toggle("cursor-not-allowed", atStart);
-  }, []);
-
-  const scrollNext = useCallback(() => {
-    if (!carouselRef.current) return;
-    const container = carouselRef.current;
-    const card = container.querySelector(
-      '[data-slot="carousel-item"]'
-    ) as HTMLElement;
-    if (!card) return;
-
-    const styles = getComputedStyle(container);
-    const gap = parseInt(styles.columnGap || "0");
-    const cardWidth = card.clientWidth + gap;
-
-    if (
-      container.scrollLeft + container.clientWidth >=
-      container.scrollWidth - 1
-    ) {
-      container.scrollTo({ left: 0, behavior: "smooth" });
-    } else {
-      container.scrollBy({ left: cardWidth, behavior: "smooth" });
-    }
-
-    setTimeout(updatePrev, 300);
-  }, [updatePrev]);
-
-  const scrollPrev = useCallback(() => {
-    if (!carouselRef.current) return;
-    const container = carouselRef.current;
-    const card = container.querySelector(
-      '[data-slot="carousel-item"]'
-    ) as HTMLElement;
-    if (!card) return;
-
-    const styles = getComputedStyle(container);
-    const gap = parseInt(styles.columnGap || "0");
-    const cardWidth = card.clientWidth + gap;
-
-    if (container.scrollLeft > 0) {
-      container.scrollBy({ left: -cardWidth, behavior: "smooth" });
-    }
-
-    setTimeout(updatePrev, 300);
-  }, [updatePrev]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const mobileStripRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-    updatePrev();
-    carousel.addEventListener("scroll", updatePrev);
-    const handleTouchStart = (event: TouchEvent) => {
-      touchStartX.current = event.touches[0]?.clientX ?? null;
-    };
-
-    const handleTouchEnd = (event: TouchEvent) => {
-      if (touchStartX.current == null) return;
-      const deltaX = event.changedTouches[0]?.clientX - touchStartX.current;
-      touchStartX.current = null;
-      if (Math.abs(deltaX) < 40) return;
-      if (deltaX > 0) scrollPrev();
-      else scrollNext();
-    };
-
-    carousel.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
+    const el = mobileStripRef.current;
+    if (!el) return;
+    const btn = el.children[activeIndex] as HTMLElement;
+    if (!btn) return;
+    el.scrollTo({
+      left: btn.offsetLeft - el.clientWidth / 2 + btn.offsetWidth / 2,
+      behavior: "smooth",
     });
-    carousel.addEventListener("touchend", handleTouchEnd);
+  }, [activeIndex]);
 
-    return () => {
-      carousel.removeEventListener("scroll", updatePrev);
-      carousel.removeEventListener("touchstart", handleTouchStart);
-      carousel.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [scrollNext, scrollPrev, updatePrev]);
+  const n = teamMembers.length;
+  const itemH = SECTION_H / 2;
+  const half = itemH / 2;
+  const listH = n * itemH;
+  const rawTranslate = SECTION_H / 2 - half - (n - 1 - activeIndex) * itemH;
+  const desktopTranslate = Math.max(-(listH - SECTION_H), Math.min(0, rawTranslate));
+  const maskV = `linear-gradient(to bottom, transparent 0px, black ${half}px, black calc(100% - ${half}px), transparent 100%)`;
 
   return (
-    <section className="bg-white/90">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
-        <Section
-          className="ml-0 text-left"
-          subtitle="Team"
-          title="Our team"
-          description="The passionate people behind every cup of your carefully crafted coffee."
-        />
-
-        <div
-          className="relative"
-          role="region"
-          aria-label="Team members carousel"
-        >
-          <div
-            ref={carouselRef}
-            data-slot="carousel-content"
-            className="grid grid-flow-col gap-4 overflow-x-hidden snap-x snap-mandatory scroll-smooth auto-cols-[minmax(100%,1fr)] sm:auto-cols-[min(100%,1fr)] md:auto-cols-[calc((100%-2rem)/3)] lg:lg:auto-cols-[calc((100%-3rem)/4)]"
+    <section className="flex flex-col lg:grid lg:grid-cols-[3.5rem_1fr_50%] lg:h-[420px]">
+      {/* mobile strip */}
+      <div
+        ref={mobileStripRef}
+        className="lg:hidden flex overflow-x-scroll border-b border-neutral-200 bg-neutral-50"
+        style={{ scrollbarWidth: "none", WebkitMaskImage: MASK_H, maskImage: MASK_H }}
+      >
+        {teamMembers.map((member, i) => (
+          <button
+            key={member.name}
+            onClick={() => setActiveIndex(i)}
+            style={{ minWidth: ITEM_W, flexShrink: 0 }}
+            className={`py-3 px-4 text-sm whitespace-nowrap border-b-2 transition-colors duration-300 ${
+              i === activeIndex
+                ? "text-black font-semibold border-black"
+                : "text-neutral-400 border-transparent hover:text-neutral-700"
+            }`}
           >
-            {teamMembers.map((member, index) => (
-              <div
-                key={member.name}
-                role="group"
-                aria-label={`${index + 1} of ${teamMembers.length}`}
-                data-slot="carousel-item"
-                className="snap-start w-full"
-              >
-                <div className="flex flex-col space-y-4">
-                  <div className="relative aspect-square overflow-hidden">
-                    <Image
-                      src={member.image}
-                      alt={`${member.name}, ${member.title}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                  <div>
-                    <h6 className="text-lg md:text-xl font-semibold">
-                      {member.name}
-                    </h6>
-                    <p className="text-sm text-black/50">{member.title}</p>
-                  </div>
-                  <p className="text-sm md:text-base text-black/75">
-                    {member.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+            {member.name}
+          </button>
+        ))}
+      </div>
 
-          <div className="mt-6 flex items-center justify-end gap-2 lg:gap-4">
-            <Button
-              onClick={scrollPrev}
-              aria-label="Previous team member"
-              variant="secondary"
-              className="p-4!"
-              disabled={isAtStart}
+      {/* desktop strip */}
+      <div
+        className="hidden lg:block relative border-r border-neutral-200 bg-neutral-50 overflow-hidden"
+        style={{ WebkitMaskImage: maskV, maskImage: maskV }}
+      >
+        <div
+          className="absolute left-0 right-0 flex flex-col-reverse"
+          style={{
+            transform: `translateY(${desktopTranslate}px)`,
+            transition: "transform 0.45s cubic-bezier(0.22,1,0.36,1)",
+          }}
+        >
+          {teamMembers.map((member, i) => (
+            <button
+              key={member.name}
+              onClick={() => setActiveIndex(i)}
+              style={{ height: itemH }}
+              className={`flex items-center justify-center border-r-2 transition-colors duration-300 ${
+                i === activeIndex
+                  ? "text-black font-semibold border-black"
+                  : "text-neutral-400 border-transparent hover:text-neutral-700"
+              }`}
             >
-              <CaretLeftIcon size={20} weight="bold" />
-            </Button>
-            <Button
-              onClick={scrollNext}
-              aria-label="Next team member"
-              variant="secondary"
-              className="p-4!"
-            >
-              <CaretRightIcon size={20} weight="bold" />
-            </Button>
-          </div>
+              <span
+                style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                className="text-sm whitespace-nowrap"
+              >
+                {member.name}
+              </span>
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* info */}
+      <div className="bg-neutral-100 relative overflow-hidden min-h-[360px] lg:min-h-0">
+        {teamMembers.map((member, i) => (
+          <div
+            key={member.name}
+            className={`absolute inset-0 flex flex-col justify-center px-8 md:px-12 lg:px-16 text-center transition-all duration-500 ease-out ${
+              i === activeIndex
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-5 pointer-events-none"
+            }`}
+          >
+            <p className="flex items-center justify-center gap-2 text-sm text-neutral-500 mb-6">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-neutral-500" />
+              our team.
+            </p>
+            <h2 className="text-2xl md:text-3xl lg:text-[2.5rem] font-semibold tracking-[-0.03em] text-black leading-tight mb-5 lowercase">
+              {member.name}
+            </h2>
+            <p className="text-sm leading-7 text-neutral-600 max-w-md mx-auto">
+              {member.description}
+            </p>
+            <p className="text-[11px] tracking-[0.25em] uppercase text-amber-700 mt-6">
+              {member.title}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* image */}
+      <div className="relative overflow-hidden aspect-square lg:aspect-auto lg:h-full">
+        {teamMembers.map((member, i) => (
+          <div
+            key={member.name}
+            className={`absolute inset-0 transition-opacity duration-500 ease-out ${
+              i === activeIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={member.image}
+              alt={member.name}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        ))}
       </div>
     </section>
   );

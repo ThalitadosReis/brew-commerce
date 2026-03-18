@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-import { STORY_IMAGES } from "@/lib/images/about";
+import { STORY_IMAGES } from "@/lib/images";
 
 const timelineItems = [
   {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { ABOUT_IMAGES } from "@/lib/images/about";
+import { ABOUT_IMAGES } from "@/lib/images";
 
 export default function AboutSection() {
   return (

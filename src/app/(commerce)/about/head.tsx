@@ -1,6 +1,6 @@
 import Preload from "@/components/Preload";
-import { ABOUT_IMAGES } from "@/lib/images/about";
+import { ABOUT_STATIC_IMAGES } from "@/lib/images";
 
 export default function Head() {
-  return <Preload images={ABOUT_IMAGES} />;
+  return <Preload images={ABOUT_STATIC_IMAGES} />;
 }
