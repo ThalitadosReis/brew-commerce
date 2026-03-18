@@ -1,119 +1,134 @@
-import React from "react";
-import Section from "../common/Section";
+"use client";
 
-type TimelineCardType = {
-  date: string;
-  heading: string;
-  text: string;
-};
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
-const timelineCards: TimelineCardType[] = [
+import { STORY_IMAGES } from "@/lib/images/about";
+
+const timelineItems = [
   {
-    date: "2017",
+    year: "2017",
     heading: "Idea Was Brewed",
     text: "The concept of bringing ethically sourced specialty coffee to homes around the world started in a small hometown café.",
+    image: STORY_IMAGES[0],
   },
   {
-    date: "2018",
+    year: "2018",
     heading: "First Beans from Colombia",
-    text: "We began sourcing Arabica beans directly from small family farms in Colombia, ensuring fair prices and traceability.",
+    text: "We began sourcing Arabica beans directly from small family farms in Colombia, ensuring fair prices and full traceability.",
+    image: STORY_IMAGES[1],
   },
   {
-    date: "2019",
+    year: "2019",
     heading: "Ethiopian & Brazilian Partnerships",
-    text: "Expanded partnerships to include cooperatives in Yirgacheffe, Ethiopia and Minas Gerais, Brazil to offer unique flavor profiles.",
+    text: "Expanded to cooperatives in Yirgacheffe, Ethiopia and Minas Gerais, Brazil, adding distinct flavor profiles to our range.",
+    image: STORY_IMAGES[2],
   },
   {
-    date: "2020",
+    year: "2020",
     heading: "Online Store Launch",
-    text: "Our e-commerce platform went live, allowing customers to order freshly roasted beans with global shipping options.",
+    text: "Our platform went live, giving customers worldwide access to freshly roasted beans shipped directly to their door.",
+    image: STORY_IMAGES[3],
   },
   {
-    date: "2021",
-    heading: "European Distribution Center",
-    text: "Opened our first European roasting and distribution hub in Amsterdam to speed up deliveries across EU countries.",
+    year: "2021",
+    heading: "European Distribution",
+    text: "Opened our first European roasting hub in Amsterdam, cutting delivery times across the continent significantly.",
+    image: STORY_IMAGES[4],
   },
   {
-    date: "2022",
-    heading: "Sourcing from Vietnam & Kenya",
-    text: "Added Vietnamese Robusta and Kenyan AA beans, expanding our range for espresso lovers and filter drinkers alike.",
-  },
-  {
-    date: "2023",
-    heading: "Sustainable Packaging & Carbon Neutral Shipping",
-    text: "Introduced biodegradable coffee bags and partnered with logistics companies offering carbon-neutral international delivery.",
-  },
-  {
-    date: "Today",
+    year: "Today",
     heading: "A Global Coffee Community",
-    text: "We now source beans from over 7 countries, roast fresh every week, and ship coffee to customers in more than 15 countries. Our focus remains on sustainability, fair trade farming relationships, and inspiring people to brew better coffee at home.",
+    text: "We source from over seven countries, roast fresh every week, and ship to customers in more than fifteen countries — with sustainability at the core of every decision.",
+    image: STORY_IMAGES[5],
   },
-];
-
-function TimelineCard({ card }: { card: TimelineCardType }) {
-  return (
-    <div className="w-full overflow-hidden bg-white">
-      <div className="p-8 space-y-2">
-        <small>{card.date}</small>
-        <h4 className="text-lg md:text-xl lg:text-2xl font-semibold">
-          {card.heading}
-        </h4>
-        <p className="text-sm md:text-base">{card.text}</p>
-      </div>
-    </div>
-  );
-}
+] as const;
 
 export default function TimelineSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // scroll tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const { top } = sectionRef.current.getBoundingClientRect();
+      const scrolled = -top;
+      const idx = Math.min(
+        Math.max(0, Math.floor(scrolled / window.innerHeight)),
+        timelineItems.length - 1,
+      );
+      setActiveIndex(idx);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 lg:py-24">
-      <Section
-        subtitle="Our Coffee Journey"
-        title="From Local Passion to Global Coffee Culture"
-        description="Discover how we built meaningful relationships with coffee farmers across continents and delivered their craft to mugs worldwide."
-      />
+    <section
+      ref={sectionRef}
+      style={{ height: `${timelineItems.length * 100}vh` }}
+      className="relative"
+    >
+      <div className="sticky top-0 h-screen grid grid-rows-2 lg:grid-rows-none lg:grid-cols-2 overflow-hidden">
+        <div className="order-2 lg:order-1 bg-neutral-900 relative overflow-hidden">
+          {timelineItems.map((item, i) => (
+            <div
+              key={item.year}
+              className={`absolute inset-0 flex flex-col justify-center px-8 md:px-12 lg:px-16 transition-all duration-700 ease-out ${
+                i === activeIndex
+                  ? "opacity-100 translate-y-0"
+                  : i < activeIndex
+                    ? "opacity-0 -translate-y-6"
+                    : "opacity-0 translate-y-6"
+              }`}
+            >
+              <p className="text-xs tracking-[0.28em] uppercase text-amber-600 mb-5">
+                {item.year}
+              </p>
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold tracking-[-0.03em] text-white leading-tight mb-5">
+                {item.heading}
+              </h3>
+              <p className="text-sm leading-7 text-neutral-400 max-w-sm">
+                {item.text}
+              </p>
 
-      <div className="relative">
-        <div className="pointer-events-none absolute top-0 bottom-0 left-4 lg:left-1/2 lg:-translate-x-1/2 w-px bg-black/25" />
-
-        <div className="space-y-8 relative z-10">
-          {timelineCards.map((card, index) => {
-            const isLeft = index % 2 === 0;
-            return (
-              <div key={index} className="relative">
-                {/* mobile layout */}
-                <div className="lg:hidden flex">
-                  <div className="w-8 flex justify-center relative z-30">
-                    <span className="mt-8 w-3 h-3 rounded-full bg-black ring-4 ring-[#F3F3F3]" />
-                  </div>
-                  <div className="flex-1 ml-4">
-                    <TimelineCard card={card} />
-                  </div>
-                </div>
-
-                {/* desktop layout */}
-                <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-start w-full">
-                  <div className="flex">
-                    {isLeft && (
-                      <div className="mr-8 w-full">
-                        <TimelineCard card={card} />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-8 w-3 h-3 rounded-full bg-black ring-8 ring-[#F3F3F3]" />
-
-                  <div className="flex">
-                    {!isLeft && (
-                      <div className="ml-8 w-full">
-                        <TimelineCard card={card} />
-                      </div>
-                    )}
-                  </div>
-                </div>
+              {/* progress indicator */}
+              <div className="flex items-center gap-1.5 mt-10">
+                {timelineItems.map((_, j) => (
+                  <span
+                    key={j}
+                    className={`h-0.5 transition-all duration-500 ${
+                      j === activeIndex
+                        ? "w-8 bg-amber-600"
+                        : "w-4 bg-neutral-600"
+                    }`}
+                  />
+                ))}
               </div>
-            );
-          })}
+            </div>
+          ))}
+        </div>
+
+        <div className="order-1 lg:order-2 relative overflow-hidden">
+          {timelineItems.map((item, i) => (
+            <div
+              key={item.year}
+              className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+                i === activeIndex ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <Image
+                src={item.image}
+                alt={item.heading}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/25" />
+            </div>
+          ))}
         </div>
       </div>
     </section>

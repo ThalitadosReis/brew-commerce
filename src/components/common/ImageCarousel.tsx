@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Section from "../common/Section";
+
 import { STORY_IMAGES } from "@/lib/images/about";
 
-export default function StoryCarousel() {
+export default function ImageCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
@@ -13,7 +13,7 @@ export default function StoryCarousel() {
     const container = scrollRef.current;
     if (!container) return;
 
-    const speed = 0.5;
+    const speed = 0.35;
     let rafId: number;
     let scrollPosition = container.scrollLeft;
 
@@ -70,24 +70,15 @@ export default function StoryCarousel() {
   }, []);
 
   return (
-    <section className="py-12 lg:py-24">
-      <Section
-        className="px-4 md:px-6"
-        subtitle="Roots"
-        title="A journey of passion and precision in coffee"
-        description="Born from a deep love of coffee and commitment to craft, our small business began in a tiny kitchen with a single mission."
-      />
-
+    <section className="overflow-hidden">
       <div
         ref={scrollRef}
-        className="w-full overflow-x-auto hide-scrollbar scroll-container touch-pan-x"
+        className="w-full overflow-x-auto hide-scrollbar touch-pan-x"
+        style={{ scrollbarWidth: "none" }}
       >
-        <div className="flex gap-4">
+        <div className="flex gap-0">
           {[...STORY_IMAGES, ...STORY_IMAGES].map((src, idx) => (
-            <div
-              key={idx}
-              className="relative w-[70vw] sm:w-[40vw] lg:w-[30vw] flex-none snap-start scroll-mr-4"
-            >
+            <div key={idx} className="relative w-[50vw] lg:w-[20vw] flex-none">
               <Image
                 src={src}
                 alt={`Coffee story image ${idx + 1}`}
@@ -95,7 +86,7 @@ export default function StoryCarousel() {
                 height={400}
                 className="aspect-4/3 w-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 bg-black/25" />
             </div>
           ))}
         </div>
