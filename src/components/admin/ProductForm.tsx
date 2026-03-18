@@ -350,28 +350,39 @@ export function ProductForm({
 
   if (!open) return null;
 
+  const inputClass =
+    "w-full border-b border-black/20 bg-transparent px-0 py-2 text-sm text-black outline-none placeholder:text-black/30 focus:border-black transition-colors";
+  const selectClass =
+    "w-full appearance-none border-b border-black/20 bg-transparent px-0 py-2 pr-6 text-sm text-black outline-none focus:border-black transition-colors";
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6 py-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
       onClick={handleBackdropClick}
       role="presentation"
     >
       <div
-        className="w-full max-w-3xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-2xl"
+        className="w-full max-w-3xl overflow-hidden border border-black/10 bg-white"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
+        {/* Header */}
         <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
-          <h5 className="text-lg md:text-xl lg:text-2xl font-semibold">
-            {product ? "Edit product" : "New product"}
-          </h5>
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-amber-700 mb-1">
+              {product ? "Edit" : "New"}
+            </p>
+            <h5 className="text-xl font-semibold tracking-[-0.02em] text-black">
+              {product ? "Edit product" : "Create product"}
+            </h5>
+          </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
             disabled={submitting}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-black transition hover:bg-black/10 disabled:opacity-60"
+            className="flex h-8 w-8 items-center justify-center border border-black/10 text-black transition hover:bg-black/5 disabled:opacity-60"
           >
             <XIcon size={16} />
           </button>
@@ -382,108 +393,113 @@ export function ProductForm({
           className="flex max-h-[80vh] flex-col"
           noValidate
         >
-          <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
-            <section className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1.5 text-sm font-medium text-black">
-                  <span className="text-xs uppercase tracking-wide text-black/50">
+          <div className="flex-1 space-y-8 overflow-y-auto px-6 py-6">
+            {/* Basic info */}
+            <section className="space-y-5">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-black/40">
+                Basic info
+              </p>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <label className="block space-y-1">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                     Name *
                   </span>
                   <input
                     id="name"
                     value={formData.name}
-                    onChange={(event) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        name: event.target.value,
-                      }))
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, name: e.target.value }))
                     }
                     required
                     placeholder="Name of the coffee product"
-                    className="w-full rounded-lg border border-black/15 bg-white px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black/20"
+                    className={inputClass}
                   />
                 </label>
 
-                <label className="space-y-1.5 text-sm font-medium text-black">
-                  <span className="text-xs uppercase tracking-wide text-black/50">
+                <label className="block space-y-1">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                     Country *
                   </span>
                   <input
                     id="country"
                     value={formData.country}
-                    onChange={(event) =>
+                    onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        country: event.target.value,
+                        country: e.target.value,
                       }))
                     }
                     required
                     placeholder="Origin country"
-                    className="w-full rounded-lg border border-black/15 bg-white px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black/20"
+                    className={inputClass}
                   />
                 </label>
 
-                <label className="space-y-1.5 text-sm font-medium text-black">
-                  <span className="text-xs uppercase tracking-wide text-black/50">
+                <label className="block space-y-1">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                     Category *
                   </span>
                   <div className="relative">
                     <select
                       value={formData.category}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          category: event.target.value,
+                          category: e.target.value,
                         }))
                       }
-                      className="w-full appearance-none rounded-lg border border-black/15 bg-white px-4 py-2 pr-10 text-sm outline-none focus:ring-2 focus:ring-black/20"
+                      className={selectClass}
                     >
                       <option value="">Select a category</option>
-                      {categoryOptions.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
+                      {categoryOptions.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
                         </option>
                       ))}
                     </select>
                     <CaretDownIcon
-                      size={14}
-                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black/40"
+                      size={13}
+                      className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-black/40"
                     />
                   </div>
                 </label>
               </div>
 
-              <label className="space-y-1.5 text-sm font-medium text-black">
-                <span className="text-xs uppercase tracking-wide text-black/50">
+              <label className="block space-y-1">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                   Description *
                 </span>
                 <textarea
                   id="description"
                   value={formData.description}
-                  onChange={(event) =>
+                  onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
-                      description: event.target.value,
+                      description: e.target.value,
                     }))
                   }
                   required
-                  rows={4}
+                  rows={3}
                   placeholder="Describe the coffee product"
-                  className="w-full rounded-lg border border-black/15 bg-white px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black/20"
+                  className="w-full border-b border-black/20 bg-transparent px-0 py-2 text-sm text-black outline-none placeholder:text-black/30 focus:border-black transition-colors resize-none"
                 />
               </label>
             </section>
 
-            <section className="space-y-6">
-              <div>
-                <h6 className="font-semibold">Product images</h6>
-                <span className="text-xs text-black/75">
-                  Pick the hero image that appears on product cards and detail
-                  pages.
-                </span>
+            {/* Images */}
+            <section className="space-y-5">
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-black/40 mb-0.5">
+                    Images
+                  </p>
+                  <p className="text-xs text-black/40">
+                    Select the hero image shown on product cards.
+                  </p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
                 {heroOptions.map((image) => {
                   const isHero = formData.image === image;
                   const isDefault =
@@ -495,10 +511,10 @@ export function ProductForm({
                   return (
                     <div
                       key={image}
-                      className={`relative overflow-hidden rounded-lg border transition ${
+                      className={`relative overflow-hidden border transition ${
                         isHero
-                          ? "border-black/70 ring-2 ring-black/15"
-                          : "border-black/15 hover:border-black/30"
+                          ? "border-black"
+                          : "border-black/15 hover:border-black/40"
                       }`}
                     >
                       <button
@@ -506,7 +522,7 @@ export function ProductForm({
                         onClick={() => handleHeroSelect(image)}
                         className="relative block h-full w-full text-left focus:outline-none"
                       >
-                        <div className="relative h-28 w-full bg-black/10">
+                        <div className="relative h-24 w-full bg-black/5">
                           <Image
                             src={image}
                             alt="Product thumbnail"
@@ -517,24 +533,24 @@ export function ProductForm({
                           />
                         </div>
                         <span
-                          className={`absolute bottom-2 right-2 rounded-full px-3 py-1 text-xs font-medium ${
+                          className={`absolute bottom-1.5 right-1.5 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] font-medium ${
                             isHero
                               ? "bg-black text-white"
-                              : "bg-white/95 text-black"
+                              : "bg-white/95 text-black/60"
                           }`}
                         >
-                          {isHero ? "Hero" : "Set hero"}
+                          {isHero ? "Hero" : "Set"}
                         </span>
                       </button>
 
                       {removable && (
                         <button
                           type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
+                          onClick={(e) => {
+                            e.stopPropagation();
                             removeImageByValue(image);
                           }}
-                          className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full border border-black/15 bg-white text-black transition hover:bg-black/10"
+                          className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center border border-black/15 bg-white text-black transition hover:bg-black/10"
                           aria-label="Remove image"
                         >
                           <XIcon className="h-3 w-3" />
@@ -546,31 +562,36 @@ export function ProductForm({
               </div>
 
               <div className="space-y-3">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <input
-                    type="url"
-                    value={newImageUrl}
-                    onChange={(event) => setNewImageUrl(event.target.value)}
-                    placeholder="https://images.example.com/beans.jpg"
-                    className="w-full flex-1 rounded-lg border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/20"
-                  />
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                  <div className="flex-1 space-y-1">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                      Add by URL
+                    </span>
+                    <input
+                      type="url"
+                      value={newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      placeholder="https://images.example.com/beans.jpg"
+                      className={inputClass}
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={handleAddImageLink}
-                    className="inline-flex w-full items-center justify-center rounded-lg border border-black/20 px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/10 sm:w-auto"
+                    className="shrink-0 border border-black/20 px-4 py-2 text-xs uppercase tracking-[0.15em] text-black transition hover:bg-black/5"
                   >
-                    Add link
+                    Add
                   </button>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => fileUploadInputRef.current?.click()}
-                    className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/10"
+                    className="inline-flex items-center gap-2 border border-black/15 px-3 py-2 text-xs uppercase tracking-[0.15em] text-black transition hover:bg-black/5"
                   >
-                    <UploadIcon size={16} />
-                    {uploadingImage ? "Uploading..." : "Upload image"}
+                    <UploadIcon size={13} />
+                    {uploadingImage ? "Uploading..." : "Upload"}
                   </button>
                   <input
                     ref={fileUploadInputRef}
@@ -579,115 +600,120 @@ export function ProductForm({
                     className="hidden"
                     onChange={handleUploadFromDevice}
                   />
-                  <span className="text-xs text-black/50">
+                  <span className="text-xs text-black/40">
                     JPG, PNG up to 5MB.
                   </span>
                 </div>
               </div>
             </section>
 
-            <section className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="w-full flex-1 space-y-1">
-                    <h6 className="font-semibold">Size-specific pricing</h6>
-                    <span className="text-xs text-black/75">
-                      Customize price and stock for individual bag sizes.
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={addSizeRow}
-                    disabled={!canAddMoreSizes}
-                    className="inline-flex items-center gap-2 rounded-lg border border-black/20 px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <PlusIcon size={16} />
-                    Add size
-                  </button>
+            {/* Sizes */}
+            <section className="space-y-5">
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-black/40 mb-0.5">
+                    Pricing & stock
+                  </p>
+                  <p className="text-xs text-black/40">
+                    Set price and stock per bag size.
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={addSizeRow}
+                  disabled={!canAddMoreSizes}
+                  className="inline-flex items-center gap-1.5 border border-black/15 px-3 py-2 text-xs uppercase tracking-[0.15em] text-black transition hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <PlusIcon size={13} />
+                  Add size
+                </button>
+              </div>
 
-                <div className="space-y-3">
-                  {formData.sizes.map((sizeEntry, index) => (
-                    <div
-                      key={`${sizeEntry.size}-${index}`}
-                      className="grid gap-3 rounded-xl border border-black/10 bg-white px-4 py-4 sm:grid-cols-[1fr_1fr_1fr_auto]"
-                    >
-                      <label className="text-sm font-medium">
-                        <span className="text-xs text-black/60">Size</span>
-                        <div className="relative mt-1">
-                          <select
-                            value={sizeEntry.size}
-                            onChange={(event) =>
-                              handleSizeSelect(
-                                index,
-                                event.target.value as ProductSize["size"]
-                              )
-                            }
-                            className="w-full appearance-none rounded-lg border border-black/15 bg-white px-3 py-2 pr-8 text-sm text-black outline-none focus:ring-2 focus:ring-black/20"
-                          >
-                            {BASE_SIZES.map((size) => (
-                              <option key={size} value={size}>
-                                {size}
-                              </option>
-                            ))}
-                          </select>
-                          <CaretDownIcon
-                            size={12}
-                            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black/40"
-                          />
-                        </div>
-                      </label>
-                      <label className="text-sm font-medium">
-                        <span className="text-xs text-black/60">
-                          Price (CHF)
-                        </span>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.05"
-                          value={sizeEntry.price}
-                          onChange={(event) =>
-                            updateSizePrice(index, event.target.value)
+              <div className="divide-y divide-black/5 border border-black/10">
+                {formData.sizes.map((sizeEntry, index) => (
+                  <div
+                    key={`${sizeEntry.size}-${index}`}
+                    className="grid gap-4 bg-white px-5 py-4 sm:grid-cols-[1fr_1fr_1fr_auto]"
+                  >
+                    <label className="block space-y-1">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                        Size
+                      </span>
+                      <div className="relative">
+                        <select
+                          value={sizeEntry.size}
+                          onChange={(e) =>
+                            handleSizeSelect(
+                              index,
+                              e.target.value as ProductSize["size"]
+                            )
                           }
-                          placeholder="Price"
-                          className="mt-1 w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-black/20"
-                        />
-                      </label>
-                      <label className="text-sm font-medium">
-                        <span className="text-xs text-black/60">Stock</span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={sizeEntry.stock}
-                          onChange={(event) =>
-                            updateSizeStock(index, event.target.value)
-                          }
-                          placeholder="Stock"
-                          className="mt-1 w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-black/20"
-                        />
-                      </label>
-                      <div className="flex items-end">
-                        <button
-                          type="button"
-                          onClick={() => removeSizeRow(index)}
-                          disabled={formData.sizes.length === 1}
-                          className="inline-flex h-9 items-center justify-center rounded-lg border border-black/15 bg-white px-3 text-sm font-medium text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50"
+                          className={selectClass}
                         >
-                          Remove
-                        </button>
+                          {BASE_SIZES.map((size) => (
+                            <option key={size} value={size}>
+                              {size}
+                            </option>
+                          ))}
+                        </select>
+                        <CaretDownIcon
+                          size={12}
+                          className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-black/40"
+                        />
                       </div>
+                    </label>
+
+                    <label className="block space-y-1">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                        Price (CHF)
+                      </span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.05"
+                        value={sizeEntry.price}
+                        onChange={(e) => updateSizePrice(index, e.target.value)}
+                        placeholder="0.00"
+                        className={inputClass}
+                      />
+                    </label>
+
+                    <label className="block space-y-1">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                        Stock
+                      </span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={sizeEntry.stock}
+                        onChange={(e) => updateSizeStock(index, e.target.value)}
+                        placeholder="0"
+                        className={inputClass}
+                      />
+                    </label>
+
+                    <div className="flex items-end">
+                      <button
+                        type="button"
+                        onClick={() => removeSizeRow(index)}
+                        disabled={formData.sizes.length === 1}
+                        className="border border-black/10 px-3 py-2 text-xs uppercase tracking-[0.15em] text-black transition hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Remove
+                      </button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </section>
           </div>
 
+          {/* Footer */}
           <div className="flex items-center justify-end gap-3 border-t border-black/10 px-6 py-5">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-black/20 px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/10 disabled:opacity-60"
+              className="border border-black/15 px-4 py-2 text-xs uppercase tracking-[0.15em] text-black transition hover:bg-black/5 disabled:opacity-60"
               disabled={submitting}
             >
               Cancel
@@ -695,7 +721,7 @@ export function ProductForm({
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg border border-black bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-60"
+              className="bg-black px-4 py-2 text-xs uppercase tracking-[0.15em] text-white transition hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting
                 ? "Saving..."
