@@ -28,7 +28,7 @@ function AdminLayoutContent({ children }: AdminLayoutProps) {
   return (
     <AuthProvider verifyOnMount={!isAdminLogin}>
       {isAdminLogin ? (
-        <div className="min-h-screen bg-black/5">{children}</div>
+        <div className="min-h-screen">{children}</div>
       ) : (
         <AdminConsoleNav activeTab={activeTab}>{children}</AdminConsoleNav>
       )}
