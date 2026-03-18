@@ -6,25 +6,29 @@ import { Product } from "@/types/product";
 
 import Loading from "@/components/common/Loading";
 import ProductSection from "@/components/collection[id]/ProductSection";
-import FlavourSection from "@/components/collection[id]/FlavourSection";
-import ImageGrid from "@/components/collection[id]/ImageGrid";
-import ContentBlock from "@/components/common/ContentBlock";
-import { CRAFT_IMAGE } from "@/lib/images/products";
+import { ProductPromisesSection } from "@/components/collection[id]/ProductPromisesSection";
+import { SimilarProductsSection } from "@/components/collection[id]/SimilarProductsSection";
+import { CtaSection } from "@/components/homepage/CtaSection";
+import { COLLECTION_CTA_IMAGE } from "@/lib/images";
 
 export default function ProductPage() {
   const params = useParams();
   const [product, setProduct] = useState<Product | null>(null);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/products/${params.id}`);
-        if (response.ok) {
-          const data = await response.json();
+        const [productRes, allRes] = await Promise.all([
+          fetch(`/api/products/${params.id}`),
+          fetch("/api/products"),
+        ]);
+
+        if (productRes.ok) {
+          const data = await productRes.json();
           setProduct(data.product);
 
-          // dynamically preload the product’s main image
           const heroImage = data?.product?.images?.[0];
           if (heroImage) {
             const link = document.createElement("link");
@@ -34,6 +38,11 @@ export default function ProductPage() {
             document.head.appendChild(link);
           }
         }
+
+        if (allRes.ok) {
+          const data = await allRes.json();
+          setAllProducts(Array.isArray(data) ? data : []);
+        }
       } catch (error) {
         console.error("Error fetching product:", error);
       } finally {
@@ -41,7 +50,7 @@ export default function ProductPage() {
       }
     };
 
-    if (params.id) fetchProduct();
+    if (params.id) fetchData();
   }, [params.id]);
 
   if (loading) return <Loading message="Loading..." />;
@@ -49,33 +58,22 @@ export default function ProductPage() {
   return (
     <>
       <ProductSection product={product} />
-
-      <div className="bg-white">
-        <ContentBlock
-          className="max-w-7xl mx-auto px-4 md:px-6 lg:px-0 py-12 lg:py-24"
-          contentClassName="!p-0"
-          subtitle="Craft"
-          title="The art of coffee roasting"
-          text={
-            <div className="space-y-4">
-              <p>
-                We select only the finest beans from sustainable farms. Each
-                batch is roasted with precision and care.
-              </p>
-              <ul className="list-disc pl-4">
-                <li>Small batch roasting ensures maximum flavor</li>
-                <li>Direct trade with Ethiopian farmers</li>
-                <li>Sustainable and ethical coffee production</li>
-              </ul>
-            </div>
-          }
-          image={CRAFT_IMAGE}
-          imagePosition="left"
+      {product && (
+        <SimilarProductsSection
+        currentProduct={product}
+        allProducts={allProducts}
         />
-      </div>
-
-      <FlavourSection />
-      <ImageGrid />
+      )}
+      <ProductPromisesSection />
+      <CtaSection
+        subtitle="Keep exploring"
+        title="Find your next favourite cup"
+        buttons={[
+          { label: "Browse all coffees", href: "/collection", variant: "primary" },
+          { label: "Contact us", href: "/contact", variant: "outline" },
+        ]}
+        image={COLLECTION_CTA_IMAGE}
+      />
     </>
   );
 }
