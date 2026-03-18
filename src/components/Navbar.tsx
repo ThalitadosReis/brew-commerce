@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
@@ -33,6 +33,7 @@ interface CountBadgeProps {
 
 interface BrandLinkProps {
   className: string;
+  onClick?: () => void;
 }
 
 function CountBadge({ count, className }: CountBadgeProps) {
@@ -47,9 +48,9 @@ function CountBadge({ count, className }: CountBadgeProps) {
   );
 }
 
-function BrandLink({ className }: BrandLinkProps) {
+function BrandLink({ className, onClick }: BrandLinkProps) {
   return (
-    <Link href="/" className={className}>
+    <Link href="/" className={className} onClick={onClick}>
       brew<span className="text-amber-700">.</span>
     </Link>
   );
@@ -90,6 +91,22 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { getTotalItems } = useCart();
+
+  const brandClickCount = useRef(0);
+  const brandClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleBrandClick = () => {
+    brandClickCount.current += 1;
+    if (brandClickTimer.current) clearTimeout(brandClickTimer.current);
+    if (brandClickCount.current >= 5) {
+      brandClickCount.current = 0;
+      router.push("/admin-login");
+      return;
+    }
+    brandClickTimer.current = setTimeout(() => {
+      brandClickCount.current = 0;
+    }, 1500);
+  };
   const cartCount = getTotalItems();
   const isSolidNavPage =
     /^\/collection\/.+/.test(pathname ?? "") ||
@@ -191,7 +208,7 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto grid h-20 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-6 px-4 md:px-6">
-          <BrandLink className="hidden text-xl uppercase tracking-[0.16em] transition-colors duration-300 md:block text-white" />
+          <BrandLink className="hidden text-xl uppercase tracking-[0.16em] transition-colors duration-300 md:block text-white" onClick={handleBrandClick} />
 
           <div className="hidden items-center justify-center gap-8 md:flex">
             {NAV_LINKS.map(({ href, label }) => (
@@ -207,7 +224,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          <BrandLink className="text-lg uppercase tracking-[0.16em] text-white md:hidden" />
+          <BrandLink className="text-lg uppercase tracking-[0.16em] text-white md:hidden" onClick={handleBrandClick} />
 
           <div className="relative flex items-center justify-end gap-4 text-white">
             <button onClick={toggleSearch} title="Search">
@@ -234,9 +251,7 @@ export default function Navbar() {
               <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
             </div>
 
-            <span className="text-sm md:hidden text-white/30">|</span>
-
-            <div className="flex items-center ml-2 md:hidden">
+            <div className="flex items-center md:hidden">
               <button
                 className="transition-colors duration-300"
                 onClick={toggleMenu}
@@ -276,61 +291,62 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-0 z-50 flex flex-col bg-white md:hidden"
+              className="fixed inset-0 z-50 flex flex-col bg-neutral-900 md:hidden"
             >
-              <div className="flex h-20 items-center justify-between border-b border-black/10 px-6">
-                <div className="flex flex-col leading-none">
-                  <span className="text-lg font-medium tracking-[0.15em] uppercase text-black">
-                    brew<span className="text-amber-700">.</span>
-                  </span>
-                </div>
+              {/* header */}
+              <div className="flex h-20 items-center justify-between px-6">
+                <span className="text-base uppercase tracking-[0.16em] text-white">
+                  brew<span className="text-amber-500">.</span>
+                </span>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-black/40 transition-colors duration-300 hover:text-black"
+                  className="text-white/40 transition-colors hover:text-white"
                   aria-label="Close menu"
                 >
-                  <XIcon size={22} weight="light" />
+                  <XIcon size={20} weight="light" />
                 </button>
               </div>
 
+              {/* nav */}
               <nav className="flex flex-1 flex-col justify-center px-6">
                 {NAV_LINKS.map((link, i) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: 16 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{
-                      duration: 0.3,
-                      delay: 0.08 + i * 0.07,
+                      duration: 0.35,
+                      delay: 0.06 + i * 0.07,
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
                     <Link
                       href={link.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`group flex items-center justify-between border-b border-black/10 py-5 ${
+                      className={`group flex items-center justify-between border-b py-5 transition-colors ${
                         pathname === link.href
-                          ? "text-black"
-                          : "text-black/50 hover:text-black"
+                          ? "border-white/20 text-white"
+                          : "border-white/10 text-white/40 hover:text-white"
                       }`}
                     >
-                      <span className="text-xl font-light">{link.label}</span>
+                      <span className="text-2xl font-light tracking-[-0.02em]">{link.label}</span>
                       <ArrowRightIcon
-                        size={18}
-                        className="text-black/30 transition-transform duration-300 group-hover:translate-x-1"
+                        size={16}
+                        className="text-white/20 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white/50"
                       />
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
-              <div className="border-t border-black/10 px-6 py-6">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-amber-700">
+              {/* footer */}
+              <div className="px-6 py-8">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-amber-500 mb-1">
                   Get in touch
                 </p>
                 <a
                   href="mailto:hello@brewcommerce.com"
-                  className="text-sm text-black/50 transition-colors duration-300 hover:text-black"
+                  className="text-sm text-white/40 transition-colors hover:text-white"
                 >
                   hello@brewcommerce.com
                 </a>

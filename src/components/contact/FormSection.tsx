@@ -149,7 +149,7 @@ export default function FormSection() {
           </form>
 
           {/* contact info */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-10 content-start">
+          <div className="grid lg:grid-cols-2 gap-x-8 gap-y-10 content-start">
             {contactItems.map((item) => (
               <div key={item.heading} className="space-y-2 border-t border-black/10 pt-4">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-amber-700">

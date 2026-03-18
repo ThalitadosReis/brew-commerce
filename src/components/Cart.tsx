@@ -7,8 +7,6 @@ import type { CartItem } from "@/types/product";
 import {
   MinusIcon,
   PlusIcon,
-  ArrowRightIcon,
-  ShoppingBagIcon,
   TrashSimpleIcon,
   PackageIcon,
 } from "@phosphor-icons/react";
@@ -52,7 +50,6 @@ function CartItemComponent({
   const quantity = item.quantity;
   const itemId = getCartItemId(item);
 
-  // calculate if user can increase quantity based on stock
   const canIncrease = selectedSizes.every((sizeStr) => {
     const sizeData = item.sizes?.find((s) => s.size === sizeStr);
     if (!sizeData) return true;
@@ -78,67 +75,70 @@ function CartItemComponent({
   const itemTotal = item.price * quantity;
 
   return (
-    <div className="flex gap-4 border-b border-black/5 py-4">
-      <div className="flex h-24 w-24 items-center justify-center overflow-hidden bg-black/10 shrink-0">
+    <div className="flex gap-4 border-b border-black/8 py-5">
+      <div className="h-20 w-20 shrink-0 overflow-hidden bg-black/5">
         {item?.images ? (
           <Image
             src={item.images[0]}
             alt={item.name}
             width={80}
-            height={96}
+            height={80}
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-black/40">
-            <PackageIcon size={24} />
+          <div className="flex h-full w-full items-center justify-center text-black/30">
+            <PackageIcon size={20} />
           </div>
         )}
       </div>
+
       <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-base leading-tight text-black">{item.name}</p>
+            <p className="text-sm font-medium leading-snug text-black">
+              {item.name}
+            </p>
             {selectedSizes.length > 0 && (
-              <p className="mt-1 text-xs text-black/45">
+              <p className="mt-0.5 text-xs uppercase tracking-[0.15em] text-black/40">
                 {selectedSizes.join(", ")}
               </p>
             )}
           </div>
           <button
             onClick={handleRemove}
-            className="ml-2 shrink-0 text-black/25 transition-colors hover:text-black/60"
+            className="shrink-0 text-black/25 transition-colors hover:text-black/60"
             aria-label="Remove item from cart"
           >
-            <TrashSimpleIcon size={16} weight="light" />
+            <TrashSimpleIcon size={15} />
           </button>
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 border border-black/15 px-2 py-1">
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center border border-black/15">
             <button
               onClick={handleDecreaseQuantity}
-              className="text-black/45 transition-colors hover:text-black"
+              className="flex h-7 w-7 items-center justify-center text-black/40 transition-colors hover:text-black"
               aria-label="Decrease quantity"
             >
-              <MinusIcon size={12} weight="light" />
+              <MinusIcon size={11} />
             </button>
-            <span className="w-5 text-center text-xs font-medium text-black/70">
+            <span className="w-7 text-center text-xs font-medium text-black">
               {quantity}
             </span>
             <button
               onClick={handleIncreaseQuantity}
               disabled={!canIncrease}
-              className={`transition-colors ${
+              className={`flex h-7 w-7 items-center justify-center transition-colors ${
                 !canIncrease
-                  ? "cursor-not-allowed opacity-40"
-                  : "text-black/45 hover:text-black"
+                  ? "cursor-not-allowed opacity-30"
+                  : "text-black/40 hover:text-black"
               }`}
               aria-label="Increase quantity"
             >
-              <PlusIcon size={12} weight="light" />
+              <PlusIcon size={11} />
             </button>
           </div>
-          <span className="shrink-0 text-sm font-medium text-black">
+          <span className="text-sm font-medium text-black tabular-nums">
             {formatPrice(itemTotal)}
           </span>
         </div>
@@ -158,18 +158,11 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     () => checkoutEmail.trim(),
     [checkoutEmail],
   );
-  const checkoutLabel = isCheckingOut ? "Processing..." : "Checkout";
 
   const handleCheckout = async () => {
-    if (!hasItems) return;
-    if (!normalizedCheckoutEmail) {
-      return;
-    }
-
+    if (!hasItems || !normalizedCheckoutEmail) return;
     setIsCheckingOut(true);
-
     try {
-      // prepare items for checkout
       const checkoutItems = items.map((item) => ({
         name: item.name,
         description: item.description,
@@ -177,30 +170,20 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         quantity: item.quantity,
         selectedSizes: item.selectedSizes,
       }));
-
-      // call checkout API
       const response = await fetch("/api/checkout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: checkoutItems,
           email: normalizedCheckoutEmail,
         }),
       });
-
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || "Checkout failed");
       }
-
       const { url } = await response.json();
-
-      // redirect to Stripe checkout
-      if (url) {
-        window.location.href = url;
-      }
+      if (url) window.location.href = url;
     } catch (error) {
       console.error("Checkout error:", error);
       setIsCheckingOut(false);
@@ -208,41 +191,45 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   };
 
   const footerContent = hasItems && (
-    <div className="-m-6 space-y-4 bg-black/5 p-6">
-      <div className="space-y-2">
+    <div className="space-y-5">
+      <div className="space-y-1.5">
         <label
           htmlFor="cart-checkout-email"
-          className="block text-xs uppercase tracking-[0.18em] text-black/45"
+          className="block text-[10px] uppercase tracking-[0.2em] text-black/40"
         >
-          Email
+          Email for order confirmation
         </label>
         <input
           id="cart-checkout-email"
           type="email"
           value={checkoutEmail}
-          onChange={(event) => setCheckoutEmail(event.target.value)}
+          onChange={(e) => setCheckoutEmail(e.target.value)}
           placeholder="name@email.com"
-          className="w-full border border-black/10 bg-white px-4 py-3 text-sm text-black placeholder:text-black/30 focus:outline-none"
+          className="w-full border-b border-black/20 bg-transparent py-2 text-sm text-black placeholder:text-black/30 outline-none focus:border-black transition-colors"
         />
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm">Subtotal</span>
-        <span className="text-lg">{formatPrice(subtotal)}</span>
+
+      <div className="flex items-center justify-between border-t border-black/10 pt-4">
+        <span className="text-xs uppercase tracking-[0.2em] text-black/40">
+          Subtotal
+        </span>
+        <span className="text-base font-semibold tracking-[-0.02em] tabular-nums text-black">
+          {formatPrice(subtotal)}
+        </span>
       </div>
-      <p className="text-sm text-black/50">
-        Shipping is calculated at checkout.
-      </p>
+      <p className="text-xs text-black/40">Shipping calculated at checkout.</p>
+
       <Button
         variant="primary"
         onClick={handleCheckout}
         disabled={isCheckingOut || !normalizedCheckoutEmail}
-        className="group w-full transition-colors disabled:opacity-50"
+        className="w-full disabled:opacity-50"
       >
-        {checkoutLabel}
+        {isCheckingOut ? "Processing..." : "Checkout"}
       </Button>
       <button
         onClick={onClose}
-        className="w-full text-center text-sm text-black/40 transition-colors hover:text-black/65"
+        className="w-full text-center text-xs uppercase tracking-[0.2em] text-black/40 transition-colors hover:text-black/70"
       >
         Continue shopping
       </button>
@@ -253,47 +240,39 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      title={
-        <span className="inline-flex items-center gap-2">
-          <ShoppingBagIcon size={18} weight="light" className="text-black/70" />
-          <span>Your bag</span>
-        </span>
-      }
+      title="your bag"
       footer={footerContent}
       ariaLabel="Shopping cart"
     >
-      <div className="space-y-4">
-        {!hasItems ? (
-          <div className="flex h-full min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black/5">
-              <ShoppingBagIcon
-                size={28}
-                weight="thin"
-                className="text-black/35"
-              />
-            </div>
-            <p className="text-sm text-black/50">Your bag is empty</p>
-
-            <Button
-              as="link"
-              href="/collection"
-              variant="primary"
-              onClick={onClose}
-            >
-              Continue shopping
-            </Button>
+      {!hasItems ? (
+        <div className="flex h-full min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-black">Your bag is empty</p>
+            <p className="text-xs text-black/40">
+              Add something to get started.
+            </p>
           </div>
-        ) : (
-          items.map((item) => (
+          <Button
+            as="link"
+            href="/collection"
+            variant="primary"
+            onClick={onClose}
+          >
+            Browse collection
+          </Button>
+        </div>
+      ) : (
+        <div>
+          {items.map((item) => (
             <CartItemComponent
               key={`${item.id || item._id}-${(item.selectedSizes ?? []).join("-")}`}
               item={item}
               updateQuantity={updateQuantity}
               removeFromCart={removeFromCart}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </Drawer>
   );
 }

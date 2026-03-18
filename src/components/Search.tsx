@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowUpRightIcon,
-  MagnifyingGlassIcon,
   PackageIcon,
   XIcon,
 } from "@phosphor-icons/react";
@@ -66,14 +65,7 @@ function SearchResultRow({ product, onClose }: SearchResultRowProps) {
 
 function SearchState({ message }: SearchStateProps) {
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black/5">
-        <MagnifyingGlassIcon
-          size={28}
-          weight="thin"
-          className="text-black/35"
-        />
-      </div>
+    <div className="flex min-h-[50vh] flex-col items-center justify-center text-center">
       <p className="text-sm text-black/50">{message}</p>
     </div>
   );
