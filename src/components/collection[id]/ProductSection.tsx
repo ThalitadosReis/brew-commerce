@@ -58,8 +58,7 @@ function CarouselThumbnails({
   const handlePrevious = () =>
     onSelect((activeIndex - 1 + images.length) % images.length);
 
-  const handleNext = () =>
-    onSelect((activeIndex + 1) % images.length);
+  const handleNext = () => onSelect((activeIndex + 1) % images.length);
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     touchStartRef.current = event.touches[0]?.clientX ?? null;
@@ -204,8 +203,8 @@ export default function ProductSection({ product }: ProductSectionProps) {
         product.images
           .filter((img): img is string => typeof img === "string")
           .map((img) => img.trim())
-          .filter((img) => img.length > 0)
-      )
+          .filter((img) => img.length > 0),
+      ),
     );
   }, [product]);
 
@@ -215,7 +214,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
       return;
     }
     setActiveImageIndex((current) =>
-      current >= productImages.length ? productImages.length - 1 : current
+      current >= productImages.length ? productImages.length - 1 : current,
     );
   }, [productImages]);
 
@@ -225,11 +224,11 @@ export default function ProductSection({ product }: ProductSectionProps) {
       const cartItem = items.find(
         (item) =>
           item.id === product._id &&
-          JSON.stringify(item.selectedSizes) === JSON.stringify([sizeToCheck])
+          JSON.stringify(item.selectedSizes) === JSON.stringify([sizeToCheck]),
       );
       return cartItem ? cartItem.quantity : 0;
     },
-    [product, items]
+    [product, items],
   );
 
   const selectedSizeOption = useMemo(() => {
@@ -262,7 +261,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => setShowFloating(!entry!.isIntersecting),
-      { threshold: 0 }
+      { threshold: 0 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -345,7 +344,9 @@ export default function ProductSection({ product }: ProductSectionProps) {
           </div>
 
           {/* Origin */}
-          <p className="text-sm text-black/60">{product.country} · Single Origin</p>
+          <p className="text-sm text-black/60">
+            {product.country} · Single Origin
+          </p>
 
           {/* Description */}
           <div className="border-y border-black/10 py-5">
@@ -379,8 +380,8 @@ export default function ProductSection({ product }: ProductSectionProps) {
                       sizeOutOfStock
                         ? "border border-black/20 text-black/40 cursor-not-allowed"
                         : selectedSize === sizeOption.size
-                        ? "bg-black text-white"
-                        : "bg-black/10 hover:bg-black/15"
+                          ? "bg-black text-white"
+                          : "bg-black/10 hover:bg-black/15"
                     }`}
                   >
                     {sizeOption.size}
@@ -424,8 +425,8 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 {!selectedSize
                   ? "Select size"
                   : isOutOfStock
-                  ? "Out of stock"
-                  : `Add to cart · CHF ${displayPrice.toFixed(2)}`}
+                    ? "Out of stock"
+                    : `Add to cart · CHF ${displayPrice.toFixed(2)}`}
               </Button>
             </div>
 
@@ -488,7 +489,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
         md:bottom-6 md:left-auto md:right-6 md:w-80
         `}
       >
-        <div className="bg-white/95 backdrop-blur-sm shadow-xl border border-black/8 p-4 md:rounded-lg">
+        <div className="bg-white/95 backdrop-blur-sm shadow-xl border border-black/8 p-4">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-base font-light">{product.name}</span>
             <span className="text-base font-medium ml-auto">
@@ -517,8 +518,8 @@ export default function ProductSection({ product }: ProductSectionProps) {
                     sizeOutOfStock
                       ? "border border-black/20 text-black/40 cursor-not-allowed"
                       : selectedSize === sizeOption.size
-                      ? "bg-black text-white"
-                      : "bg-black/10 hover:bg-black/15"
+                        ? "bg-black text-white"
+                        : "bg-black/10 hover:bg-black/15"
                   }`}
                 >
                   {sizeOption.size}
@@ -535,8 +536,8 @@ export default function ProductSection({ product }: ProductSectionProps) {
             {!selectedSize
               ? "Select size"
               : isOutOfStock
-              ? "Out of stock"
-              : `Add to cart · CHF ${displayPrice.toFixed(2)}`}
+                ? "Out of stock"
+                : `Add to cart · CHF ${displayPrice.toFixed(2)}`}
           </Button>
           <p className="text-xs text-center text-black/50 mt-2">
             Free shipping on orders over CHF 50
