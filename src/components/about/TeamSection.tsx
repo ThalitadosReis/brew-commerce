@@ -137,7 +137,7 @@ export default function TeamSection() {
       </div>
 
       {/* info */}
-      <div className="bg-neutral-100 relative overflow-hidden min-h-[360px] lg:min-h-0">
+      <div className="bg-neutral-100 relative overflow-hidden min-h-[480px] lg:min-h-0">
         {teamMembers.map((member, i) => (
           <div
             key={member.name}
@@ -147,6 +147,16 @@ export default function TeamSection() {
                 : "opacity-0 translate-y-5 pointer-events-none"
             }`}
           >
+            <div className="lg:hidden relative w-24 h-24 shrink-0 rounded-full overflow-hidden mx-auto mb-5 ring-1 ring-neutral-200">
+              <Image
+                src={member.image}
+                alt={member.name}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+
             <p className="flex items-center justify-center gap-2 text-sm text-neutral-500 mb-6">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-neutral-500" />
               our team.
@@ -165,7 +175,7 @@ export default function TeamSection() {
       </div>
 
       {/* image */}
-      <div className="relative overflow-hidden aspect-square lg:aspect-auto lg:h-full">
+      <div className="hidden lg:block relative overflow-hidden lg:h-full">
         {teamMembers.map((member, i) => (
           <div
             key={member.name}

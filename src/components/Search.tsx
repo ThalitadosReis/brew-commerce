@@ -100,7 +100,7 @@ export default function SearchDrawer({
             onChange={(e) => onQueryChange(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="Type to search..."
-            className="w-full bg-transparent py-4 pr-24 text-sm text-black placeholder:text-black/35 focus:outline-none"
+            className="w-full bg-transparent py-4 pr-24 text-base md:text-sm text-black placeholder:text-black/35 focus:outline-none"
             autoFocus
           />
 

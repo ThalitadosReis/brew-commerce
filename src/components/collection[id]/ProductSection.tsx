@@ -320,7 +320,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
         </div>
 
         {/* Info — right */}
-        <div className="space-y-6 px-4 md:px-6 lg:px-0 lg:pr-6 pt-6 lg:pt-0">
+        <div className="space-y-4 px-4 md:px-6 lg:px-0 lg:pr-6 pt-6 lg:pt-0">
           {/* Title */}
           <h1 className="text-4xl md:text-5xl font-light tracking-tight">
             {product.name}
@@ -349,7 +349,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
           </p>
 
           {/* Description */}
-          <div className="border-y border-black/10 py-5">
+          <div className="border-y border-black/10 py-4">
             <p className="text-sm leading-relaxed text-black/75">
               {product.description}
             </p>
@@ -392,7 +392,7 @@ export default function ProductSection({ product }: ProductSectionProps) {
           </div>
 
           {/* Quantity + Add to cart */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex gap-2">
               {/* Quantity */}
               <div className="flex items-center border border-black/15">
@@ -420,13 +420,13 @@ export default function ProductSection({ product }: ProductSectionProps) {
                 variant="primary"
                 onClick={handleAddToCart}
                 disabled={!selectedSize || isOutOfStock}
-                className="flex-1"
+                className="flex-1 whitespace-nowrap"
               >
                 {!selectedSize
                   ? "Select size"
                   : isOutOfStock
                     ? "Out of stock"
-                    : `Add to cart · CHF ${displayPrice.toFixed(2)}`}
+                    : "Add to cart"}
               </Button>
             </div>
 

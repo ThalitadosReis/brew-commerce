@@ -18,6 +18,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     () => ["/collection", "/about", "/contact"],
     [],
   );
+  const productDetailPattern = useMemo(() => /^\/collection\/.+/, []);
 
   const hideLayout = useMemo(() => {
     if (!pathname) return false;
@@ -34,8 +35,21 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const needsStandardPadding = useMemo(() => {
     if (!pathname || pathname === "/") return false;
     if (fullBleedHeaderPaths.some((route) => pathname === route)) return false;
+    if (productDetailPattern.test(pathname)) return false;
     return !relaxedPaddingPaths.some((route) => pathname.startsWith(route));
-  }, [pathname, fullBleedHeaderPaths, relaxedPaddingPaths]);
+  }, [
+    pathname,
+    fullBleedHeaderPaths,
+    relaxedPaddingPaths,
+    productDetailPattern,
+  ]);
+
+  // product detail pages have no hero header of their own, but the navbar is
+  // always solid there — so content just needs enough padding to clear it.
+  const needsNavbarClearance = useMemo(
+    () => !!pathname && productDetailPattern.test(pathname),
+    [pathname, productDetailPattern],
+  );
 
   return (
     <AuthProvider verifyOnMount={verifyAuth}>
@@ -48,7 +62,13 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
             <div
               ref={pathname === "/" ? heroRef : undefined}
               className={`bg-black/5 min-h-screen ${
-                pathname === "/" ? "" : needsStandardPadding ? "pt-40" : ""
+                pathname === "/"
+                  ? ""
+                  : needsStandardPadding
+                    ? "pt-40"
+                    : needsNavbarClearance
+                      ? "pt-20 lg:pt-40"
+                      : ""
               }`}
             >
               {children}

@@ -207,7 +207,7 @@ export default function Navbar() {
           navSurface ? "bg-black" : "bg-transparent"
         }`}
       >
-        <div className="mx-auto grid h-20 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-6 px-4 md:px-6">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-6 px-6 md:grid md:grid-cols-[auto_1fr_auto]">
           <BrandLink className="hidden text-xl uppercase tracking-[0.16em] transition-colors duration-300 md:block text-white" onClick={handleBrandClick} />
 
           <div className="hidden items-center justify-center gap-8 md:flex">
