@@ -152,8 +152,8 @@ export default function TeamSection() {
                 src={member.image}
                 alt={member.name}
                 fill
+                sizes="96px"
                 className="object-cover"
-                unoptimized
               />
             </div>
 
@@ -187,8 +187,8 @@ export default function TeamSection() {
               src={member.image}
               alt={member.name}
               fill
+              sizes="50vw"
               className="object-cover"
-              unoptimized
             />
           </div>
         ))}
